@@ -13,8 +13,12 @@ func do() int {
 }
 
 func run(ctx context.Context) error {
-	srv := build()
-	return srv.Start(ctx)
+	entrypoint, err := build(ctx)
+	if err != nil {
+		return err
+	}
+	defer entrypoint.Shutdown(context.WithoutCancel(ctx))
+	return entrypoint.Start(ctx)
 }
 
 func exitCodeOf(err error) int {

@@ -7,16 +7,37 @@
 package main
 
 import (
+	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/o11y"
 	"careco/backend/web"
+	"context"
 )
 
 // Injectors from wire.go:
 
-func build() *web.Server {
+func build(contextContext context.Context) (*internal.Entrypoint, error) {
+	serviceVersion, err := providers.ProvideServiceVersionFromGitRevision(contextContext)
+	if err != nil {
+		return nil, err
+	}
+	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
+	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
+	if err != nil {
+		return nil, err
+	}
+	tracerProvider, err := o11y.ProvideTracerProvider(contextContext, resource)
+	if err != nil {
+		return nil, err
+	}
 	environment := config.ProvideEnvironment()
 	port := providers.ProvidePort(environment)
-	server := web.ProvideServer(port)
-	return server
+	server := web.ProvideServer(port, tracerProvider)
+	entrypoint := internal.ProvideEntrypoint(tracerProvider, server)
+	return entrypoint, nil
 }
+
+var (
+	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
+)
