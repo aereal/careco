@@ -51,3 +51,23 @@ jobs:
         continue-on-error: true
       - if: ${{ steps.lint.outcome == 'failure' || steps.build.outcome == 'failure' }}
         run: exit 1
+  test-server:
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        id: setup-go
+        with:
+          cache: true
+          go-version-file: go.mod
+      - run: go mod download
+      - name: go test
+        run: go test -coverpkg=./... -coverprofile=./coverage.out -timeout=30s ./backend/...
+      - uses: k1LoW/octocov-action@73d561f65d59e66899ed5c87e4621a913b5d5c20 # v1.5.0
+        with:
+          version: v0.73.0
+          config: octocov.backend.yml
