@@ -1,7 +1,7 @@
 package providers
 
 import (
-	"careco/backend/cmd/config"
+	"careco/backend/config"
 	"careco/backend/web"
 )
 

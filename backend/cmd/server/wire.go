@@ -3,8 +3,8 @@
 package main
 
 import (
-	"careco/backend/cmd/config"
-	"careco/backend/cmd/config/providers"
+	"careco/backend/config"
+	"careco/backend/config/providers"
 	"careco/backend/web"
 
 	"github.com/google/wire"
