@@ -10,6 +10,7 @@ import (
 	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
 	"context"
@@ -18,10 +19,15 @@ import (
 // Injectors from wire.go:
 
 func build(contextContext context.Context) (*internal.Entrypoint, error) {
+	output := log.ProvideStdoutOutput()
+	environment := config.ProvideEnvironment()
+	level := providers.ProvideLogLevel(environment)
 	serviceVersion, err := providers.ProvideServiceVersionFromGitRevision(contextContext)
 	if err != nil {
 		return nil, err
 	}
+	logger := log.ProvideJSONLogger(output, level, serviceVersion)
+	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
 	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
 	if err != nil {
@@ -31,10 +37,9 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	environment := config.ProvideEnvironment()
 	port := providers.ProvidePort(environment)
 	server := web.ProvideServer(port, tracerProvider)
-	entrypoint := internal.ProvideEntrypoint(tracerProvider, server)
+	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, server)
 	return entrypoint, nil
 }
 

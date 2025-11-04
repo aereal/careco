@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"careco/backend/log"
 	"careco/backend/web"
 	"context"
 	"log/slog"
@@ -9,7 +10,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
-func ProvideEntrypoint(tp *sdktrace.TracerProvider, srv *web.Server) *Entrypoint {
+func ProvideEntrypoint(_ log.GlobalInstrumentationToken, tp *sdktrace.TracerProvider, srv *web.Server) *Entrypoint {
 	return &Entrypoint{
 		Server: srv,
 		tp:     tp,

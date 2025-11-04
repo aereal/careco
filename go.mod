@@ -5,6 +5,7 @@ go 1.25.1
 tool github.com/google/wire/cmd/wire
 
 require (
+	github.com/google/go-cmp v0.7.0
 	github.com/google/wire v0.7.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0
 	go.opentelemetry.io/otel v1.38.0
