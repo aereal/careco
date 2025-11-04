@@ -1,0 +1,3 @@
+---
+schema: schema.gql
+documents: ./src/**/*.{ts,tsx}

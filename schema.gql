@@ -1,0 +1,7 @@
+type TotalDrivenRecord {
+  mileageKillos: Int!
+}
+
+type Query {
+  total: TotalDrivenRecord!
+}
