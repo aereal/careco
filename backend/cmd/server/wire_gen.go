@@ -10,6 +10,8 @@ import (
 	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/graph"
+	"careco/backend/graph/resolver"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
@@ -38,8 +40,10 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 		return nil, err
 	}
 	port := providers.ProvidePort(environment)
-	server := web.ProvideServer(port, tracerProvider)
-	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, server)
+	resolverResolver := resolver.ProvideResolver()
+	server := graph.ProvideServer(resolverResolver)
+	webServer := web.ProvideServer(port, tracerProvider, server)
+	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil
 }
 
