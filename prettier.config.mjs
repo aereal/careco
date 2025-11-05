@@ -1,6 +1,7 @@
-import { type Config } from "prettier";
-
-const config: Config = {
+/**
+ * @type {import('prettier').Config}
+ */
+const config = {
   arrowParens: "always",
   bracketSpacing: true,
   jsxSingleQuote: true,
