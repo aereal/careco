@@ -1,11 +1,12 @@
 package log
 
 import (
-	"careco/backend/log/attribute"
-	"careco/backend/o11y"
 	"context"
 	"fmt"
 	"log/slog"
+
+	"careco/backend/log/attribute"
+	"careco/backend/o11y"
 
 	"go.opentelemetry.io/otel/trace"
 )

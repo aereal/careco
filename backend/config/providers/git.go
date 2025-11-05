@@ -2,12 +2,13 @@ package providers
 
 import (
 	"bytes"
-	"careco/backend/o11y"
 	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"time"
+
+	"careco/backend/o11y"
 )
 
 func ProvideServiceVersionFromGitRevision(ctx context.Context) (o11y.ServiceVersion, error) {

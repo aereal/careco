@@ -1,10 +1,11 @@
 package log
 
 import (
-	"careco/backend/o11y"
 	"io"
 	"log/slog"
 	"os"
+
+	"careco/backend/o11y"
 )
 
 type Output io.Writer

@@ -1,9 +1,10 @@
 package providers
 
 import (
+	"log/slog"
+
 	"careco/backend/config"
 	"careco/backend/web"
-	"log/slog"
 )
 
 func ProvidePort(e *config.Environment) web.Port {

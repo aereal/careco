@@ -1,5 +1,12 @@
 version: "2"
-formatters: {}
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - careco/backend/
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
