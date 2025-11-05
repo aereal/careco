@@ -1,0 +1,12 @@
+{
+  "go.buildTags": "wireinject",
+  "go.formatTool": "custom",
+  "go.lintTool": "golangci-lint-v2",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint-v2",
+  },
+  "go.formatFlags": [
+    "fmt",
+    "--stdin",
+  ],
+}

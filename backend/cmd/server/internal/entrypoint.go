@@ -1,11 +1,12 @@
 package internal
 
 import (
-	"careco/backend/log"
-	"careco/backend/web"
 	"context"
 	"log/slog"
 	"time"
+
+	"careco/backend/log"
+	"careco/backend/web"
 
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )

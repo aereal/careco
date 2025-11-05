@@ -3,13 +3,14 @@
 package main
 
 import (
+	"context"
+
 	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
-	"context"
 
 	"github.com/google/wire"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"

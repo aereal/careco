@@ -2,13 +2,14 @@ package log_test
 
 import (
 	"bytes"
-	"careco/backend/log"
-	"careco/backend/log/attribute"
 	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
 	"testing"
+
+	"careco/backend/log"
+	"careco/backend/log/attribute"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
