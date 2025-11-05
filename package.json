@@ -14,12 +14,21 @@
     "node": "v22.17.0"
   },
   "dependencies": {
+    "@graphql-typed-document-node/core": "3.2.0",
+    "@urql/core": "6.0.1",
+    "@urql/next": "2.0.0",
+    "graphql": "16.12.0",
+    "graphql-tag": "2.12.6",
     "next": "16.0.1",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "urql": "5.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
+    "@graphql-codegen/cli": "6.0.1",
+    "@graphql-codegen/client-preset": "5.1.1",
+    "@graphql-codegen/typescript": "5.0.2",
     "@types/node": "24.9.2",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
