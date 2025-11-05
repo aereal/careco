@@ -2,6 +2,36 @@
 
 package dtos
 
-type TotalDrivenRecord struct {
-	MileageKillos int `json:"mileageKillos"`
+import (
+	"time"
+)
+
+type DailyReport struct {
+	Year           int        `json:"year"`
+	Month          time.Month `json:"month"`
+	Day            int        `json:"day"`
+	DistanceKillos int        `json:"distanceKillos"`
+}
+
+type DrivingRecord struct {
+	RecordedAt     string  `json:"recordedAt"`
+	DistanceKillos int     `json:"distanceKillos"`
+	Memo           *string `json:"memo,omitempty"`
+}
+
+type MonthlyReport struct {
+	Year            int            `json:"year"`
+	Month           time.Month     `json:"month"`
+	DistanceKillos  int            `json:"distanceKillos"`
+	DailyStatistics []*DailyReport `json:"dailyStatistics"`
+}
+
+type TotalStatistics struct {
+	DistanceKillos int `json:"distanceKillos"`
+}
+
+type YearlyReport struct {
+	Year              int              `json:"year"`
+	DistanceKillos    int              `json:"distanceKillos"`
+	MonthlyStatistics []*MonthlyReport `json:"monthlyStatistics"`
 }

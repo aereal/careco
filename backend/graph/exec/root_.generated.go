@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -32,6 +33,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Mutation() MutationResolver
 	Query() QueryResolver
 }
 
@@ -39,12 +41,45 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Query struct {
-		Total func(childComplexity int) int
+	DailyReport struct {
+		Day            func(childComplexity int) int
+		DistanceKillos func(childComplexity int) int
+		Month          func(childComplexity int) int
+		Year           func(childComplexity int) int
 	}
 
-	TotalDrivenRecord struct {
-		MileageKillos func(childComplexity int) int
+	DrivingRecord struct {
+		DistanceKillos func(childComplexity int) int
+		Memo           func(childComplexity int) int
+		RecordedAt     func(childComplexity int) int
+	}
+
+	MonthlyReport struct {
+		DailyStatistics func(childComplexity int) int
+		DistanceKillos  func(childComplexity int) int
+		Month           func(childComplexity int) int
+		Year            func(childComplexity int) int
+	}
+
+	Mutation struct {
+		RecordDrivingRecord func(childComplexity int, date string, distanceKillos int, memo *string) int
+	}
+
+	Query struct {
+		MonthlyReport        func(childComplexity int, year int, month time.Month) int
+		RecentDrivingRecords func(childComplexity int, first int) int
+		TotalStatistics      func(childComplexity int) int
+		YearlyReport         func(childComplexity int, year int) int
+	}
+
+	TotalStatistics struct {
+		DistanceKillos func(childComplexity int) int
+	}
+
+	YearlyReport struct {
+		DistanceKillos    func(childComplexity int) int
+		MonthlyStatistics func(childComplexity int) int
+		Year              func(childComplexity int) int
 	}
 }
 
@@ -67,19 +102,165 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Query.total":
-		if e.complexity.Query.Total == nil {
+	case "DailyReport.day":
+		if e.complexity.DailyReport.Day == nil {
 			break
 		}
 
-		return e.complexity.Query.Total(childComplexity), true
+		return e.complexity.DailyReport.Day(childComplexity), true
 
-	case "TotalDrivenRecord.mileageKillos":
-		if e.complexity.TotalDrivenRecord.MileageKillos == nil {
+	case "DailyReport.distanceKillos":
+		if e.complexity.DailyReport.DistanceKillos == nil {
 			break
 		}
 
-		return e.complexity.TotalDrivenRecord.MileageKillos(childComplexity), true
+		return e.complexity.DailyReport.DistanceKillos(childComplexity), true
+
+	case "DailyReport.month":
+		if e.complexity.DailyReport.Month == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.Month(childComplexity), true
+
+	case "DailyReport.year":
+		if e.complexity.DailyReport.Year == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.Year(childComplexity), true
+
+	case "DrivingRecord.distanceKillos":
+		if e.complexity.DrivingRecord.DistanceKillos == nil {
+			break
+		}
+
+		return e.complexity.DrivingRecord.DistanceKillos(childComplexity), true
+
+	case "DrivingRecord.memo":
+		if e.complexity.DrivingRecord.Memo == nil {
+			break
+		}
+
+		return e.complexity.DrivingRecord.Memo(childComplexity), true
+
+	case "DrivingRecord.recordedAt":
+		if e.complexity.DrivingRecord.RecordedAt == nil {
+			break
+		}
+
+		return e.complexity.DrivingRecord.RecordedAt(childComplexity), true
+
+	case "MonthlyReport.dailyStatistics":
+		if e.complexity.MonthlyReport.DailyStatistics == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.DailyStatistics(childComplexity), true
+
+	case "MonthlyReport.distanceKillos":
+		if e.complexity.MonthlyReport.DistanceKillos == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.DistanceKillos(childComplexity), true
+
+	case "MonthlyReport.month":
+		if e.complexity.MonthlyReport.Month == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.Month(childComplexity), true
+
+	case "MonthlyReport.year":
+		if e.complexity.MonthlyReport.Year == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.Year(childComplexity), true
+
+	case "Mutation.recordDrivingRecord":
+		if e.complexity.Mutation.RecordDrivingRecord == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_recordDrivingRecord_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(string), args["distanceKillos"].(int), args["memo"].(*string)), true
+
+	case "Query.monthlyReport":
+		if e.complexity.Query.MonthlyReport == nil {
+			break
+		}
+
+		args, err := ec.field_Query_monthlyReport_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.MonthlyReport(childComplexity, args["year"].(int), args["month"].(time.Month)), true
+
+	case "Query.recentDrivingRecords":
+		if e.complexity.Query.RecentDrivingRecords == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recentDrivingRecords_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecentDrivingRecords(childComplexity, args["first"].(int)), true
+
+	case "Query.totalStatistics":
+		if e.complexity.Query.TotalStatistics == nil {
+			break
+		}
+
+		return e.complexity.Query.TotalStatistics(childComplexity), true
+
+	case "Query.yearlyReport":
+		if e.complexity.Query.YearlyReport == nil {
+			break
+		}
+
+		args, err := ec.field_Query_yearlyReport_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.YearlyReport(childComplexity, args["year"].(int)), true
+
+	case "TotalStatistics.distanceKillos":
+		if e.complexity.TotalStatistics.DistanceKillos == nil {
+			break
+		}
+
+		return e.complexity.TotalStatistics.DistanceKillos(childComplexity), true
+
+	case "YearlyReport.distanceKillos":
+		if e.complexity.YearlyReport.DistanceKillos == nil {
+			break
+		}
+
+		return e.complexity.YearlyReport.DistanceKillos(childComplexity), true
+
+	case "YearlyReport.monthlyStatistics":
+		if e.complexity.YearlyReport.MonthlyStatistics == nil {
+			break
+		}
+
+		return e.complexity.YearlyReport.MonthlyStatistics(childComplexity), true
+
+	case "YearlyReport.year":
+		if e.complexity.YearlyReport.Year == nil {
+			break
+		}
+
+		return e.complexity.YearlyReport.Year(childComplexity), true
 
 	}
 	return 0, false
@@ -121,6 +302,21 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 
 			return &response
+		}
+	case ast.Mutation:
+		return func(ctx context.Context) *graphql.Response {
+			if !first {
+				return nil
+			}
+			first = false
+			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
+			data := ec._Mutation(ctx, opCtx.Operation.SelectionSet)
+			var buf bytes.Buffer
+			data.MarshalGQL(&buf)
+
+			return &graphql.Response{
+				Data: buf.Bytes(),
+			}
 		}
 
 	default:
@@ -170,12 +366,52 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../../../schema.gql", Input: `type TotalDrivenRecord {
-  mileageKillos: Int!
+	{Name: "../../../schema.gql", Input: `scalar DateTime
+scalar Month
+
+type DrivingRecord {
+  recordedAt: DateTime!
+  distanceKillos: Int!
+  memo: String
+}
+
+type TotalStatistics {
+  distanceKillos: Int!
+}
+
+type YearlyReport {
+  year: Int!
+  distanceKillos: Int!
+  monthlyStatistics: [MonthlyReport!]!
+}
+
+type MonthlyReport {
+  year: Int!
+  month: Month!
+  distanceKillos: Int!
+  dailyStatistics: [DailyReport!]!
+}
+
+type DailyReport {
+  year: Int!
+  month: Month!
+  day: Int!
+  distanceKillos: Int!
 }
 
 type Query {
-  total: TotalDrivenRecord!
+  totalStatistics: TotalStatistics!
+  recentDrivingRecords(first: Int!): [DrivingRecord!]!
+  yearlyReport(year: Int!): YearlyReport!
+  monthlyReport(year: Int!, month: Month!): MonthlyReport!
+}
+
+type Mutation {
+  recordDrivingRecord(
+    date: DateTime!
+    distanceKillos: Int!
+    memo: String
+  ): Boolean!
 }
 `, BuiltIn: false},
 }

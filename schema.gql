@@ -1,7 +1,47 @@
-type TotalDrivenRecord {
-  mileageKillos: Int!
+scalar DateTime
+scalar Month
+
+type DrivingRecord {
+  recordedAt: DateTime!
+  distanceKillos: Int!
+  memo: String
+}
+
+type TotalStatistics {
+  distanceKillos: Int!
+}
+
+type YearlyReport {
+  year: Int!
+  distanceKillos: Int!
+  monthlyStatistics: [MonthlyReport!]!
+}
+
+type MonthlyReport {
+  year: Int!
+  month: Month!
+  distanceKillos: Int!
+  dailyStatistics: [DailyReport!]!
+}
+
+type DailyReport {
+  year: Int!
+  month: Month!
+  day: Int!
+  distanceKillos: Int!
 }
 
 type Query {
-  total: TotalDrivenRecord!
+  totalStatistics: TotalStatistics!
+  recentDrivingRecords(first: Int!): [DrivingRecord!]!
+  yearlyReport(year: Int!): YearlyReport!
+  monthlyReport(year: Int!, month: Month!): MonthlyReport!
+}
+
+type Mutation {
+  recordDrivingRecord(
+    date: DateTime!
+    distanceKillos: Int!
+    memo: String
+  ): Boolean!
 }
