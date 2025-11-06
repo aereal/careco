@@ -40,3 +40,32 @@ cases:
           - distanceKilometers: 36
             recordedAt: '2025-09-30T12:34:56+00:00'
             memo: blah blah
+  'query monthlyReport/ok':
+    request:
+      query: |
+        query GetMonthly($year: Int!, $month: Month!) {
+          monthlyReport(year: $year, month: $month) {
+            year
+            month
+            distanceKilometers
+            dailyStatistics {
+              distanceKilometers
+            }
+          }
+        }
+      variables:
+        year: 2025
+        month: OCTOBER
+    response:
+      data:
+        monthlyReport:
+          year: 2025
+          month: OCTOBER
+          distanceKilometers: 36
+          dailyStatistics:
+            -
+              distanceKilometers: 0
+            -
+              distanceKilometers: 12
+            -
+              distanceKilometers: 24

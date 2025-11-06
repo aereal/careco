@@ -36,7 +36,19 @@ func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.Yearl
 }
 
 func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error) {
-	return nil, errNotImplemented
+	if year != 2025 || month != time.October {
+		return nil, errNotImplemented
+	}
+	base := time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC)
+	ret := &dtos.MonthlyReport{
+		Year:            year,
+		Month:           month,
+		DailyStatistics: slices.Collect(seq.Take(generateDummyData(base), 3)),
+	}
+	for _, r := range ret.DailyStatistics {
+		ret.DistanceKilometers += r.DistanceKilometers
+	}
+	return ret, nil
 }
 
 func (r *Resolver) Mutation() exec.MutationResolver { return &mutationResolver{r} }
