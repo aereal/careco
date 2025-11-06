@@ -34,8 +34,10 @@ type Config struct {
 
 type ResolverRoot interface {
 	DailyReport() DailyReportResolver
+	MonthlyReport() MonthlyReportResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	YearlyReport() YearlyReportResolver
 }
 
 type DirectiveRoot struct {

@@ -40,3 +40,11 @@ models:
         resolver: true
       day:
         resolver: true
+  MonthlyReport:
+    fields:
+      distanceKilometers:
+        resolver: true
+  YearlyReport:
+    fields:
+      distanceKilometers:
+        resolver: true

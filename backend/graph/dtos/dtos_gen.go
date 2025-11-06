@@ -13,10 +13,9 @@ type DailyReport struct {
 }
 
 type MonthlyReport struct {
-	Year               int            `json:"year"`
-	Month              time.Month     `json:"month"`
-	DistanceKilometers int            `json:"distanceKilometers"`
-	DailyStatistics    []*DailyReport `json:"dailyStatistics"`
+	Year            int            `json:"year"`
+	Month           time.Month     `json:"month"`
+	DailyStatistics []*DailyReport `json:"dailyStatistics"`
 }
 
 type TotalStatistics struct {
@@ -24,7 +23,6 @@ type TotalStatistics struct {
 }
 
 type YearlyReport struct {
-	Year               int              `json:"year"`
-	DistanceKilometers int              `json:"distanceKilometers"`
-	MonthlyStatistics  []*MonthlyReport `json:"monthlyStatistics"`
+	Year              int              `json:"year"`
+	MonthlyStatistics []*MonthlyReport `json:"monthlyStatistics"`
 }

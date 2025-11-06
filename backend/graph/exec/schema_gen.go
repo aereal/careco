@@ -24,6 +24,9 @@ type DailyReportResolver interface {
 	Month(ctx context.Context, obj *dtos.DailyReport) (time.Month, error)
 	Day(ctx context.Context, obj *dtos.DailyReport) (int, error)
 }
+type MonthlyReportResolver interface {
+	DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error)
+}
 type MutationResolver interface {
 	RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error)
 }
@@ -32,6 +35,9 @@ type QueryResolver interface {
 	RecentDrivingRecords(ctx context.Context, first int) ([]*dtos.DailyReport, error)
 	YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error)
 	MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error)
+}
+type YearlyReportResolver interface {
+	DistanceKilometers(ctx context.Context, obj *dtos.YearlyReport) (int, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
@@ -355,7 +361,7 @@ func (ec *executionContext) _MonthlyReport_distanceKilometers(ctx context.Contex
 		field,
 		ec.fieldContext_MonthlyReport_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKilometers, nil
+			return ec.resolvers.MonthlyReport().DistanceKilometers(ctx, obj)
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -368,8 +374,8 @@ func (ec *executionContext) fieldContext_MonthlyReport_distanceKilometers(_ cont
 	fc = &graphql.FieldContext{
 		Object:     "MonthlyReport",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
 		},
@@ -822,7 +828,7 @@ func (ec *executionContext) _YearlyReport_distanceKilometers(ctx context.Context
 		field,
 		ec.fieldContext_YearlyReport_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKilometers, nil
+			return ec.resolvers.YearlyReport().DistanceKilometers(ctx, obj)
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -835,8 +841,8 @@ func (ec *executionContext) fieldContext_YearlyReport_distanceKilometers(_ conte
 	fc = &graphql.FieldContext{
 		Object:     "YearlyReport",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
 		},
@@ -1063,22 +1069,53 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 		case "year":
 			out.Values[i] = ec._MonthlyReport_year(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "month":
 			out.Values[i] = ec._MonthlyReport_month(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "distanceKilometers":
-			out.Values[i] = ec._MonthlyReport_distanceKilometers(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._MonthlyReport_distanceKilometers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dailyStatistics":
 			out.Values[i] = ec._MonthlyReport_dailyStatistics(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -1343,17 +1380,48 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 		case "year":
 			out.Values[i] = ec._YearlyReport_year(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "distanceKilometers":
-			out.Values[i] = ec._YearlyReport_distanceKilometers(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._YearlyReport_distanceKilometers(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "monthlyStatistics":
 			out.Values[i] = ec._YearlyReport_monthlyStatistics(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

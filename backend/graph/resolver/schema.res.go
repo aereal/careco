@@ -27,6 +27,14 @@ func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (i
 	return obj.RecordedAt.Day(), nil
 }
 
+func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
+	var ret int
+	for _, dailyReport := range obj.DailyStatistics {
+		ret += dailyReport.DistanceKilometers
+	}
+	return ret, nil
+}
+
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
 	return false, errNotImplemented
 }
@@ -52,8 +60,6 @@ func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.Yearl
 	for _, baseTime := range baseTimes {
 		monthlyReport := &dtos.MonthlyReport{Year: year, Month: baseTime.Month()}
 		for dailyReport := range seq.Take(generateDummyData(baseTime), 3) {
-			yearlyReport.DistanceKilometers += dailyReport.DistanceKilometers
-			monthlyReport.DistanceKilometers += dailyReport.DistanceKilometers
 			monthlyReport.DailyStatistics = append(monthlyReport.DailyStatistics, dailyReport)
 		}
 		yearlyReport.MonthlyStatistics = append(yearlyReport.MonthlyStatistics, monthlyReport)
@@ -71,18 +77,31 @@ func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.
 		Month:           month,
 		DailyStatistics: slices.Collect(seq.Take(generateDummyData(base), 3)),
 	}
-	for _, r := range ret.DailyStatistics {
-		ret.DistanceKilometers += r.DistanceKilometers
+	return ret, nil
+}
+
+func (r *yearlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.YearlyReport) (int, error) {
+	var ret int
+	for _, monthlyReport := range obj.MonthlyStatistics {
+		for _, dailyReport := range monthlyReport.DailyStatistics {
+			ret += dailyReport.DistanceKilometers
+		}
 	}
 	return ret, nil
 }
 
 func (r *Resolver) DailyReport() exec.DailyReportResolver { return &dailyReportResolver{r} }
 
+func (r *Resolver) MonthlyReport() exec.MonthlyReportResolver { return &monthlyReportResolver{r} }
+
 func (r *Resolver) Mutation() exec.MutationResolver { return &mutationResolver{r} }
 
 func (r *Resolver) Query() exec.QueryResolver { return &queryResolver{r} }
 
+func (r *Resolver) YearlyReport() exec.YearlyReportResolver { return &yearlyReportResolver{r} }
+
 type dailyReportResolver struct{ *Resolver }
+type monthlyReportResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type yearlyReportResolver struct{ *Resolver }
