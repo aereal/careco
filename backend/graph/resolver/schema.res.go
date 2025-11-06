@@ -44,7 +44,21 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) ([]
 }
 
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {
-	return nil, errNotImplemented
+	yearlyReport := &dtos.YearlyReport{Year: year}
+	baseTimes := []time.Time{
+		time.Date(year, time.October, 3, 12, 34, 56, 0, time.UTC),
+		time.Date(year, time.September, 30, 12, 34, 56, 0, time.UTC),
+	}
+	for _, baseTime := range baseTimes {
+		monthlyReport := &dtos.MonthlyReport{Year: year, Month: baseTime.Month()}
+		for dailyReport := range seq.Take(generateDummyData(baseTime), 3) {
+			yearlyReport.DistanceKilometers += dailyReport.DistanceKilometers
+			monthlyReport.DistanceKilometers += dailyReport.DistanceKilometers
+			monthlyReport.DailyStatistics = append(monthlyReport.DailyStatistics, dailyReport)
+		}
+		yearlyReport.MonthlyStatistics = append(yearlyReport.MonthlyStatistics, monthlyReport)
+	}
+	return yearlyReport, nil
 }
 
 func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error) {
