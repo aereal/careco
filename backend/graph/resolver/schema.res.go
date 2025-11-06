@@ -6,10 +6,13 @@ package resolver
 
 import (
 	"context"
+	"slices"
 	"time"
 
 	"careco/backend/graph/dtos"
 	"careco/backend/graph/exec"
+
+	"github.com/aereal/iter/seq"
 )
 
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
@@ -24,17 +27,7 @@ func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatist
 
 func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) ([]*dtos.DailyReport, error) {
 	base := time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC)
-	records := make([]*dtos.DailyReport, first)
-	for i := range first {
-		records[i] = &dtos.DailyReport{
-			RecordedAt:         base.Add(time.Hour * -24 * time.Duration(i)),
-			DistanceKilometers: 12 * i,
-		}
-		if i%2 == 1 {
-			memo := "blah blah"
-			records[i].Memo = &memo
-		}
-	}
+	records := slices.Collect(seq.Take(generateDummyData(base), first))
 	return records, nil
 }
 
