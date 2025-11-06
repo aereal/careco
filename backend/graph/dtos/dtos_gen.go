@@ -11,12 +11,8 @@ type DailyReport struct {
 	Month              time.Month `json:"month"`
 	Day                int        `json:"day"`
 	DistanceKilometers int        `json:"distanceKilometers"`
-}
-
-type DrivingRecord struct {
-	RecordedAt         time.Time `json:"recordedAt"`
-	DistanceKilometers int       `json:"distanceKilometers"`
-	Memo               *string   `json:"memo,omitempty"`
+	RecordedAt         time.Time  `json:"recordedAt"`
+	Memo               *string    `json:"memo,omitempty"`
 }
 
 type MonthlyReport struct {

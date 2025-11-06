@@ -44,14 +44,10 @@ type ComplexityRoot struct {
 	DailyReport struct {
 		Day                func(childComplexity int) int
 		DistanceKilometers func(childComplexity int) int
-		Month              func(childComplexity int) int
-		Year               func(childComplexity int) int
-	}
-
-	DrivingRecord struct {
-		DistanceKilometers func(childComplexity int) int
 		Memo               func(childComplexity int) int
+		Month              func(childComplexity int) int
 		RecordedAt         func(childComplexity int) int
+		Year               func(childComplexity int) int
 	}
 
 	MonthlyReport struct {
@@ -116,6 +112,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReport.DistanceKilometers(childComplexity), true
 
+	case "DailyReport.memo":
+		if e.complexity.DailyReport.Memo == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.Memo(childComplexity), true
+
 	case "DailyReport.month":
 		if e.complexity.DailyReport.Month == nil {
 			break
@@ -123,33 +126,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReport.Month(childComplexity), true
 
+	case "DailyReport.recordedAt":
+		if e.complexity.DailyReport.RecordedAt == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.RecordedAt(childComplexity), true
+
 	case "DailyReport.year":
 		if e.complexity.DailyReport.Year == nil {
 			break
 		}
 
 		return e.complexity.DailyReport.Year(childComplexity), true
-
-	case "DrivingRecord.distanceKilometers":
-		if e.complexity.DrivingRecord.DistanceKilometers == nil {
-			break
-		}
-
-		return e.complexity.DrivingRecord.DistanceKilometers(childComplexity), true
-
-	case "DrivingRecord.memo":
-		if e.complexity.DrivingRecord.Memo == nil {
-			break
-		}
-
-		return e.complexity.DrivingRecord.Memo(childComplexity), true
-
-	case "DrivingRecord.recordedAt":
-		if e.complexity.DrivingRecord.RecordedAt == nil {
-			break
-		}
-
-		return e.complexity.DrivingRecord.RecordedAt(childComplexity), true
 
 	case "MonthlyReport.dailyStatistics":
 		if e.complexity.MonthlyReport.DailyStatistics == nil {
@@ -369,12 +358,6 @@ var sources = []*ast.Source{
 	{Name: "../../../schema.gql", Input: `scalar DateTime
 scalar Month
 
-type DrivingRecord {
-  recordedAt: DateTime!
-  distanceKilometers: Int!
-  memo: String
-}
-
 type TotalStatistics {
   distanceKilometers: Int!
 }
@@ -397,11 +380,13 @@ type DailyReport {
   month: Month!
   day: Int!
   distanceKilometers: Int!
+  recordedAt: DateTime!
+  memo: String
 }
 
 type Query {
   totalStatistics: TotalStatistics!
-  recentDrivingRecords(first: Int!): [DrivingRecord!]!
+  recentDrivingRecords(first: Int!): [DailyReport!]!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
 }

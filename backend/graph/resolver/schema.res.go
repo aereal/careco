@@ -22,11 +22,11 @@ func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatist
 	}, nil
 }
 
-func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) ([]*dtos.DrivingRecord, error) {
+func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) ([]*dtos.DailyReport, error) {
 	base := time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC)
-	records := make([]*dtos.DrivingRecord, first)
+	records := make([]*dtos.DailyReport, first)
 	for i := range first {
-		records[i] = &dtos.DrivingRecord{
+		records[i] = &dtos.DailyReport{
 			RecordedAt:         base.Add(time.Hour * -24 * time.Duration(i)),
 			DistanceKilometers: 12 * i,
 		}
