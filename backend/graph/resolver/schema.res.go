@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date string, distanceKilometers int, memo *string) (bool, error) {
+func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
 	return false, errNotImplemented
 }
 

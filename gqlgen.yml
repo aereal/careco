@@ -29,3 +29,6 @@ models:
   Month:
     model:
       - careco/backend/graph/dtos.Month
+  DateTime:
+    model:
+      - careco/backend/graph/dtos.DateTime

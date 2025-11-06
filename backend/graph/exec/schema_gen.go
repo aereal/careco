@@ -20,7 +20,7 @@ import (
 // region    ************************** generated!.gotpl **************************
 
 type MutationResolver interface {
-	RecordDrivingRecord(ctx context.Context, date string, distanceKilometers int, memo *string) (bool, error)
+	RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error)
 }
 type QueryResolver interface {
 	TotalStatistics(ctx context.Context) (*dtos.TotalStatistics, error)
@@ -36,7 +36,7 @@ type QueryResolver interface {
 func (ec *executionContext) field_Mutation_recordDrivingRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "date", ec.unmarshalNDateTime2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "date", ec.unmarshalNDateTime2timeᚐTime)
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +237,7 @@ func (ec *executionContext) _DrivingRecord_recordedAt(ctx context.Context, field
 			return obj.RecordedAt, nil
 		},
 		nil,
-		ec.marshalNDateTime2string,
+		ec.marshalNDateTime2timeᚐTime,
 		true,
 		true,
 	)
@@ -448,7 +448,7 @@ func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, f
 		ec.fieldContext_Mutation_recordDrivingRecord,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(string), fc.Args["distanceKilometers"].(int), fc.Args["memo"].(*string))
+			return ec.resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(time.Time), fc.Args["distanceKilometers"].(int), fc.Args["memo"].(*string))
 		},
 		nil,
 		ec.marshalNBoolean2bool,
@@ -1404,20 +1404,20 @@ func (ec *executionContext) marshalNDailyReport2ᚖcarecoᚋbackendᚋgraphᚋdt
 	return ec._DailyReport(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNDateTime2string(ctx context.Context, v any) (string, error) {
-	res, err := graphql.UnmarshalString(v)
+func (ec *executionContext) unmarshalNDateTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {
+	res, err := dtos.UnmarshalDateTime(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNDateTime2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
 	_ = sel
-	res := graphql.MarshalString(v)
+	res := dtos.MarshalDateTime(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
-	return res
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) marshalNDrivingRecord2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDrivingRecordᚄ(ctx context.Context, sel ast.SelectionSet, v []*dtos.DrivingRecord) graphql.Marshaler {

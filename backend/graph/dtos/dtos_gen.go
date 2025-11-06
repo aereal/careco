@@ -14,9 +14,9 @@ type DailyReport struct {
 }
 
 type DrivingRecord struct {
-	RecordedAt         string  `json:"recordedAt"`
-	DistanceKilometers int     `json:"distanceKilometers"`
-	Memo               *string `json:"memo,omitempty"`
+	RecordedAt         time.Time `json:"recordedAt"`
+	DistanceKilometers int       `json:"distanceKilometers"`
+	Memo               *string   `json:"memo,omitempty"`
 }
 
 type MonthlyReport struct {

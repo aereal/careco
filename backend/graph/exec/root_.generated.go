@@ -62,7 +62,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		RecordDrivingRecord func(childComplexity int, date string, distanceKilometers int, memo *string) int
+		RecordDrivingRecord func(childComplexity int, date time.Time, distanceKilometers int, memo *string) int
 	}
 
 	Query struct {
@@ -189,7 +189,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(string), args["distanceKilometers"].(int), args["memo"].(*string)), true
+		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["distanceKilometers"].(int), args["memo"].(*string)), true
 
 	case "Query.monthlyReport":
 		if e.complexity.Query.MonthlyReport == nil {
