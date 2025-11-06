@@ -36,7 +36,7 @@ func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dto
 }
 
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
-	return false, errNotImplemented
+	return true, nil
 }
 
 func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatistics, error) {

@@ -147,3 +147,15 @@ cases:
                   year: 2025
                   month: SEPTEMBER
                   day: 28
+  'mutation recordDrivingRecord/ok':
+    request:
+      query: |
+        mutation Record($date: DateTime!, $distance: Int!, $memo: String) {
+          recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)
+        }
+      variables:
+        date: '2025-10-03T00:00:00+00:00'
+        distance: 12
+    response:
+      data:
+        recordDrivingRecord: true
