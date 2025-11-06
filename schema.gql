@@ -3,24 +3,24 @@ scalar Month
 
 type DrivingRecord {
   recordedAt: DateTime!
-  distanceKillos: Int!
+  distanceKilometers: Int!
   memo: String
 }
 
 type TotalStatistics {
-  distanceKillos: Int!
+  distanceKilometers: Int!
 }
 
 type YearlyReport {
   year: Int!
-  distanceKillos: Int!
+  distanceKilometers: Int!
   monthlyStatistics: [MonthlyReport!]!
 }
 
 type MonthlyReport {
   year: Int!
   month: Month!
-  distanceKillos: Int!
+  distanceKilometers: Int!
   dailyStatistics: [DailyReport!]!
 }
 
@@ -28,7 +28,7 @@ type DailyReport {
   year: Int!
   month: Month!
   day: Int!
-  distanceKillos: Int!
+  distanceKilometers: Int!
 }
 
 type Query {
@@ -41,7 +41,7 @@ type Query {
 type Mutation {
   recordDrivingRecord(
     date: DateTime!
-    distanceKillos: Int!
+    distanceKilometers: Int!
     memo: String
   ): Boolean!
 }

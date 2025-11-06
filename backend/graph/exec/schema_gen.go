@@ -20,7 +20,7 @@ import (
 // region    ************************** generated!.gotpl **************************
 
 type MutationResolver interface {
-	RecordDrivingRecord(ctx context.Context, date string, distanceKillos int, memo *string) (bool, error)
+	RecordDrivingRecord(ctx context.Context, date string, distanceKilometers int, memo *string) (bool, error)
 }
 type QueryResolver interface {
 	TotalStatistics(ctx context.Context) (*dtos.TotalStatistics, error)
@@ -41,11 +41,11 @@ func (ec *executionContext) field_Mutation_recordDrivingRecord_args(ctx context.
 		return nil, err
 	}
 	args["date"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "distanceKillos", ec.unmarshalNInt2int)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "distanceKilometers", ec.unmarshalNInt2int)
 	if err != nil {
 		return nil, err
 	}
-	args["distanceKillos"] = arg1
+	args["distanceKilometers"] = arg1
 	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "memo", ec.unmarshalOString2ᚖstring)
 	if err != nil {
 		return nil, err
@@ -198,14 +198,14 @@ func (ec *executionContext) fieldContext_DailyReport_day(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _DailyReport_distanceKillos(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
+func (ec *executionContext) _DailyReport_distanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_distanceKillos,
+		ec.fieldContext_DailyReport_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKillos, nil
+			return obj.DistanceKilometers, nil
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -214,7 +214,7 @@ func (ec *executionContext) _DailyReport_distanceKillos(ctx context.Context, fie
 	)
 }
 
-func (ec *executionContext) fieldContext_DailyReport_distanceKillos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DailyReport_distanceKilometers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DailyReport",
 		Field:      field,
@@ -256,14 +256,14 @@ func (ec *executionContext) fieldContext_DrivingRecord_recordedAt(_ context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _DrivingRecord_distanceKillos(ctx context.Context, field graphql.CollectedField, obj *dtos.DrivingRecord) (ret graphql.Marshaler) {
+func (ec *executionContext) _DrivingRecord_distanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.DrivingRecord) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DrivingRecord_distanceKillos,
+		ec.fieldContext_DrivingRecord_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKillos, nil
+			return obj.DistanceKilometers, nil
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -272,7 +272,7 @@ func (ec *executionContext) _DrivingRecord_distanceKillos(ctx context.Context, f
 	)
 }
 
-func (ec *executionContext) fieldContext_DrivingRecord_distanceKillos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DrivingRecord_distanceKilometers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DrivingRecord",
 		Field:      field,
@@ -372,14 +372,14 @@ func (ec *executionContext) fieldContext_MonthlyReport_month(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _MonthlyReport_distanceKillos(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
+func (ec *executionContext) _MonthlyReport_distanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_distanceKillos,
+		ec.fieldContext_MonthlyReport_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKillos, nil
+			return obj.DistanceKilometers, nil
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -388,7 +388,7 @@ func (ec *executionContext) _MonthlyReport_distanceKillos(ctx context.Context, f
 	)
 }
 
-func (ec *executionContext) fieldContext_MonthlyReport_distanceKillos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MonthlyReport_distanceKilometers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MonthlyReport",
 		Field:      field,
@@ -431,8 +431,8 @@ func (ec *executionContext) fieldContext_MonthlyReport_dailyStatistics(_ context
 				return ec.fieldContext_DailyReport_month(ctx, field)
 			case "day":
 				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "distanceKillos":
-				return ec.fieldContext_DailyReport_distanceKillos(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
 		},
@@ -448,7 +448,7 @@ func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, f
 		ec.fieldContext_Mutation_recordDrivingRecord,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(string), fc.Args["distanceKillos"].(int), fc.Args["memo"].(*string))
+			return ec.resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(string), fc.Args["distanceKilometers"].(int), fc.Args["memo"].(*string))
 		},
 		nil,
 		ec.marshalNBoolean2bool,
@@ -505,8 +505,8 @@ func (ec *executionContext) fieldContext_Query_totalStatistics(_ context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "distanceKillos":
-				return ec.fieldContext_TotalStatistics_distanceKillos(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_TotalStatistics_distanceKilometers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TotalStatistics", field.Name)
 		},
@@ -541,8 +541,8 @@ func (ec *executionContext) fieldContext_Query_recentDrivingRecords(ctx context.
 			switch field.Name {
 			case "recordedAt":
 				return ec.fieldContext_DrivingRecord_recordedAt(ctx, field)
-			case "distanceKillos":
-				return ec.fieldContext_DrivingRecord_distanceKillos(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_DrivingRecord_distanceKilometers(ctx, field)
 			case "memo":
 				return ec.fieldContext_DrivingRecord_memo(ctx, field)
 			}
@@ -590,8 +590,8 @@ func (ec *executionContext) fieldContext_Query_yearlyReport(ctx context.Context,
 			switch field.Name {
 			case "year":
 				return ec.fieldContext_YearlyReport_year(ctx, field)
-			case "distanceKillos":
-				return ec.fieldContext_YearlyReport_distanceKillos(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_YearlyReport_distanceKilometers(ctx, field)
 			case "monthlyStatistics":
 				return ec.fieldContext_YearlyReport_monthlyStatistics(ctx, field)
 			}
@@ -641,8 +641,8 @@ func (ec *executionContext) fieldContext_Query_monthlyReport(ctx context.Context
 				return ec.fieldContext_MonthlyReport_year(ctx, field)
 			case "month":
 				return ec.fieldContext_MonthlyReport_month(ctx, field)
-			case "distanceKillos":
-				return ec.fieldContext_MonthlyReport_distanceKillos(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_MonthlyReport_distanceKilometers(ctx, field)
 			case "dailyStatistics":
 				return ec.fieldContext_MonthlyReport_dailyStatistics(ctx, field)
 			}
@@ -771,14 +771,14 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _TotalStatistics_distanceKillos(ctx context.Context, field graphql.CollectedField, obj *dtos.TotalStatistics) (ret graphql.Marshaler) {
+func (ec *executionContext) _TotalStatistics_distanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.TotalStatistics) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_TotalStatistics_distanceKillos,
+		ec.fieldContext_TotalStatistics_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKillos, nil
+			return obj.DistanceKilometers, nil
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -787,7 +787,7 @@ func (ec *executionContext) _TotalStatistics_distanceKillos(ctx context.Context,
 	)
 }
 
-func (ec *executionContext) fieldContext_TotalStatistics_distanceKillos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TotalStatistics_distanceKilometers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "TotalStatistics",
 		Field:      field,
@@ -829,14 +829,14 @@ func (ec *executionContext) fieldContext_YearlyReport_year(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _YearlyReport_distanceKillos(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
+func (ec *executionContext) _YearlyReport_distanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_YearlyReport_distanceKillos,
+		ec.fieldContext_YearlyReport_distanceKilometers,
 		func(ctx context.Context) (any, error) {
-			return obj.DistanceKillos, nil
+			return obj.DistanceKilometers, nil
 		},
 		nil,
 		ec.marshalNInt2int,
@@ -845,7 +845,7 @@ func (ec *executionContext) _YearlyReport_distanceKillos(ctx context.Context, fi
 	)
 }
 
-func (ec *executionContext) fieldContext_YearlyReport_distanceKillos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_YearlyReport_distanceKilometers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "YearlyReport",
 		Field:      field,
@@ -886,8 +886,8 @@ func (ec *executionContext) fieldContext_YearlyReport_monthlyStatistics(_ contex
 				return ec.fieldContext_MonthlyReport_year(ctx, field)
 			case "month":
 				return ec.fieldContext_MonthlyReport_month(ctx, field)
-			case "distanceKillos":
-				return ec.fieldContext_MonthlyReport_distanceKillos(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_MonthlyReport_distanceKilometers(ctx, field)
 			case "dailyStatistics":
 				return ec.fieldContext_MonthlyReport_dailyStatistics(ctx, field)
 			}
@@ -935,8 +935,8 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "distanceKillos":
-			out.Values[i] = ec._DailyReport_distanceKillos(ctx, field, obj)
+		case "distanceKilometers":
+			out.Values[i] = ec._DailyReport_distanceKilometers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -979,8 +979,8 @@ func (ec *executionContext) _DrivingRecord(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "distanceKillos":
-			out.Values[i] = ec._DrivingRecord_distanceKillos(ctx, field, obj)
+		case "distanceKilometers":
+			out.Values[i] = ec._DrivingRecord_distanceKilometers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -1030,8 +1030,8 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "distanceKillos":
-			out.Values[i] = ec._MonthlyReport_distanceKillos(ctx, field, obj)
+		case "distanceKilometers":
+			out.Values[i] = ec._MonthlyReport_distanceKilometers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -1261,8 +1261,8 @@ func (ec *executionContext) _TotalStatistics(ctx context.Context, sel ast.Select
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("TotalStatistics")
-		case "distanceKillos":
-			out.Values[i] = ec._TotalStatistics_distanceKillos(ctx, field, obj)
+		case "distanceKilometers":
+			out.Values[i] = ec._TotalStatistics_distanceKilometers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -1305,8 +1305,8 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "distanceKillos":
-			out.Values[i] = ec._YearlyReport_distanceKillos(ctx, field, obj)
+		case "distanceKilometers":
+			out.Values[i] = ec._YearlyReport_distanceKilometers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

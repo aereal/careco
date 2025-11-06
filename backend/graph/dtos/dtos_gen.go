@@ -7,31 +7,31 @@ import (
 )
 
 type DailyReport struct {
-	Year           int        `json:"year"`
-	Month          time.Month `json:"month"`
-	Day            int        `json:"day"`
-	DistanceKillos int        `json:"distanceKillos"`
+	Year               int        `json:"year"`
+	Month              time.Month `json:"month"`
+	Day                int        `json:"day"`
+	DistanceKilometers int        `json:"distanceKilometers"`
 }
 
 type DrivingRecord struct {
-	RecordedAt     string  `json:"recordedAt"`
-	DistanceKillos int     `json:"distanceKillos"`
-	Memo           *string `json:"memo,omitempty"`
+	RecordedAt         string  `json:"recordedAt"`
+	DistanceKilometers int     `json:"distanceKilometers"`
+	Memo               *string `json:"memo,omitempty"`
 }
 
 type MonthlyReport struct {
-	Year            int            `json:"year"`
-	Month           time.Month     `json:"month"`
-	DistanceKillos  int            `json:"distanceKillos"`
-	DailyStatistics []*DailyReport `json:"dailyStatistics"`
+	Year               int            `json:"year"`
+	Month              time.Month     `json:"month"`
+	DistanceKilometers int            `json:"distanceKilometers"`
+	DailyStatistics    []*DailyReport `json:"dailyStatistics"`
 }
 
 type TotalStatistics struct {
-	DistanceKillos int `json:"distanceKillos"`
+	DistanceKilometers int `json:"distanceKilometers"`
 }
 
 type YearlyReport struct {
-	Year              int              `json:"year"`
-	DistanceKillos    int              `json:"distanceKillos"`
-	MonthlyStatistics []*MonthlyReport `json:"monthlyStatistics"`
+	Year               int              `json:"year"`
+	DistanceKilometers int              `json:"distanceKilometers"`
+	MonthlyStatistics  []*MonthlyReport `json:"monthlyStatistics"`
 }
