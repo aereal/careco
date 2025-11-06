@@ -1,3 +1,15 @@
 # yaml-language-server: $schema=./tests.schema.json
 ---
-cases: []
+cases:
+  'query totalStatistics/ok':
+    request:
+      query: |
+        {
+          totalStatistics {
+            distanceKilometers
+          }
+        }
+    response:
+      data:
+        totalStatistics:
+          distanceKilometers: 45678
