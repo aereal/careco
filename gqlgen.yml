@@ -32,3 +32,11 @@ models:
   DateTime:
     model:
       - careco/backend/graph/dtos.DateTime
+  DailyReport:
+    fields:
+      year:
+        resolver: true
+      month:
+        resolver: true
+      day:
+        resolver: true

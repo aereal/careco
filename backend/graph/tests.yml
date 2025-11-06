@@ -49,6 +49,9 @@ cases:
             month
             distanceKilometers
             dailyStatistics {
+              year
+              month
+              day
               distanceKilometers
             }
           }
@@ -65,7 +68,16 @@ cases:
           dailyStatistics:
             -
               distanceKilometers: 0
+              year: 2025
+              month: OCTOBER
+              day: 3
             -
               distanceKilometers: 12
+              year: 2025
+              month: OCTOBER
+              day: 2
             -
               distanceKilometers: 24
+              year: 2025
+              month: OCTOBER
+              day: 1

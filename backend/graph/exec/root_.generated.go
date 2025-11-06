@@ -33,6 +33,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	DailyReport() DailyReportResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }

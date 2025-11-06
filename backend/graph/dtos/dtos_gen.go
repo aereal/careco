@@ -7,12 +7,9 @@ import (
 )
 
 type DailyReport struct {
-	Year               int        `json:"year"`
-	Month              time.Month `json:"month"`
-	Day                int        `json:"day"`
-	DistanceKilometers int        `json:"distanceKilometers"`
-	RecordedAt         time.Time  `json:"recordedAt"`
-	Memo               *string    `json:"memo,omitempty"`
+	DistanceKilometers int       `json:"distanceKilometers"`
+	RecordedAt         time.Time `json:"recordedAt"`
+	Memo               *string   `json:"memo,omitempty"`
 }
 
 type MonthlyReport struct {

@@ -15,6 +15,18 @@ import (
 	"github.com/aereal/iter/seq"
 )
 
+func (r *dailyReportResolver) Year(ctx context.Context, obj *dtos.DailyReport) (int, error) {
+	return obj.RecordedAt.Year(), nil
+}
+
+func (r *dailyReportResolver) Month(ctx context.Context, obj *dtos.DailyReport) (time.Month, error) {
+	return obj.RecordedAt.Month(), nil
+}
+
+func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (int, error) {
+	return obj.RecordedAt.Day(), nil
+}
+
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
 	return false, errNotImplemented
 }
@@ -51,9 +63,12 @@ func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.
 	return ret, nil
 }
 
+func (r *Resolver) DailyReport() exec.DailyReportResolver { return &dailyReportResolver{r} }
+
 func (r *Resolver) Mutation() exec.MutationResolver { return &mutationResolver{r} }
 
 func (r *Resolver) Query() exec.QueryResolver { return &queryResolver{r} }
 
+type dailyReportResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
