@@ -24,16 +24,19 @@ cases:
           }
         }
       variables:
-        first: 3
+        first: 4
     response:
       data:
         recentDrivingRecords:
           - distanceKilometers: 0
-            recordedAt: '2025-10-02T12:34:56+00:00'
+            recordedAt: '2025-10-03T12:34:56+00:00'
             memo: null
           - distanceKilometers: 12
-            recordedAt: '2025-10-01T12:34:56+00:00'
+            recordedAt: '2025-10-02T12:34:56+00:00'
             memo: blah blah
           - distanceKilometers: 24
-            recordedAt: '2025-09-30T12:34:56+00:00'
+            recordedAt: '2025-10-01T12:34:56+00:00'
             memo: null
+          - distanceKilometers: 36
+            recordedAt: '2025-09-30T12:34:56+00:00'
+            memo: blah blah
