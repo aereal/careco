@@ -8,7 +8,13 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 const eslintConfig = defineConfig([
   ...coreWebVitals,
   ...ts,
-  globalIgnores(['node_modules/**', '.next/**', 'out/**', 'next-env.d.ts']),
+  globalIgnores([
+    'node_modules/**',
+    '.next/**',
+    'out/**',
+    'next-env.d.ts',
+    'src/graphql/**/*.ts',
+  ]),
 ]);
 
 export default eslintConfig;

@@ -1,0 +1,31 @@
+---
+schema:
+  - ./schema.gql
+exec:
+  package: exec
+  layout: follow-schema
+  dir: ./backend/graph/exec
+  filename_template: '{name}_gen.go'
+  worker_limit: 1000
+model:
+  filename: ./backend/graph/dtos/dtos_gen.go
+  package: dtos
+resolver:
+  package: resolver
+  layout: follow-schema
+  dir: ./backend/graph/resolver
+  filename_template: '{name}.res.go'
+  omit_template_comment: true
+omit_slice_element_pointers: false
+omit_gqlgen_version_in_file_notice: true
+omit_root_models: true
+omit_resolver_fields: true
+skip_mod_tidy: true
+call_argument_directives_with_null: true
+models:
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+  Month:
+    model:
+      - careco/backend/graph/dtos.Month
