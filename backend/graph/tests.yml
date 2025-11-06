@@ -13,3 +13,27 @@ cases:
       data:
         totalStatistics:
           distanceKilometers: 45678
+  'query recentDrivingRecords/ok':
+    request:
+      query: |
+        query GetLatest($first: Int!) {
+          recentDrivingRecords(first: $first) {
+            recordedAt
+            memo
+            distanceKilometers
+          }
+        }
+      variables:
+        first: 3
+    response:
+      data:
+        recentDrivingRecords:
+          - distanceKilometers: 0
+            recordedAt: '2025-10-02T12:34:56+00:00'
+            memo: null
+          - distanceKilometers: 12
+            recordedAt: '2025-10-01T12:34:56+00:00'
+            memo: blah blah
+          - distanceKilometers: 24
+            recordedAt: '2025-09-30T12:34:56+00:00'
+            memo: null

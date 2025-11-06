@@ -23,7 +23,19 @@ func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatist
 }
 
 func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) ([]*dtos.DrivingRecord, error) {
-	return nil, errNotImplemented
+	base := time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC)
+	records := make([]*dtos.DrivingRecord, first)
+	for i := range first {
+		records[i] = &dtos.DrivingRecord{
+			RecordedAt:         base.Add(time.Hour * -24 * time.Duration(i)),
+			DistanceKilometers: 12 * i,
+		}
+		if i%2 == 1 {
+			memo := "blah blah"
+			records[i].Memo = &memo
+		}
+	}
+	return records, nil
 }
 
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {
