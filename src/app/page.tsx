@@ -1,3 +1,4 @@
+import { SelectMonth } from '@/components/SelectMonth';
 import { YMD } from '@/components/YMD';
 import { getClient } from '@/get-client';
 import { FC } from 'react';
@@ -13,6 +14,9 @@ const Page: FC = async () => {
   }
   return (
     <div>
+      <div>
+        <SelectMonth />
+      </div>
       <div>total: {data.totalStatistics.distanceKilometers}km</div>
       <ul>
         {data.recentDrivingRecords.map((record) => (
