@@ -48,7 +48,7 @@ cases:
             year
             month
             distanceKilometers
-            dailyStatistics {
+            dailyReports {
               year
               month
               day
@@ -65,7 +65,7 @@ cases:
           year: 2025
           month: OCTOBER
           distanceKilometers: 36
-          dailyStatistics:
+          dailyReports:
             -
               distanceKilometers: 0
               year: 2025
@@ -88,11 +88,11 @@ cases:
           yearlyReport(year: $year) {
             year
             distanceKilometers
-            monthlyStatistics {
+            monthlyReports {
               year
               month
               distanceKilometers
-              dailyStatistics {
+              dailyReports {
                 year
                 month
                 day
@@ -108,11 +108,11 @@ cases:
         yearlyReport:
           year: 2025
           distanceKilometers: 72
-          monthlyStatistics:
+          monthlyReports:
             - month: OCTOBER
               year: 2025
               distanceKilometers: 36
-              dailyStatistics:
+              dailyReports:
                 -
                   distanceKilometers: 0
                   year: 2025
@@ -131,7 +131,7 @@ cases:
             - month: SEPTEMBER
               year: 2025
               distanceKilometers: 36
-              dailyStatistics:
+              dailyReports:
                 -
                   distanceKilometers: 0
                   year: 2025

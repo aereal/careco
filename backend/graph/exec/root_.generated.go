@@ -54,7 +54,7 @@ type ComplexityRoot struct {
 	}
 
 	MonthlyReport struct {
-		DailyStatistics    func(childComplexity int) int
+		DailyReports       func(childComplexity int) int
 		DistanceKilometers func(childComplexity int) int
 		Month              func(childComplexity int) int
 		Year               func(childComplexity int) int
@@ -77,7 +77,7 @@ type ComplexityRoot struct {
 
 	YearlyReport struct {
 		DistanceKilometers func(childComplexity int) int
-		MonthlyStatistics  func(childComplexity int) int
+		MonthlyReports     func(childComplexity int) int
 		Year               func(childComplexity int) int
 	}
 }
@@ -143,12 +143,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReport.Year(childComplexity), true
 
-	case "MonthlyReport.dailyStatistics":
-		if e.complexity.MonthlyReport.DailyStatistics == nil {
+	case "MonthlyReport.dailyReports":
+		if e.complexity.MonthlyReport.DailyReports == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.DailyStatistics(childComplexity), true
+		return e.complexity.MonthlyReport.DailyReports(childComplexity), true
 
 	case "MonthlyReport.distanceKilometers":
 		if e.complexity.MonthlyReport.DistanceKilometers == nil {
@@ -240,12 +240,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.YearlyReport.DistanceKilometers(childComplexity), true
 
-	case "YearlyReport.monthlyStatistics":
-		if e.complexity.YearlyReport.MonthlyStatistics == nil {
+	case "YearlyReport.monthlyReports":
+		if e.complexity.YearlyReport.MonthlyReports == nil {
 			break
 		}
 
-		return e.complexity.YearlyReport.MonthlyStatistics(childComplexity), true
+		return e.complexity.YearlyReport.MonthlyReports(childComplexity), true
 
 	case "YearlyReport.year":
 		if e.complexity.YearlyReport.Year == nil {
@@ -368,14 +368,14 @@ type TotalStatistics {
 type YearlyReport {
   year: Int!
   distanceKilometers: Int!
-  monthlyStatistics: [MonthlyReport!]!
+  monthlyReports: [MonthlyReport!]!
 }
 
 type MonthlyReport {
   year: Int!
   month: Month!
   distanceKilometers: Int!
-  dailyStatistics: [DailyReport!]!
+  dailyReports: [DailyReport!]!
 }
 
 type DailyReport {

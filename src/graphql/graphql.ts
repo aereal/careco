@@ -40,7 +40,7 @@ export type DailyReport = {
 };
 
 export type MonthlyReport = {
-  readonly dailyStatistics: ReadonlyArray<DailyReport>;
+  readonly dailyReports: ReadonlyArray<DailyReport>;
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Scalars['Month']['output'];
   readonly year: Scalars['Int']['output'];
@@ -82,6 +82,6 @@ export type TotalStatistics = {
 
 export type YearlyReport = {
   readonly distanceKilometers: Scalars['Int']['output'];
-  readonly monthlyStatistics: ReadonlyArray<MonthlyReport>;
+  readonly monthlyReports: ReadonlyArray<MonthlyReport>;
   readonly year: Scalars['Int']['output'];
 };

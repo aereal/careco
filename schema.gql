@@ -8,14 +8,14 @@ type TotalStatistics {
 type YearlyReport {
   year: Int!
   distanceKilometers: Int!
-  monthlyStatistics: [MonthlyReport!]!
+  monthlyReports: [MonthlyReport!]!
 }
 
 type MonthlyReport {
   year: Int!
   month: Month!
   distanceKilometers: Int!
-  dailyStatistics: [DailyReport!]!
+  dailyReports: [DailyReport!]!
 }
 
 type DailyReport {

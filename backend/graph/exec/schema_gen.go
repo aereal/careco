@@ -383,14 +383,14 @@ func (ec *executionContext) fieldContext_MonthlyReport_distanceKilometers(_ cont
 	return fc, nil
 }
 
-func (ec *executionContext) _MonthlyReport_dailyStatistics(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
+func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_dailyStatistics,
+		ec.fieldContext_MonthlyReport_dailyReports,
 		func(ctx context.Context) (any, error) {
-			return obj.DailyStatistics, nil
+			return obj.DailyReports, nil
 		},
 		nil,
 		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
@@ -399,7 +399,7 @@ func (ec *executionContext) _MonthlyReport_dailyStatistics(ctx context.Context, 
 	)
 }
 
-func (ec *executionContext) fieldContext_MonthlyReport_dailyStatistics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MonthlyReport",
 		Field:      field,
@@ -584,8 +584,8 @@ func (ec *executionContext) fieldContext_Query_yearlyReport(ctx context.Context,
 				return ec.fieldContext_YearlyReport_year(ctx, field)
 			case "distanceKilometers":
 				return ec.fieldContext_YearlyReport_distanceKilometers(ctx, field)
-			case "monthlyStatistics":
-				return ec.fieldContext_YearlyReport_monthlyStatistics(ctx, field)
+			case "monthlyReports":
+				return ec.fieldContext_YearlyReport_monthlyReports(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type YearlyReport", field.Name)
 		},
@@ -635,8 +635,8 @@ func (ec *executionContext) fieldContext_Query_monthlyReport(ctx context.Context
 				return ec.fieldContext_MonthlyReport_month(ctx, field)
 			case "distanceKilometers":
 				return ec.fieldContext_MonthlyReport_distanceKilometers(ctx, field)
-			case "dailyStatistics":
-				return ec.fieldContext_MonthlyReport_dailyStatistics(ctx, field)
+			case "dailyReports":
+				return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
 		},
@@ -850,14 +850,14 @@ func (ec *executionContext) fieldContext_YearlyReport_distanceKilometers(_ conte
 	return fc, nil
 }
 
-func (ec *executionContext) _YearlyReport_monthlyStatistics(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
+func (ec *executionContext) _YearlyReport_monthlyReports(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_YearlyReport_monthlyStatistics,
+		ec.fieldContext_YearlyReport_monthlyReports,
 		func(ctx context.Context) (any, error) {
-			return obj.MonthlyStatistics, nil
+			return obj.MonthlyReports, nil
 		},
 		nil,
 		ec.marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReportᚄ,
@@ -866,7 +866,7 @@ func (ec *executionContext) _YearlyReport_monthlyStatistics(ctx context.Context,
 	)
 }
 
-func (ec *executionContext) fieldContext_YearlyReport_monthlyStatistics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_YearlyReport_monthlyReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "YearlyReport",
 		Field:      field,
@@ -880,8 +880,8 @@ func (ec *executionContext) fieldContext_YearlyReport_monthlyStatistics(_ contex
 				return ec.fieldContext_MonthlyReport_month(ctx, field)
 			case "distanceKilometers":
 				return ec.fieldContext_MonthlyReport_distanceKilometers(ctx, field)
-			case "dailyStatistics":
-				return ec.fieldContext_MonthlyReport_dailyStatistics(ctx, field)
+			case "dailyReports":
+				return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
 		},
@@ -1112,8 +1112,8 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "dailyStatistics":
-			out.Values[i] = ec._MonthlyReport_dailyStatistics(ctx, field, obj)
+		case "dailyReports":
+			out.Values[i] = ec._MonthlyReport_dailyReports(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -1418,8 +1418,8 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "monthlyStatistics":
-			out.Values[i] = ec._YearlyReport_monthlyStatistics(ctx, field, obj)
+		case "monthlyReports":
+			out.Values[i] = ec._YearlyReport_monthlyReports(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

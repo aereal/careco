@@ -13,9 +13,9 @@ type DailyReport struct {
 }
 
 type MonthlyReport struct {
-	Year            int            `json:"year"`
-	Month           time.Month     `json:"month"`
-	DailyStatistics []*DailyReport `json:"dailyStatistics"`
+	Year         int            `json:"year"`
+	Month        time.Month     `json:"month"`
+	DailyReports []*DailyReport `json:"dailyReports"`
 }
 
 type TotalStatistics struct {
@@ -23,6 +23,6 @@ type TotalStatistics struct {
 }
 
 type YearlyReport struct {
-	Year              int              `json:"year"`
-	MonthlyStatistics []*MonthlyReport `json:"monthlyStatistics"`
+	Year           int              `json:"year"`
+	MonthlyReports []*MonthlyReport `json:"monthlyReports"`
 }
