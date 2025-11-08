@@ -12,11 +12,10 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"careco/backend/graph/test"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/google/go-cmp/cmp"
 	"gopkg.in/yaml.v3"
 )
 
