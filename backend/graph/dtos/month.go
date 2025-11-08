@@ -42,7 +42,7 @@ func monthAndName() iter.Seq2[string, time.Month] {
 	return func(yield func(string, time.Month) bool) {
 		for i := range 12 {
 			m := time.Month(i + 1)
-			if !yield(m.String(), m) {
+			if !yield(strings.ToUpper(m.String()), m) {
 				return
 			}
 		}

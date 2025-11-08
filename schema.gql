@@ -1,12 +1,6 @@
 scalar DateTime
 scalar Month
 
-type DrivingRecord {
-  recordedAt: DateTime!
-  distanceKilometers: Int!
-  memo: String
-}
-
 type TotalStatistics {
   distanceKilometers: Int!
 }
@@ -14,14 +8,14 @@ type TotalStatistics {
 type YearlyReport {
   year: Int!
   distanceKilometers: Int!
-  monthlyStatistics: [MonthlyReport!]!
+  monthlyReports: [MonthlyReport!]!
 }
 
 type MonthlyReport {
   year: Int!
   month: Month!
   distanceKilometers: Int!
-  dailyStatistics: [DailyReport!]!
+  dailyReports: [DailyReport!]!
 }
 
 type DailyReport {
@@ -29,11 +23,13 @@ type DailyReport {
   month: Month!
   day: Int!
   distanceKilometers: Int!
+  recordedAt: DateTime!
+  memo: String
 }
 
 type Query {
   totalStatistics: TotalStatistics!
-  recentDrivingRecords(first: Int!): [DrivingRecord!]!
+  recentDrivingRecords(first: Int!): [DailyReport!]!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
 }

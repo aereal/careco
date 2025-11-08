@@ -33,18 +33,14 @@ export type Scalars = {
 export type DailyReport = {
   readonly day: Scalars['Int']['output'];
   readonly distanceKilometers: Scalars['Int']['output'];
+  readonly memo?: Maybe<Scalars['String']['output']>;
   readonly month: Scalars['Month']['output'];
+  readonly recordedAt: Scalars['DateTime']['output'];
   readonly year: Scalars['Int']['output'];
 };
 
-export type DrivingRecord = {
-  readonly distanceKilometers: Scalars['Int']['output'];
-  readonly memo?: Maybe<Scalars['String']['output']>;
-  readonly recordedAt: Scalars['DateTime']['output'];
-};
-
 export type MonthlyReport = {
-  readonly dailyStatistics: ReadonlyArray<DailyReport>;
+  readonly dailyReports: ReadonlyArray<DailyReport>;
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Scalars['Month']['output'];
   readonly year: Scalars['Int']['output'];
@@ -62,7 +58,7 @@ export type MutationRecordDrivingRecordArgs = {
 
 export type Query = {
   readonly monthlyReport: MonthlyReport;
-  readonly recentDrivingRecords: ReadonlyArray<DrivingRecord>;
+  readonly recentDrivingRecords: ReadonlyArray<DailyReport>;
   readonly totalStatistics: TotalStatistics;
   readonly yearlyReport: YearlyReport;
 };
@@ -86,6 +82,6 @@ export type TotalStatistics = {
 
 export type YearlyReport = {
   readonly distanceKilometers: Scalars['Int']['output'];
-  readonly monthlyStatistics: ReadonlyArray<MonthlyReport>;
+  readonly monthlyReports: ReadonlyArray<MonthlyReport>;
   readonly year: Scalars['Int']['output'];
 };

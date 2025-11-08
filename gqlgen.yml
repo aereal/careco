@@ -29,3 +29,22 @@ models:
   Month:
     model:
       - careco/backend/graph/dtos.Month
+  DateTime:
+    model:
+      - careco/backend/graph/dtos.DateTime
+  DailyReport:
+    fields:
+      year:
+        resolver: true
+      month:
+        resolver: true
+      day:
+        resolver: true
+  MonthlyReport:
+    fields:
+      distanceKilometers:
+        resolver: true
+  YearlyReport:
+    fields:
+      distanceKilometers:
+        resolver: true
