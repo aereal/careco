@@ -11,10 +11,26 @@ export type SuccessfulOperationResult<D, V extends AnyVariables> = Omit<
   'error'
 >;
 
-export type SuccessfulReadQueryResult<D, V extends AnyVariables> = Omit<
+export type OperationValueResult<D, V extends AnyVariables> = Omit<
   SuccessfulOperationResult<D, V>,
   'data'
 > & { data: D };
+
+export const runMutation = <D, V extends AnyVariables>(
+  client: Client,
+  doc: DocumentInput<D, V>,
+  catchErr: (err: unknown) => Error = toError,
+) =>
+  Result.try({
+    try: async (variables: V): Promise<SuccessfulOperationResult<D, V>> => {
+      const { error, ...rest } = await client.mutation(doc, variables);
+      if (error) {
+        throw error;
+      }
+      return rest;
+    },
+    catch: catchErr,
+  });
 
 export const readQuery = <D, V extends AnyVariables>(
   client: Client,
@@ -50,7 +66,7 @@ export class NullDataError extends Error {
 
 const assumeData = <D, V extends AnyVariables>(
   ret: SuccessfulOperationResult<D, V>,
-): Result.Result<SuccessfulReadQueryResult<D, V>, NullDataError> =>
+): Result.Result<OperationValueResult<D, V>, NullDataError> =>
   !ret.data
     ? Result.fail(new NullDataError())
     : Result.succeed({
@@ -59,7 +75,7 @@ const assumeData = <D, V extends AnyVariables>(
         hasNext: ret.hasNext,
         stale: ret.stale,
         data: ret.data,
-      } satisfies SuccessfulReadQueryResult<D, V>);
+      } satisfies OperationValueResult<D, V>);
 
 const toError = (v: unknown): Error =>
   v instanceof Error ? v : new Error(`${v}`);

@@ -17,6 +17,7 @@ type Documents = {
   '\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      distanceKilometers\n    }\n    recentDrivingRecords(first: $first) {\n      distanceKilometers\n      recordedAt\n    }\n  }\n': typeof types.GetRootDocument;
   '\n  query MonthReport($year: Int!, $month: Month!) {\n    monthlyReport(year: $year, month: $month) {\n      ...MonthlySummary\n    }\n  }\n': typeof types.MonthReportDocument;
   '\n  fragment MonthlySummary on MonthlyReport {\n    distanceKilometers\n    year\n    month\n  }\n': typeof types.MonthlySummaryFragmentDoc;
+  '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)\n  }\n': typeof types.RecordDriveDocument;
 };
 const documents: Documents = {
   '\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      distanceKilometers\n    }\n    recentDrivingRecords(first: $first) {\n      distanceKilometers\n      recordedAt\n    }\n  }\n':
@@ -25,6 +26,8 @@ const documents: Documents = {
     types.MonthReportDocument,
   '\n  fragment MonthlySummary on MonthlyReport {\n    distanceKilometers\n    year\n    month\n  }\n':
     types.MonthlySummaryFragmentDoc,
+  '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)\n  }\n':
+    types.RecordDriveDocument,
 };
 
 /**
@@ -59,6 +62,12 @@ export function graphql(
 export function graphql(
   source: '\n  fragment MonthlySummary on MonthlyReport {\n    distanceKilometers\n    year\n    month\n  }\n',
 ): (typeof documents)['\n  fragment MonthlySummary on MonthlyReport {\n    distanceKilometers\n    year\n    month\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)\n  }\n',
+): (typeof documents)['\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
