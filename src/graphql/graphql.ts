@@ -129,6 +129,14 @@ export type MonthlySummaryFragment = {
   readonly month: Month;
 } & { ' $fragmentName'?: 'MonthlySummaryFragment' };
 
+export type RecordDriveMutationVariables = Exact<{
+  date: Scalars['DateTime']['input'];
+  distance: Scalars['Int']['input'];
+  memo?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
+
 export const MonthlySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -304,3 +312,77 @@ export const MonthReportDocument = {
     },
   ],
 } as unknown as DocumentNode<MonthReportQuery, MonthReportQueryVariables>;
+export const RecordDriveDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RecordDrive' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'date' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'DateTime' },
+            },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'distance' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'memo' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'recordDrivingRecord' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'date' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'date' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'distanceKilometers' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'distance' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'memo' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'memo' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RecordDriveMutation, RecordDriveMutationVariables>;

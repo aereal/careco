@@ -1,3 +1,4 @@
+import { RecordDialog } from '@/components/RecordDialog';
 import { SelectMonth } from '@/components/SelectMonth';
 import { YMD } from '@/components/YMD';
 import { getClient } from '@/get-client';
@@ -29,6 +30,7 @@ const Page: FC = async () => {
           </li>
         ))}
       </ul>
+      <RecordDialog />
     </div>
   );
 };
