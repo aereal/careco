@@ -34,14 +34,18 @@ export const RecordDialog: FC = () => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setActive(false);
-    const ret = await doRecordDrive({ distance, memo, date: formatISO(date) });
+    const ret = await doRecordDrive({
+      distance,
+      memo: memo === '' ? undefined : memo,
+      date: formatISO(date),
+    });
     const success =
       Result.isSuccess(ret) && ret.value.data
         ? ret.value.data.recordDrivingRecord
         : false;
     if (success) {
       setDistance(0);
-      setMemo(undefined);
+      setMemo('');
     }
     setActive(true);
   };
