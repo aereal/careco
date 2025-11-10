@@ -105,7 +105,9 @@ export type GetRootQueryVariables = Exact<{
 }>;
 
 export type GetRootQuery = {
-  readonly totalStatistics: { readonly distanceKilometers: number };
+  readonly totalStatistics: {
+    ' $fragmentRefs'?: { TotalDistanceFragment: TotalDistanceFragment };
+  };
   readonly recentDrivingRecords: ReadonlyArray<{
     readonly distanceKilometers: number;
     readonly recordedAt: Date;
@@ -137,6 +139,10 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
+export type TotalDistanceFragment = { readonly distanceKilometers: number } & {
+  ' $fragmentName'?: 'TotalDistanceFragment';
+};
+
 export const MonthlySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -161,6 +167,28 @@ export const MonthlySummaryFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<MonthlySummaryFragment, unknown>;
+export const TotalDistanceFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'TotalStatistics' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'distanceKilometers' },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TotalDistanceFragment, unknown>;
 export const GetRootDocument = {
   kind: 'Document',
   definitions: [
@@ -191,8 +219,8 @@ export const GetRootDocument = {
               kind: 'SelectionSet',
               selections: [
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'distanceKilometers' },
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TotalDistance' },
                 },
               ],
             },
@@ -220,6 +248,23 @@ export const GetRootDocument = {
                 { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
               ],
             },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'TotalStatistics' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'distanceKilometers' },
           },
         ],
       },

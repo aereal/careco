@@ -1,5 +1,6 @@
 import { RecordDialog } from '@/components/RecordDialog';
 import { SelectMonth } from '@/components/SelectMonth';
+import { TotalDrivingDistance } from '@/components/TotalDrivingDistance';
 import { YMD } from '@/components/YMD';
 import { getClient } from '@/get-client';
 import { readQuery } from '@/run-operation';
@@ -23,14 +24,7 @@ const Page: FC = async () => {
         <div>
           <SelectMonth />
         </div>
-        <div className='stats'>
-          <div className='stat'>
-            <h2 className='stat-title'>総走行距離</h2>
-            <div className='stat-value'>
-              {totalStatistics.distanceKilometers}km
-            </div>
-          </div>
-        </div>
+        <TotalDrivingDistance {...totalStatistics} />
         <ol className='mb-8 list rounded-box shadow-md'>
           {recentDrivingRecords.map((record) => (
             <li key={record.recordedAt.toString()} className='p-2'>

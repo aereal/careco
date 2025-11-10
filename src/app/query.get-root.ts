@@ -3,7 +3,7 @@ import { graphql } from '@/graphql';
 export const GetRoot = graphql(`
   query GetRoot($first: Int!) {
     totalStatistics {
-      distanceKilometers
+      ...TotalDistance
     }
     recentDrivingRecords(first: $first) {
       distanceKilometers
