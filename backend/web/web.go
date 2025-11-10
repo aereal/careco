@@ -41,7 +41,6 @@ func (s *Server) Start(ctx context.Context) error {
 
 func (s *Server) handler() http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("OPTIONS /graphql", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
 	mux.Handle("POST /graphql", s.gh)
 	withOtel := otelhttp.NewMiddleware("",
 		otelhttp.WithPropagators(propagation.TraceContext{}),
