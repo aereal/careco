@@ -41,9 +41,13 @@ type DailyReport {
   memo: String
 }
 
+type DrivingRecordsConnection {
+  nodes: [DailyReport!]!
+}
+
 type Query {
   totalStatistics: TotalStatistics!
-  recentDrivingRecords(first: Int!): [DailyReport!]!
+  recentDrivingRecords(first: Int!): DrivingRecordsConnection!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
 }

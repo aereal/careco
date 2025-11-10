@@ -12,6 +12,10 @@ type DailyReport struct {
 	Memo               *string   `json:"memo,omitempty"`
 }
 
+type DrivingRecordsConnection struct {
+	Nodes []*DailyReport `json:"nodes"`
+}
+
 type MonthlyReport struct {
 	Year         int            `json:"year"`
 	Month        time.Month     `json:"month"`

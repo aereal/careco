@@ -53,6 +53,10 @@ type ComplexityRoot struct {
 		Year               func(childComplexity int) int
 	}
 
+	DrivingRecordsConnection struct {
+		Nodes func(childComplexity int) int
+	}
+
 	MonthlyReport struct {
 		DailyReports       func(childComplexity int) int
 		DistanceKilometers func(childComplexity int) int
@@ -142,6 +146,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.DailyReport.Year(childComplexity), true
+
+	case "DrivingRecordsConnection.nodes":
+		if e.complexity.DrivingRecordsConnection.Nodes == nil {
+			break
+		}
+
+		return e.complexity.DrivingRecordsConnection.Nodes(childComplexity), true
 
 	case "MonthlyReport.dailyReports":
 		if e.complexity.MonthlyReport.DailyReports == nil {
@@ -401,9 +412,13 @@ type DailyReport {
   memo: String
 }
 
+type DrivingRecordsConnection {
+  nodes: [DailyReport!]!
+}
+
 type Query {
   totalStatistics: TotalStatistics!
-  recentDrivingRecords(first: Int!): [DailyReport!]!
+  recentDrivingRecords(first: Int!): DrivingRecordsConnection!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
 }

@@ -39,6 +39,10 @@ export type DailyReport = {
   readonly year: Scalars['Int']['output'];
 };
 
+export type DrivingRecordsConnection = {
+  readonly nodes: ReadonlyArray<DailyReport>;
+};
+
 export type Month =
   | 'APRIL'
   | 'AUGUST'
@@ -72,7 +76,7 @@ export type MutationRecordDrivingRecordArgs = {
 
 export type Query = {
   readonly monthlyReport: MonthlyReport;
-  readonly recentDrivingRecords: ReadonlyArray<DailyReport>;
+  readonly recentDrivingRecords: DrivingRecordsConnection;
   readonly totalStatistics: TotalStatistics;
   readonly yearlyReport: YearlyReport;
 };
@@ -108,10 +112,12 @@ export type GetRootQuery = {
   readonly totalStatistics: {
     ' $fragmentRefs'?: { TotalDistanceFragment: TotalDistanceFragment };
   };
-  readonly recentDrivingRecords: ReadonlyArray<{
-    readonly distanceKilometers: number;
-    readonly recordedAt: Date;
-  }>;
+  readonly recentDrivingRecords: {
+    readonly nodes: ReadonlyArray<{
+      readonly distanceKilometers: number;
+      readonly recordedAt: Date;
+    }>;
+  };
 };
 
 export type MonthReportQueryVariables = Exact<{
@@ -243,9 +249,21 @@ export const GetRootDocument = {
               selections: [
                 {
                   kind: 'Field',
-                  name: { kind: 'Name', value: 'distanceKilometers' },
+                  name: { kind: 'Name', value: 'nodes' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'distanceKilometers' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'recordedAt' },
+                      },
+                    ],
+                  },
                 },
-                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
               ],
             },
           },

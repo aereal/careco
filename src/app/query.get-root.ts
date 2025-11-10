@@ -6,8 +6,10 @@ export const GetRoot = graphql(`
       ...TotalDistance
     }
     recentDrivingRecords(first: $first) {
-      distanceKilometers
-      recordedAt
+      nodes {
+        distanceKilometers
+        recordedAt
+      }
     }
   }
 `);
