@@ -4,9 +4,11 @@ import (
 	"context"
 	"net"
 	"net/http"
+	neturl "net/url"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/rs/cors"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
@@ -39,11 +41,29 @@ func (s *Server) Start(ctx context.Context) error {
 
 func (s *Server) handler() http.Handler {
 	mux := http.NewServeMux()
+	mux.Handle("OPTIONS /graphql", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
 	mux.Handle("POST /graphql", s.gh)
 	withOtel := otelhttp.NewMiddleware("",
 		otelhttp.WithPropagators(propagation.TraceContext{}),
 		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string { return r.Method + " " + r.URL.Path }),
 		otelhttp.WithTracerProvider(s.tp),
 	)
-	return withOtel(mux)
+	return withOtel(withCors(mux))
+}
+
+func withCors(next http.Handler) http.Handler {
+	opts := cors.Options{
+		AllowOriginFunc: func(origin string) bool {
+			url, err := neturl.Parse(origin)
+			if err != nil {
+				return false
+			}
+			return url.Scheme == "http" && url.Hostname() == "localhost"
+		},
+		AllowedMethods: []string{
+			http.MethodPost, http.MethodGet, http.MethodHead,
+		},
+		AllowedHeaders: []string{"*"},
+	}
+	return cors.New(opts).Handler(next)
 }

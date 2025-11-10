@@ -12,6 +12,7 @@ require (
 	github.com/aereal/iter v0.7.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/wire v0.7.0
+	github.com/rs/cors v1.11.1
 	github.com/vektah/gqlparser/v2 v2.5.30
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0
 	go.opentelemetry.io/otel v1.38.0

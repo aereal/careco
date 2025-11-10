@@ -6,6 +6,9 @@ const makeClient = () =>
     url: 'http://localhost:8080/graphql',
     exchanges: [fetchExchange],
     preferGetMethod: false,
+    fetchOptions: {
+      mode: 'cors',
+    },
   });
 
 export const { getClient } = registerUrql(makeClient);
