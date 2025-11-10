@@ -113,10 +113,7 @@ export type GetRootQuery = {
     ' $fragmentRefs'?: { TotalDistanceFragment: TotalDistanceFragment };
   };
   readonly recentDrivingRecords: {
-    readonly nodes: ReadonlyArray<{
-      readonly distanceKilometers: number;
-      readonly recordedAt: Date;
-    }>;
+    ' $fragmentRefs'?: { RecordListFragment: RecordListFragment };
   };
 };
 
@@ -130,6 +127,13 @@ export type MonthReportQuery = {
     ' $fragmentRefs'?: { MonthlySummaryFragment: MonthlySummaryFragment };
   };
 };
+
+export type RecordListFragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly distanceKilometers: number;
+    readonly recordedAt: Date;
+  }>;
+} & { ' $fragmentName'?: 'RecordListFragment' };
 
 export type MonthlySummaryFragment = {
   readonly distanceKilometers: number;
@@ -149,6 +153,38 @@ export type TotalDistanceFragment = { readonly distanceKilometers: number } & {
   ' $fragmentName'?: 'TotalDistanceFragment';
 };
 
+export const RecordListFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'RecordList' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'distanceKilometers' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RecordListFragment, unknown>;
 export const MonthlySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -248,21 +284,8 @@ export const GetRootDocument = {
               kind: 'SelectionSet',
               selections: [
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'nodes' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'distanceKilometers' },
-                      },
-                      {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'recordedAt' },
-                      },
-                    ],
-                  },
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'RecordList' },
                 },
               ],
             },
@@ -283,6 +306,33 @@ export const GetRootDocument = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'distanceKilometers' },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'RecordList' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'distanceKilometers' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+              ],
+            },
           },
         ],
       },
