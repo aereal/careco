@@ -28,22 +28,35 @@ export type Scalars = {
   Int: { input: number; output: number };
   Float: { input: number; output: number };
   DateTime: { input: string; output: Date };
-  Month: { input: string; output: string };
 };
 
 export type DailyReport = {
   readonly day: Scalars['Int']['output'];
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly memo?: Maybe<Scalars['String']['output']>;
-  readonly month: Scalars['Month']['output'];
+  readonly month: Month;
   readonly recordedAt: Scalars['DateTime']['output'];
   readonly year: Scalars['Int']['output'];
 };
 
+export type Month =
+  | 'APRIL'
+  | 'AUGUST'
+  | 'DECEMBER'
+  | 'FEBRUARY'
+  | 'JANUARY'
+  | 'JULY'
+  | 'JUNE'
+  | 'MARCH'
+  | 'MAY'
+  | 'NOVEMBER'
+  | 'OCTOBER'
+  | 'SEPTEMBER';
+
 export type MonthlyReport = {
   readonly dailyReports: ReadonlyArray<DailyReport>;
   readonly distanceKilometers: Scalars['Int']['output'];
-  readonly month: Scalars['Month']['output'];
+  readonly month: Month;
   readonly year: Scalars['Int']['output'];
 };
 
@@ -65,7 +78,7 @@ export type Query = {
 };
 
 export type QueryMonthlyReportArgs = {
-  month: Scalars['Month']['input'];
+  month: Month;
   year: Scalars['Int']['input'];
 };
 
