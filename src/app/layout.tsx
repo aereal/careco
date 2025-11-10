@@ -1,5 +1,6 @@
 import { type Metadata } from 'next';
 import { FC, PropsWithChildren } from 'react';
+import './global.css';
 
 export const metadata: Metadata = { title: 'Careco' };
 
