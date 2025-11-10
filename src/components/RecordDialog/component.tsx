@@ -2,6 +2,7 @@
 
 import { getClient } from '@/get-client';
 import { runMutation } from '@/run-operation';
+import { Result } from '@praha/byethrow';
 import { format } from 'date-fns/format';
 import { formatISO } from 'date-fns/formatISO';
 import { useAtom } from 'jotai';
@@ -33,13 +34,15 @@ export const RecordDialog: FC = () => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setActive(false);
-    await doRecordDrive({
-      distance,
-      memo,
-      date: formatISO(date),
-    });
-    setDistance(0);
-    setMemo(undefined);
+    const ret = await doRecordDrive({ distance, memo, date: formatISO(date) });
+    const success =
+      Result.isSuccess(ret) && ret.value.data
+        ? ret.value.data.recordDrivingRecord
+        : false;
+    if (success) {
+      setDistance(0);
+      setMemo(undefined);
+    }
     setActive(true);
   };
   return (
