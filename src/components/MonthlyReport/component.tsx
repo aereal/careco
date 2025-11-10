@@ -1,16 +1,21 @@
+import { FragmentType, getFragmentData } from '@/graphql';
+import { numberOf } from '@/month';
 import { FC } from 'react';
+import { fragmentMonthlySummary } from './fragment.monthly-report';
 
-export interface MonthlyReportProps {
-  readonly year: string;
-  readonly month: string;
-}
-
-export const MonthlyReport: FC<MonthlyReportProps> = ({ year, month }) => {
+export const MonthlyReport: FC<FragmentType<typeof fragmentMonthlySummary>> = (
+  fragment,
+) => {
+  const { year, month, distanceKilometers } = getFragmentData(
+    fragmentMonthlySummary,
+    fragment,
+  );
   return (
     <>
       <h1>
-        {year}年{month}月
+        {year}年{numberOf(month)}月
       </h1>
+      <div>{distanceKilometers}km</div>
     </>
   );
 };

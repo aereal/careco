@@ -18,6 +18,8 @@ const months = [
 
 const num2month = new Map<number, Month>(months.map((m, i) => [i + 1, m]));
 
+const month2num = new Map<Month, number>(months.map((m, i) => [m, i + 1]));
+
 export class InvalidMonthNumberError extends Error {
   constructor(public readonly monthNumber: number) {
     super();
@@ -38,3 +40,5 @@ export const formatMonth = (
   }
   return Result.succeed(v);
 };
+
+export const numberOf = (month: Month): number => month2num.get(month)!;

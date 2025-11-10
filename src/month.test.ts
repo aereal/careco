@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { describe, expect, test } from 'vitest';
-import { formatMonth, InvalidMonthNumberError } from './month';
+import { formatMonth, InvalidMonthNumberError, numberOf } from './month';
 
 describe('formatMonthNumber', () => {
   test('ok', () => {
@@ -13,5 +13,11 @@ describe('formatMonthNumber', () => {
     expect(formatMonth(new Date('abc'))).toStrictEqual(
       Result.fail(new InvalidMonthNumberError(NaN)),
     );
+  });
+});
+
+describe('numberOf', () => {
+  test('ok', () => {
+    expect(numberOf('APRIL')).toBe(4);
   });
 });
