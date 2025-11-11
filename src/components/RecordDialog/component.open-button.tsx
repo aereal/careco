@@ -11,9 +11,12 @@ export const OpenButton: FC = () => {
     setModalOpen((v) => !v);
   };
   return (
-    <div>
-      <button className='btn btn-neutral' onClick={handleClick}>
-        記録する
+    <div className='fab'>
+      <button
+        className='btn btn-lg btn-circle btn-primary'
+        onClick={handleClick}
+      >
+        +
       </button>
     </div>
   );

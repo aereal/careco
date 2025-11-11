@@ -57,7 +57,7 @@ export const RecordDialog: FC = () => {
     <dialog className='modal' open={useAtomValue(modalOpen)}>
       <div className='modal-box'>
         <form onSubmit={handleSubmit}>
-          <label className='input'>
+          <label className='input mt-1'>
             走行距離{' '}
             <input
               type='number'
@@ -68,7 +68,7 @@ export const RecordDialog: FC = () => {
             />
             <span className='label'>km</span>
           </label>
-          <label className='input'>
+          <label className='input my-1'>
             日時{' '}
             <input
               type='date'
@@ -77,14 +77,16 @@ export const RecordDialog: FC = () => {
               disabled={!active}
             />
           </label>
-          <details className='collapse collapse-arrow p-1'>
-            <summary className='collapse-title text-sm pl-0'>メモ</summary>
-            <textarea
-              className='textarea h-24'
-              value={memo}
-              disabled={!active}
-              onChange={handleChangeMemo}
-            />
+          <details className='collapse collapse-arrow my-1 p-1 bg-base-100 border-base-300 border'>
+            <summary className='collapse-title text-sm pl-2'>メモ</summary>
+            <div className='collapse-content'>
+              <textarea
+                className='textarea h-24'
+                value={memo}
+                disabled={!active}
+                onChange={handleChangeMemo}
+              />
+            </div>
           </details>
           <div className='modal-action'>
             <button className='btn btn-primary' disabled={!active}>
