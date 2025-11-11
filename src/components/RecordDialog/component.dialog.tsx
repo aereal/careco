@@ -19,6 +19,7 @@ export const RecordDialog: FC = () => {
   const [active, setActive] = useAtom(atoms.active);
   const [memo, setMemo] = useAtom(atoms.memo);
   const setModalOpen = useSetAtom(atoms.modalOpen);
+  const setError = useSetAtom(atoms.error);
 
   const handleChangeDistance: ChangeEventHandler<HTMLInputElement> = (e) => {
     setDistance(e.target.valueAsNumber);
@@ -35,6 +36,7 @@ export const RecordDialog: FC = () => {
   };
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setError(undefined);
     setActive(false);
     const ret = await doRecordDrive({
       distance,
@@ -49,6 +51,9 @@ export const RecordDialog: FC = () => {
       setDistance(0);
       setMemo('');
       setModalOpen(false);
+    }
+    if (Result.isFailure(ret)) {
+      setError(ret.error.message);
     }
     setActive(true);
   };

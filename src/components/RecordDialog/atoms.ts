@@ -5,3 +5,4 @@ export const date = atom(new Date());
 export const active = atom(true);
 export const memo = atom<string>('');
 export const modalOpen = atom(false);
+export const error = atom<string | undefined>(undefined);
