@@ -1,5 +1,5 @@
 import { DrivingRecordList } from '@/components/DrivingRecordList';
-import { RecordDialog } from '@/components/RecordDialog';
+import { RecordDialogContainer } from '@/components/RecordDialog';
 import { SelectMonth } from '@/components/SelectMonth';
 import { TotalDrivingDistance } from '@/components/TotalDrivingDistance';
 import { getClient } from '@/get-client';
@@ -26,7 +26,7 @@ const Page: FC = async () => {
         </div>
         <TotalDrivingDistance {...totalStatistics} />
         <DrivingRecordList {...recentDrivingRecords} />
-        <RecordDialog />
+        <RecordDialogContainer />
       </div>
     </div>
   );
