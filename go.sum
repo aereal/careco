@@ -2,6 +2,8 @@ github.com/99designs/gqlgen v0.17.81 h1:kCkN/xVyRb5rEQpuwOHRTYq83i0IuTQg9vdIiwEe
 github.com/99designs/gqlgen v0.17.81/go.mod h1:vgNcZlLwemsUhYim4dC1pvFP5FX0pr2Y+uYUoHFb1ig=
 github.com/aereal/iter v0.7.0 h1:lEGERFT0bHdzQpwtJ0eZZwMGkmMlLb3+zLS2lcqqk+M=
 github.com/aereal/iter v0.7.0/go.mod h1:90HlBmkcrMPBtQQoIfQWMlAmYXLuNuoYncn8P042b20=
+github.com/aereal/otelgqlgen v0.10.2 h1:FzGerPOuO8a7B3Ict8bnbRwGF6L16O51Sjwa8RwmlC0=
+github.com/aereal/otelgqlgen v0.10.2/go.mod h1:GYkaPBeytaT7ehtKC9RHyLsiGn+MYJSGvtKGohaDd7Y=
 github.com/agnivade/levenshtein v1.2.1 h1:EHBY3UOn1gwdy/VbFwgo4cxecRznFk7fKWN1KOX7eoM=
 github.com/agnivade/levenshtein v1.2.1/go.mod h1:QVVI16kDrtSuwcpd0p1+xMC6Z/VfhtCyDIjcwga4/DU=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
