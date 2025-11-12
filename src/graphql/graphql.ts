@@ -30,13 +30,17 @@ export type Scalars = {
   DateTime: { input: string; output: Date };
 };
 
-export type DailyReport = {
+export type DailyReport = DistanceReport & {
   readonly day: Scalars['Int']['output'];
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly memo?: Maybe<Scalars['String']['output']>;
   readonly month: Month;
   readonly recordedAt: Scalars['DateTime']['output'];
   readonly year: Scalars['Int']['output'];
+};
+
+export type DistanceReport = {
+  readonly distanceKilometers: Scalars['Int']['output'];
 };
 
 export type DrivingRecordsConnection = {
@@ -57,7 +61,7 @@ export type Month =
   | 'OCTOBER'
   | 'SEPTEMBER';
 
-export type MonthlyReport = {
+export type MonthlyReport = DistanceReport & {
   readonly dailyReports: ReadonlyArray<DailyReport>;
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Month;
@@ -94,11 +98,11 @@ export type QueryYearlyReportArgs = {
   year: Scalars['Int']['input'];
 };
 
-export type TotalStatistics = {
+export type TotalStatistics = DistanceReport & {
   readonly distanceKilometers: Scalars['Int']['output'];
 };
 
-export type YearlyReport = {
+export type YearlyReport = DistanceReport & {
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly monthlyReports: ReadonlyArray<MonthlyReport>;
   readonly year: Scalars['Int']['output'];

@@ -15,24 +15,28 @@ enum Month {
   DECEMBER
 }
 
-type TotalStatistics {
+interface DistanceReport {
   distanceKilometers: Int!
 }
 
-type YearlyReport {
+type TotalStatistics implements DistanceReport {
+  distanceKilometers: Int!
+}
+
+type YearlyReport implements DistanceReport {
   year: Int!
   distanceKilometers: Int!
   monthlyReports: [MonthlyReport!]!
 }
 
-type MonthlyReport {
+type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
   distanceKilometers: Int!
   dailyReports: [DailyReport!]!
 }
 
-type DailyReport {
+type DailyReport implements DistanceReport {
   year: Int!
   month: Month!
   day: Int!

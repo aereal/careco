@@ -930,11 +930,48 @@ func (ec *executionContext) fieldContext_YearlyReport_monthlyReports(_ context.C
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _DistanceReport(ctx context.Context, sel ast.SelectionSet, obj dtos.DistanceReport) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case dtos.YearlyReport:
+		return ec._YearlyReport(ctx, sel, &obj)
+	case *dtos.YearlyReport:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._YearlyReport(ctx, sel, obj)
+	case dtos.TotalStatistics:
+		return ec._TotalStatistics(ctx, sel, &obj)
+	case *dtos.TotalStatistics:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TotalStatistics(ctx, sel, obj)
+	case dtos.MonthlyReport:
+		return ec._MonthlyReport(ctx, sel, &obj)
+	case *dtos.MonthlyReport:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._MonthlyReport(ctx, sel, obj)
+	case dtos.DailyReport:
+		return ec._DailyReport(ctx, sel, &obj)
+	case *dtos.DailyReport:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._DailyReport(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
 
-var dailyReportImplementors = []string{"DailyReport"}
+var dailyReportImplementors = []string{"DailyReport", "DistanceReport"}
 
 func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionSet, obj *dtos.DailyReport) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, dailyReportImplementors)
@@ -1127,7 +1164,7 @@ func (ec *executionContext) _DrivingRecordsConnection(ctx context.Context, sel a
 	return out
 }
 
-var monthlyReportImplementors = []string{"MonthlyReport"}
+var monthlyReportImplementors = []string{"MonthlyReport", "DistanceReport"}
 
 func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.SelectionSet, obj *dtos.MonthlyReport) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, monthlyReportImplementors)
@@ -1399,7 +1436,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var totalStatisticsImplementors = []string{"TotalStatistics"}
+var totalStatisticsImplementors = []string{"TotalStatistics", "DistanceReport"}
 
 func (ec *executionContext) _TotalStatistics(ctx context.Context, sel ast.SelectionSet, obj *dtos.TotalStatistics) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, totalStatisticsImplementors)
@@ -1438,7 +1475,7 @@ func (ec *executionContext) _TotalStatistics(ctx context.Context, sel ast.Select
 	return out
 }
 
-var yearlyReportImplementors = []string{"YearlyReport"}
+var yearlyReportImplementors = []string{"YearlyReport", "DistanceReport"}
 
 func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.SelectionSet, obj *dtos.YearlyReport) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, yearlyReportImplementors)
