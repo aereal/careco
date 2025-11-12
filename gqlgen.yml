@@ -48,3 +48,7 @@ models:
     fields:
       distanceKilometers:
         resolver: true
+  DistanceReport:
+    fields:
+      distanceKilometers:
+        resolver: true

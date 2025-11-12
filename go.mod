@@ -10,6 +10,7 @@ tool (
 require (
 	github.com/99designs/gqlgen v0.17.81
 	github.com/aereal/iter v0.7.0
+	github.com/aereal/otelgqlgen v0.10.2
 	github.com/google/go-cmp v0.7.0
 	github.com/google/wire v0.7.0
 	github.com/rs/cors v1.11.1

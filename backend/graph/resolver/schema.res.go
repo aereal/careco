@@ -45,10 +45,12 @@ func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatist
 	}, nil
 }
 
-func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) ([]*dtos.DailyReport, error) {
+func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*dtos.DrivingRecordsConnection, error) {
 	base := time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC)
 	records := slices.Collect(seq.Take(generateDummyData(base), first))
-	return records, nil
+	return &dtos.DrivingRecordsConnection{
+		Nodes: records,
+	}, nil
 }
 
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {

@@ -6,10 +6,20 @@ import (
 	"time"
 )
 
+type DistanceReport interface {
+	IsDistanceReport()
+}
+
 type DailyReport struct {
 	DistanceKilometers int       `json:"distanceKilometers"`
 	RecordedAt         time.Time `json:"recordedAt"`
 	Memo               *string   `json:"memo,omitempty"`
+}
+
+func (DailyReport) IsDistanceReport() {}
+
+type DrivingRecordsConnection struct {
+	Nodes []*DailyReport `json:"nodes"`
 }
 
 type MonthlyReport struct {
@@ -18,11 +28,17 @@ type MonthlyReport struct {
 	DailyReports []*DailyReport `json:"dailyReports"`
 }
 
+func (MonthlyReport) IsDistanceReport() {}
+
 type TotalStatistics struct {
 	DistanceKilometers int `json:"distanceKilometers"`
 }
+
+func (TotalStatistics) IsDistanceReport() {}
 
 type YearlyReport struct {
 	Year           int              `json:"year"`
 	MonthlyReports []*MonthlyReport `json:"monthlyReports"`
 }
+
+func (YearlyReport) IsDistanceReport() {}

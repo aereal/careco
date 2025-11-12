@@ -9,13 +9,15 @@ package test
 import (
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
+	"careco/backend/o11y/test"
 )
 
 // Injectors from wire.go:
 
 func BuildHandler() *TestHandler {
+	tracerProvider := test.ProvideNoopTracerProvider()
 	resolverResolver := resolver.ProvideResolver()
-	server := graph.ProvideServer(resolverResolver)
+	server := graph.ProvideServer(tracerProvider, resolverResolver)
 	testHandler := provideTestServer(server)
 	return testHandler
 }

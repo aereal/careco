@@ -1,6 +1,7 @@
-import { RecordDialog } from '@/components/RecordDialog';
+import { DrivingRecordList } from '@/components/DrivingRecordList';
+import { RecordDialogContainer } from '@/components/RecordDialog';
 import { SelectMonth } from '@/components/SelectMonth';
-import { YMD } from '@/components/YMD';
+import { TotalDrivingDistance } from '@/components/TotalDrivingDistance';
 import { getClient } from '@/get-client';
 import { readQuery } from '@/run-operation';
 import { Result } from '@praha/byethrow';
@@ -18,19 +19,19 @@ const Page: FC = async () => {
     },
   } = ret;
   return (
-    <div>
-      <div>
-        <SelectMonth />
+    <div className='max-w-2xl mx-auto'>
+      <div className='p-4'>
+        <TotalDrivingDistance {...totalStatistics} />
+        <div className='my-8'>
+          <h1 className='font-bold text-lg -mb-4'>最近の記録</h1>
+          <DrivingRecordList {...recentDrivingRecords} />
+          <div className='my-4'>
+            <h2 className='font-bold text-md mb-2'>月毎の記録を見る</h2>
+            <SelectMonth />
+          </div>
+        </div>
+        <RecordDialogContainer />
       </div>
-      <div>total: {totalStatistics.distanceKilometers}km</div>
-      <ul>
-        {recentDrivingRecords.map((record) => (
-          <li key={record.recordedAt.toString()}>
-            <YMD date={record.recordedAt} />: {record.distanceKilometers}km
-          </li>
-        ))}
-      </ul>
-      <RecordDialog />
     </div>
   );
 };

@@ -35,7 +35,13 @@ const Page: FC<PageProps<'/reports/[year]/[month]'>> = async ({ params }) => {
       data: { monthlyReport },
     },
   } = ret;
-  return <MonthlyReport {...monthlyReport} />;
+  return (
+    <div className='max-w-2xl mx-auto'>
+      <div className='p-4'>
+        <MonthlyReport {...monthlyReport} />
+      </div>
+    </div>
+  );
 };
 
 export default Page;

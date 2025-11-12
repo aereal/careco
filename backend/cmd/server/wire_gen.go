@@ -41,7 +41,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	}
 	port := providers.ProvidePort(environment)
 	resolverResolver := resolver.ProvideResolver()
-	server := graph.ProvideServer(resolverResolver)
+	server := graph.ProvideServer(tracerProvider, resolverResolver)
 	webServer := web.ProvideServer(port, tracerProvider, server)
 	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil

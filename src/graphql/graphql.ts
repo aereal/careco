@@ -30,13 +30,21 @@ export type Scalars = {
   DateTime: { input: string; output: Date };
 };
 
-export type DailyReport = {
+export type DailyReport = DistanceReport & {
   readonly day: Scalars['Int']['output'];
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly memo?: Maybe<Scalars['String']['output']>;
   readonly month: Month;
   readonly recordedAt: Scalars['DateTime']['output'];
   readonly year: Scalars['Int']['output'];
+};
+
+export type DistanceReport = {
+  readonly distanceKilometers: Scalars['Int']['output'];
+};
+
+export type DrivingRecordsConnection = {
+  readonly nodes: ReadonlyArray<DailyReport>;
 };
 
 export type Month =
@@ -53,7 +61,7 @@ export type Month =
   | 'OCTOBER'
   | 'SEPTEMBER';
 
-export type MonthlyReport = {
+export type MonthlyReport = DistanceReport & {
   readonly dailyReports: ReadonlyArray<DailyReport>;
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Month;
@@ -72,7 +80,7 @@ export type MutationRecordDrivingRecordArgs = {
 
 export type Query = {
   readonly monthlyReport: MonthlyReport;
-  readonly recentDrivingRecords: ReadonlyArray<DailyReport>;
+  readonly recentDrivingRecords: DrivingRecordsConnection;
   readonly totalStatistics: TotalStatistics;
   readonly yearlyReport: YearlyReport;
 };
@@ -90,11 +98,11 @@ export type QueryYearlyReportArgs = {
   year: Scalars['Int']['input'];
 };
 
-export type TotalStatistics = {
+export type TotalStatistics = DistanceReport & {
   readonly distanceKilometers: Scalars['Int']['output'];
 };
 
-export type YearlyReport = {
+export type YearlyReport = DistanceReport & {
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly monthlyReports: ReadonlyArray<MonthlyReport>;
   readonly year: Scalars['Int']['output'];
@@ -105,11 +113,14 @@ export type GetRootQueryVariables = Exact<{
 }>;
 
 export type GetRootQuery = {
-  readonly totalStatistics: { readonly distanceKilometers: number };
-  readonly recentDrivingRecords: ReadonlyArray<{
-    readonly distanceKilometers: number;
-    readonly recordedAt: Date;
-  }>;
+  readonly totalStatistics: {
+    ' $fragmentRefs'?: {
+      TotalDistance_TotalStatistics_Fragment: TotalDistance_TotalStatistics_Fragment;
+    };
+  };
+  readonly recentDrivingRecords: {
+    ' $fragmentRefs'?: { RecordListFragment: RecordListFragment };
+  };
 };
 
 export type MonthReportQueryVariables = Exact<{
@@ -119,12 +130,21 @@ export type MonthReportQueryVariables = Exact<{
 
 export type MonthReportQuery = {
   readonly monthlyReport: {
-    ' $fragmentRefs'?: { MonthlySummaryFragment: MonthlySummaryFragment };
+    ' $fragmentRefs'?: {
+      MonthlySummaryFragment: MonthlySummaryFragment;
+      TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
+    };
   };
 };
 
+export type RecordListFragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly distanceKilometers: number;
+    readonly recordedAt: Date;
+  }>;
+} & { ' $fragmentName'?: 'RecordListFragment' };
+
 export type MonthlySummaryFragment = {
-  readonly distanceKilometers: number;
   readonly year: number;
   readonly month: Month;
 } & { ' $fragmentName'?: 'MonthlySummaryFragment' };
@@ -137,6 +157,60 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
+type TotalDistance_DailyReport_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment' };
+
+type TotalDistance_MonthlyReport_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_MonthlyReport_Fragment' };
+
+type TotalDistance_TotalStatistics_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_TotalStatistics_Fragment' };
+
+type TotalDistance_YearlyReport_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_YearlyReport_Fragment' };
+
+export type TotalDistanceFragment =
+  | TotalDistance_DailyReport_Fragment
+  | TotalDistance_MonthlyReport_Fragment
+  | TotalDistance_TotalStatistics_Fragment
+  | TotalDistance_YearlyReport_Fragment;
+
+export const RecordListFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'RecordList' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'distanceKilometers' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RecordListFragment, unknown>;
 export const MonthlySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -150,10 +224,6 @@ export const MonthlySummaryFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'distanceKilometers' },
-          },
           { kind: 'Field', name: { kind: 'Name', value: 'year' } },
           { kind: 'Field', name: { kind: 'Name', value: 'month' } },
         ],
@@ -161,6 +231,28 @@ export const MonthlySummaryFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<MonthlySummaryFragment, unknown>;
+export const TotalDistanceFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'distanceKilometers' },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TotalDistanceFragment, unknown>;
 export const GetRootDocument = {
   kind: 'Document',
   definitions: [
@@ -191,8 +283,8 @@ export const GetRootDocument = {
               kind: 'SelectionSet',
               selections: [
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'distanceKilometers' },
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TotalDistance' },
                 },
               ],
             },
@@ -210,6 +302,49 @@ export const GetRootDocument = {
                 },
               },
             ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'RecordList' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'distanceKilometers' },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'RecordList' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
@@ -285,6 +420,10 @@ export const MonthReportDocument = {
                   kind: 'FragmentSpread',
                   name: { kind: 'Name', value: 'MonthlySummary' },
                 },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TotalDistance' },
+                },
               ],
             },
           },
@@ -301,12 +440,25 @@ export const MonthReportDocument = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'year' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'month' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'distanceKilometers' },
           },
-          { kind: 'Field', name: { kind: 'Name', value: 'year' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'month' } },
         ],
       },
     },
