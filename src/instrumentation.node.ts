@@ -18,7 +18,7 @@ export const register = async (): Promise<void> => {
   });
   const propagator = new W3CTraceContextPropagator();
   tp.register({ propagator });
-  propagation.setGlobalPropagator(propagation);
+  propagation.setGlobalPropagator(propagator);
 
   registerInstrumentations({
     instrumentations: [new FetchInstrumentation()],
