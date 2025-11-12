@@ -19,7 +19,7 @@ type Documents = {
   '\n  fragment RecordList on DrivingRecordsConnection {\n    nodes {\n      distanceKilometers\n      recordedAt\n    }\n  }\n': typeof types.RecordListFragmentDoc;
   '\n  fragment MonthlySummary on MonthlyReport {\n    distanceKilometers\n    year\n    month\n  }\n': typeof types.MonthlySummaryFragmentDoc;
   '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)\n  }\n': typeof types.RecordDriveDocument;
-  '\n  fragment TotalDistance on TotalStatistics {\n    distanceKilometers\n  }\n': typeof types.TotalDistanceFragmentDoc;
+  '\n  fragment TotalDistance on DistanceReport {\n    distanceKilometers\n  }\n': typeof types.TotalDistanceFragmentDoc;
 };
 const documents: Documents = {
   '\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      ...TotalDistance\n    }\n    recentDrivingRecords(first: $first) {\n      ...RecordList\n    }\n  }\n':
@@ -32,7 +32,7 @@ const documents: Documents = {
     types.MonthlySummaryFragmentDoc,
   '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)\n  }\n':
     types.RecordDriveDocument,
-  '\n  fragment TotalDistance on TotalStatistics {\n    distanceKilometers\n  }\n':
+  '\n  fragment TotalDistance on DistanceReport {\n    distanceKilometers\n  }\n':
     types.TotalDistanceFragmentDoc,
 };
 
@@ -84,8 +84,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment TotalDistance on TotalStatistics {\n    distanceKilometers\n  }\n',
-): (typeof documents)['\n  fragment TotalDistance on TotalStatistics {\n    distanceKilometers\n  }\n'];
+  source: '\n  fragment TotalDistance on DistanceReport {\n    distanceKilometers\n  }\n',
+): (typeof documents)['\n  fragment TotalDistance on DistanceReport {\n    distanceKilometers\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

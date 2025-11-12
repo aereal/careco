@@ -114,7 +114,9 @@ export type GetRootQueryVariables = Exact<{
 
 export type GetRootQuery = {
   readonly totalStatistics: {
-    ' $fragmentRefs'?: { TotalDistanceFragment: TotalDistanceFragment };
+    ' $fragmentRefs'?: {
+      TotalDistance_TotalStatistics_Fragment: TotalDistance_TotalStatistics_Fragment;
+    };
   };
   readonly recentDrivingRecords: {
     ' $fragmentRefs'?: { RecordListFragment: RecordListFragment };
@@ -153,9 +155,27 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
-export type TotalDistanceFragment = { readonly distanceKilometers: number } & {
-  ' $fragmentName'?: 'TotalDistanceFragment';
-};
+type TotalDistance_DailyReport_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment' };
+
+type TotalDistance_MonthlyReport_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_MonthlyReport_Fragment' };
+
+type TotalDistance_TotalStatistics_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_TotalStatistics_Fragment' };
+
+type TotalDistance_YearlyReport_Fragment = {
+  readonly distanceKilometers: number;
+} & { ' $fragmentName'?: 'TotalDistance_YearlyReport_Fragment' };
+
+export type TotalDistanceFragment =
+  | TotalDistance_DailyReport_Fragment
+  | TotalDistance_MonthlyReport_Fragment
+  | TotalDistance_TotalStatistics_Fragment
+  | TotalDistance_YearlyReport_Fragment;
 
 export const RecordListFragmentDoc = {
   kind: 'Document',
@@ -221,7 +241,7 @@ export const TotalDistanceFragmentDoc = {
       name: { kind: 'Name', value: 'TotalDistance' },
       typeCondition: {
         kind: 'NamedType',
-        name: { kind: 'Name', value: 'TotalStatistics' },
+        name: { kind: 'Name', value: 'DistanceReport' },
       },
       selectionSet: {
         kind: 'SelectionSet',
@@ -302,7 +322,7 @@ export const GetRootDocument = {
       name: { kind: 'Name', value: 'TotalDistance' },
       typeCondition: {
         kind: 'NamedType',
-        name: { kind: 'Name', value: 'TotalStatistics' },
+        name: { kind: 'Name', value: 'DistanceReport' },
       },
       selectionSet: {
         kind: 'SelectionSet',
