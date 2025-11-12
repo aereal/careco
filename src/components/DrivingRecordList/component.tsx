@@ -8,7 +8,7 @@ export const DrivingRecordList: FC<FragmentType<typeof fragmentRecordList>> = (
 ) => {
   const { nodes } = getFragmentData(fragmentRecordList, props);
   return (
-    <table className='table'>
+    <table className='table mt-8'>
       <thead>
         <tr>
           <th>日付</th>

@@ -83,8 +83,8 @@ export const RecordDialog: FC = () => {
             />
           </label>
           <details className='collapse collapse-arrow my-1 p-1 bg-base-100 border-base-300 border'>
-            <summary className='collapse-title text-sm pl-2'>メモ</summary>
-            <div className='collapse-content'>
+            <summary className='collapse-title text-sm pl-2 py-2'>メモ</summary>
+            <div className='collapse-content px-2'>
               <textarea
                 className='textarea h-24'
                 value={memo}

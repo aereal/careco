@@ -7,8 +7,8 @@ export const TotalDrivingDistance: FC<
 > = (props) => {
   const { distanceKilometers } = getFragmentData(fragmentTotalDistance, props);
   return (
-    <div className='stats'>
-      <div className='stat'>
+    <div className='stats shadow mt-8'>
+      <div className='stat pl-4'>
         <h2 className='stat-title'>総走行距離</h2>
         <div className='stat-value'>{distanceKilometers}km</div>
       </div>
