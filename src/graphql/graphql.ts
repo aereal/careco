@@ -130,7 +130,10 @@ export type MonthReportQueryVariables = Exact<{
 
 export type MonthReportQuery = {
   readonly monthlyReport: {
-    ' $fragmentRefs'?: { MonthlySummaryFragment: MonthlySummaryFragment };
+    ' $fragmentRefs'?: {
+      MonthlySummaryFragment: MonthlySummaryFragment;
+      TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
+    };
   };
 };
 
@@ -142,7 +145,6 @@ export type RecordListFragment = {
 } & { ' $fragmentName'?: 'RecordListFragment' };
 
 export type MonthlySummaryFragment = {
-  readonly distanceKilometers: number;
   readonly year: number;
   readonly month: Month;
 } & { ' $fragmentName'?: 'MonthlySummaryFragment' };
@@ -222,10 +224,6 @@ export const MonthlySummaryFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'distanceKilometers' },
-          },
           { kind: 'Field', name: { kind: 'Name', value: 'year' } },
           { kind: 'Field', name: { kind: 'Name', value: 'month' } },
         ],
@@ -422,6 +420,10 @@ export const MonthReportDocument = {
                   kind: 'FragmentSpread',
                   name: { kind: 'Name', value: 'MonthlySummary' },
                 },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TotalDistance' },
+                },
               ],
             },
           },
@@ -438,12 +440,25 @@ export const MonthReportDocument = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'year' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'month' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'distanceKilometers' },
           },
-          { kind: 'Field', name: { kind: 'Name', value: 'year' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'month' } },
         ],
       },
     },
