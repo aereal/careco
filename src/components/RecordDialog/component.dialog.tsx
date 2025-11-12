@@ -8,7 +8,6 @@ import { formatISO } from 'date-fns/formatISO';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { type ChangeEventHandler, type FC, type FormEventHandler } from 'react';
 import * as atoms from './atoms';
-import { modalOpen } from './atoms';
 import { mutationRecordDrive } from './mutation.record';
 
 const doRecordDrive = runMutation(getClient(), mutationRecordDrive);
@@ -59,7 +58,7 @@ export const RecordDialog: FC = () => {
   };
 
   return (
-    <dialog className='modal' open={useAtomValue(modalOpen)}>
+    <dialog className='modal' open={useAtomValue(atoms.modalOpen)}>
       <div className='modal-box'>
         <form onSubmit={handleSubmit}>
           <label className='input mt-1'>
