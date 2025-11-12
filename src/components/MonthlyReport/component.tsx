@@ -13,11 +13,11 @@ type Data = FragmentType<typeof fragmentMonthlySummary> &
 export const MonthlyReport: FC<Data> = (props) => {
   const { year, month } = getFragmentData(fragmentMonthlySummary, props);
   return (
-    <>
-      <h1>
-        {year}年{numberOf(month)}月
+    <div>
+      <h1 className='font-bold text-2xl -mb-4'>
+        {year}年{numberOf(month)}月の走行記録
       </h1>
       <TotalDrivingDistance {...props} />
-    </>
+    </div>
   );
 };
