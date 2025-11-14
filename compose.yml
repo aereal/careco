@@ -27,3 +27,14 @@ services:
       - /data
     volumes:
       - './data/firestore:/data'
+  test_firestore:
+    image: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:547.0.0-emulators'
+    ports:
+      - '8889:8888'
+    command:
+      - gcloud
+      - emulators
+      - firestore
+      - start
+      - --host-port
+      - '0.0.0.0:8888'
