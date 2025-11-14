@@ -88,6 +88,28 @@ func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, se
 	return val.GetIntegerValue(), nil
 }
 
+func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ []*domain.DrivingRecord, err error) {
+	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
+	defer span.End()
+
+	query := r.collections.DrivingRecords(ctx).Query
+	if whereClause := toWhere(searchPeriod); whereClause != nil {
+		query = query.WhereEntity(whereClause)
+	}
+	docs := query.
+		OrderBy("Date", firestore.Asc).
+		Documents(ctx)
+	records := make([]*domain.DrivingRecord, 0)
+	for ret := range iterateDrivingRecords(docs) {
+		record, err := ret.Value()
+		if err != nil {
+			return nil, err
+		}
+		records = append(records, record)
+	}
+	return records, nil
+}
+
 type dtoDrivingRecord struct {
 	Date     time.Time
 	Distance int64
