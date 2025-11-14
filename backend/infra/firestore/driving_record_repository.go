@@ -9,8 +9,10 @@ import (
 	"time"
 
 	"careco/backend/domain"
+	"careco/backend/types"
 
 	"cloud.google.com/go/firestore"
+	"cloud.google.com/go/firestore/apiv1/firestorepb"
 	"github.com/aereal/optional"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/api/iterator"
@@ -66,6 +68,26 @@ func (r *DrivingRecordRepository) FindRecentRecords(ctx context.Context, first i
 	return records, nil
 }
 
+func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ int64, err error) {
+	ctx, span := r.tracer.Start(ctx, "CalculateTotalDistance")
+	defer span.End()
+
+	totalPath := "total"
+	query := r.collections.DrivingRecords(ctx).Query
+	if !searchPeriod.Start.Value.IsZero() && !searchPeriod.End.Value.IsZero() {
+		query = query.WhereEntity(toWhere(searchPeriod))
+	}
+	ret, err := query.NewAggregationQuery().WithSum("Distance", totalPath).Get(ctx)
+	if err != nil {
+		return 0, err
+	}
+	val, err := types.Cast[*firestorepb.Value](ret[totalPath])
+	if err != nil {
+		return 0, err
+	}
+	return val.GetIntegerValue(), nil
+}
+
 type dtoDrivingRecord struct {
 	Date     time.Time
 	Distance int64
@@ -113,5 +135,29 @@ func iterateDrivingRecords(docs *firestore.DocumentIterator) iter.Seq[*result[*d
 				return
 			}
 		}
+	}
+}
+
+func toWhere(searchPeriod domain.Interval[time.Time]) firestore.EntityFilter {
+	if searchPeriod.Start.Value.IsZero() || searchPeriod.End.Value.IsZero() {
+		return nil
+	}
+	return firestore.AndFilter{
+		Filters: []firestore.EntityFilter{
+			filterFragment("Date", ">", searchPeriod.Start),
+			filterFragment("Date", "<", searchPeriod.End),
+		},
+	}
+}
+
+func filterFragment(path string, baseOp string, endpoint domain.Endpoint[time.Time]) firestore.EntityFilter {
+	op := baseOp
+	if endpoint.Open {
+		op += "="
+	}
+	return firestore.PropertyFilter{
+		Path:     path,
+		Operator: op,
+		Value:    endpoint.Value,
 	}
 }

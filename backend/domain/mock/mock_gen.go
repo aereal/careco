@@ -13,6 +13,7 @@ import (
 	domain "careco/backend/domain"
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	gomock "go.uber.org/mock/gomock"
 )
@@ -101,6 +102,45 @@ func NewMockDrivingRecordQuery(ctrl *gomock.Controller) *MockDrivingRecordQuery 
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockDrivingRecordQuery) EXPECT() *MockDrivingRecordQueryMockRecorder {
 	return m.recorder
+}
+
+// CalculateTotalDistance mocks base method.
+func (m *MockDrivingRecordQuery) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CalculateTotalDistance", ctx, searchPeriod)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CalculateTotalDistance indicates an expected call of CalculateTotalDistance.
+func (mr *MockDrivingRecordQueryMockRecorder) CalculateTotalDistance(ctx, searchPeriod any) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculateTotalDistance", reflect.TypeOf((*MockDrivingRecordQuery)(nil).CalculateTotalDistance), ctx, searchPeriod)
+	return &MockDrivingRecordQueryCalculateTotalDistanceCall{Call: call}
+}
+
+// MockDrivingRecordQueryCalculateTotalDistanceCall wrap *gomock.Call
+type MockDrivingRecordQueryCalculateTotalDistanceCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) Return(arg0 int64, arg1 error) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) Do(f func(context.Context, domain.Interval[time.Time]) (int64, error)) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) DoAndReturn(f func(context.Context, domain.Interval[time.Time]) (int64, error)) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
 }
 
 // FindRecentRecords mocks base method.
