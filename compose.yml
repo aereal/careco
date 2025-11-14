@@ -12,3 +12,18 @@ services:
       - './etc/otelc.yml:/etc/otelcol-contrib/config.yaml'
     environment:
       JAEGER_HOST: 'jaeger:4317'
+  firestore:
+    image: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:547.0.0-emulators'
+    ports:
+      - '8888:8888'
+    command:
+      - gcloud
+      - emulators
+      - firestore
+      - start
+      - --host-port
+      - '0.0.0.0:8888'
+      - --export-on-exit
+      - /data
+    volumes:
+      - './data/firestore:/data'
