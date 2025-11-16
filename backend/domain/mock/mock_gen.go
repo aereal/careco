@@ -144,45 +144,6 @@ func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) DoAndReturn(f func(co
 	return c
 }
 
-// FindRecentRecords mocks base method.
-func (m *MockDrivingRecordQuery) FindRecentRecords(ctx context.Context, first int) ([]*domain.DrivingRecord, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindRecentRecords", ctx, first)
-	ret0, _ := ret[0].([]*domain.DrivingRecord)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindRecentRecords indicates an expected call of FindRecentRecords.
-func (mr *MockDrivingRecordQueryMockRecorder) FindRecentRecords(ctx, first any) *MockDrivingRecordQueryFindRecentRecordsCall {
-	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRecentRecords", reflect.TypeOf((*MockDrivingRecordQuery)(nil).FindRecentRecords), ctx, first)
-	return &MockDrivingRecordQueryFindRecentRecordsCall{Call: call}
-}
-
-// MockDrivingRecordQueryFindRecentRecordsCall wrap *gomock.Call
-type MockDrivingRecordQueryFindRecentRecordsCall struct {
-	*gomock.Call
-}
-
-// Return rewrite *gomock.Call.Return
-func (c *MockDrivingRecordQueryFindRecentRecordsCall) Return(arg0 []*domain.DrivingRecord, arg1 error) *MockDrivingRecordQueryFindRecentRecordsCall {
-	c.Call = c.Call.Return(arg0, arg1)
-	return c
-}
-
-// Do rewrite *gomock.Call.Do
-func (c *MockDrivingRecordQueryFindRecentRecordsCall) Do(f func(context.Context, int) ([]*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindRecentRecordsCall {
-	c.Call = c.Call.Do(f)
-	return c
-}
-
-// DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockDrivingRecordQueryFindRecentRecordsCall) DoAndReturn(f func(context.Context, int) ([]*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindRecentRecordsCall {
-	c.Call = c.Call.DoAndReturn(f)
-	return c
-}
-
 // FindRecordsInPeriod mocks base method.
 func (m *MockDrivingRecordQuery) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) ([]*domain.DrivingRecord, error) {
 	m.ctrl.T.Helper()

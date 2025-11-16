@@ -52,22 +52,6 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 	return nil
 }
 
-func (r *DrivingRecordRepository) FindRecentRecords(ctx context.Context, first int) (_ []*domain.DrivingRecord, err error) {
-	ctx, span := r.tracer.Start(ctx, "FindRecentRecords")
-	defer span.End()
-
-	docs := r.collections.DrivingRecords(ctx).Limit(first).OrderBy("Date", firestore.Desc).Documents(ctx)
-	records := make([]*domain.DrivingRecord, 0, first)
-	for ret := range iterateDrivingRecords(docs) {
-		record, err := ret.Value()
-		if err != nil {
-			return nil, err
-		}
-		records = append(records, record)
-	}
-	return records, nil
-}
-
 func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ int64, err error) {
 	ctx, span := r.tracer.Start(ctx, "CalculateTotalDistance")
 	defer span.End()
