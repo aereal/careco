@@ -88,13 +88,16 @@ func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, se
 	return val.GetIntegerValue(), nil
 }
 
-func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection) (_ []*domain.DrivingRecord, err error) {
+func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) (_ []*domain.DrivingRecord, err error) {
 	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
 	defer span.End()
 
 	query := r.collections.DrivingRecords(ctx).Query
 	if whereClause := toWhere(searchPeriod); whereClause != nil {
 		query = query.WhereEntity(whereClause)
+	}
+	if l, ok := optional.Unwrap(limit); ok {
+		query = query.Limit(l)
 	}
 	docs := query.
 		OrderBy("Date", directionMapping[direction]).

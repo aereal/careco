@@ -10,6 +10,8 @@ import (
 	"careco/backend/infra/firestore"
 	"careco/backend/infra/firestore/test"
 	"careco/backend/tests"
+
+	"github.com/aereal/optional"
 )
 
 func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
@@ -184,6 +186,7 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 		name      string
 		interval  domain.Interval[time.Time]
 		direction domain.OrderDirection
+		limit     optional.Option[int]
 		want      []*domain.DrivingRecord
 		wantErr   error
 		prepare   func(ctx context.Context, r *firestore.DrivingRecordRepository) error
@@ -253,7 +256,7 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			got, gotErr := r.FindRecordsInPeriod(ctx, tc.interval, tc.direction)
+			got, gotErr := r.FindRecordsInPeriod(ctx, tc.interval, tc.direction, tc.limit)
 			tests.AssertsErrors(t, tc.wantErr, gotErr)
 			if gotErr != nil {
 				return
