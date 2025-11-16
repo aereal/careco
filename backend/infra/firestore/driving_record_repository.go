@@ -88,7 +88,7 @@ func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, se
 	return val.GetIntegerValue(), nil
 }
 
-func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ []*domain.DrivingRecord, err error) {
+func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection) (_ []*domain.DrivingRecord, err error) {
 	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
 	defer span.End()
 
@@ -97,7 +97,7 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 		query = query.WhereEntity(whereClause)
 	}
 	docs := query.
-		OrderBy("Date", firestore.Asc).
+		OrderBy("Date", directionMapping[direction]).
 		Documents(ctx)
 	records := make([]*domain.DrivingRecord, 0)
 	for ret := range iterateDrivingRecords(docs) {
@@ -182,4 +182,9 @@ func filterFragment(path string, baseOp string, endpoint domain.Endpoint[time.Ti
 		Operator: op,
 		Value:    endpoint.Value,
 	}
+}
+
+var directionMapping = map[domain.OrderDirection]firestore.Direction{
+	domain.OrderDirectionAsc:  firestore.Asc,
+	domain.OrderDirectionDesc: firestore.Desc,
 }

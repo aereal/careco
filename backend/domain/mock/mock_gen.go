@@ -183,18 +183,18 @@ func (c *MockDrivingRecordQueryFindRecentRecordsCall) DoAndReturn(f func(context
 }
 
 // FindRecordsInPeriod mocks base method.
-func (m *MockDrivingRecordQuery) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) ([]*domain.DrivingRecord, error) {
+func (m *MockDrivingRecordQuery) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection) ([]*domain.DrivingRecord, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindRecordsInPeriod", ctx, searchPeriod)
+	ret := m.ctrl.Call(m, "FindRecordsInPeriod", ctx, searchPeriod, direction)
 	ret0, _ := ret[0].([]*domain.DrivingRecord)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindRecordsInPeriod indicates an expected call of FindRecordsInPeriod.
-func (mr *MockDrivingRecordQueryMockRecorder) FindRecordsInPeriod(ctx, searchPeriod any) *MockDrivingRecordQueryFindRecordsInPeriodCall {
+func (mr *MockDrivingRecordQueryMockRecorder) FindRecordsInPeriod(ctx, searchPeriod, direction any) *MockDrivingRecordQueryFindRecordsInPeriodCall {
 	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRecordsInPeriod", reflect.TypeOf((*MockDrivingRecordQuery)(nil).FindRecordsInPeriod), ctx, searchPeriod)
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRecordsInPeriod", reflect.TypeOf((*MockDrivingRecordQuery)(nil).FindRecordsInPeriod), ctx, searchPeriod, direction)
 	return &MockDrivingRecordQueryFindRecordsInPeriodCall{Call: call}
 }
 
@@ -210,13 +210,13 @@ func (c *MockDrivingRecordQueryFindRecordsInPeriodCall) Return(arg0 []*domain.Dr
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockDrivingRecordQueryFindRecordsInPeriodCall) Do(f func(context.Context, domain.Interval[time.Time]) ([]*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindRecordsInPeriodCall {
+func (c *MockDrivingRecordQueryFindRecordsInPeriodCall) Do(f func(context.Context, domain.Interval[time.Time], domain.OrderDirection) ([]*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindRecordsInPeriodCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockDrivingRecordQueryFindRecordsInPeriodCall) DoAndReturn(f func(context.Context, domain.Interval[time.Time]) ([]*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindRecordsInPeriodCall {
+func (c *MockDrivingRecordQueryFindRecordsInPeriodCall) DoAndReturn(f func(context.Context, domain.Interval[time.Time], domain.OrderDirection) ([]*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindRecordsInPeriodCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

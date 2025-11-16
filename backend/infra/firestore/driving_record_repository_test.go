@@ -181,11 +181,12 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 	nextMonth := time.Date(2025, time.March, 1, 0, 0, 0, 0, time.UTC)
 
 	testCases := []struct {
-		name     string
-		interval domain.Interval[time.Time]
-		want     []*domain.DrivingRecord
-		wantErr  error
-		prepare  func(ctx context.Context, r *firestore.DrivingRecordRepository) error
+		name      string
+		interval  domain.Interval[time.Time]
+		direction domain.OrderDirection
+		want      []*domain.DrivingRecord
+		wantErr   error
+		prepare   func(ctx context.Context, r *firestore.DrivingRecordRepository) error
 	}{
 		{
 			name:     "ok/no filter",
@@ -252,7 +253,7 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			got, gotErr := r.FindRecordsInPeriod(ctx, tc.interval)
+			got, gotErr := r.FindRecordsInPeriod(ctx, tc.interval, tc.direction)
 			tests.AssertsErrors(t, tc.wantErr, gotErr)
 			if gotErr != nil {
 				return
