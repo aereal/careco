@@ -7,17 +7,21 @@
 package test
 
 import (
+	"careco/backend/domain/mock"
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
 	"careco/backend/o11y/test"
+	"go.uber.org/mock/gomock"
 )
 
 // Injectors from wire.go:
 
-func BuildHandler() *TestHandler {
+func BuildHandler(controller *gomock.Controller) *TestHandler {
 	tracerProvider := test.ProvideNoopTracerProvider()
-	resolverResolver := resolver.ProvideResolver()
+	mockDrivingRecordCommand := mock.NewMockDrivingRecordCommand(controller)
+	mockDrivingRecordQuery := mock.NewMockDrivingRecordQuery(controller)
+	resolverResolver := resolver.ProvideResolver(mockDrivingRecordCommand, mockDrivingRecordQuery)
 	server := graph.ProvideServer(tracerProvider, resolverResolver)
-	testHandler := provideTestServer(server)
+	testHandler := provideTestServer(server, mockDrivingRecordCommand, mockDrivingRecordQuery)
 	return testHandler
 }

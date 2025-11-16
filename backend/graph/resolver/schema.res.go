@@ -6,13 +6,16 @@ package resolver
 
 import (
 	"context"
-	"slices"
+	"fmt"
 	"time"
 
+	"careco/backend/domain"
 	"careco/backend/graph/dtos"
 	"careco/backend/graph/exec"
+	"careco/backend/timeops"
 
-	"github.com/aereal/iter/seq"
+	"github.com/aereal/coll"
+	"github.com/aereal/optional"
 )
 
 func (r *dailyReportResolver) Year(ctx context.Context, obj *dtos.DailyReport) (int, error) {
@@ -28,68 +31,116 @@ func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (i
 }
 
 func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
-	var ret int
-	for _, dailyReport := range obj.DailyReports {
-		ret += dailyReport.DistanceKilometers
+	interval := domain.Interval[time.Time]{
+		Start: domain.OpenEndpoint(obj.StartOfMonth()),
+		End:   domain.ClosedEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
 	}
-	return ret, nil
+	total, err := r.drivingRecordQuery.CalculateTotalDistance(ctx, interval)
+	if err != nil {
+		return 0, fmt.Errorf("CalculateTotalDistance: %w", err)
+	}
+	return int(total), nil
+}
+
+func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.MonthlyReport) ([]*dtos.DailyReport, error) {
+	interval := domain.Interval[time.Time]{
+		Start: domain.OpenEndpoint(obj.StartOfMonth()),
+		End:   domain.ClosedEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
+	}
+	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, interval, domain.OrderDirectionAsc, optional.None[int]())
+	if err != nil {
+		return nil, fmt.Errorf("FindRecordsInPeriod: %w", err)
+	}
+	reports := make([]*dtos.DailyReport, len(records))
+	for i, record := range records {
+		reports[i] = &dtos.DailyReport{
+			DistanceKilometers: int(record.DistanceKilometers),
+			RecordedAt:         record.Date,
+			Memo:               record.Memo.Ptr(),
+		}
+	}
+	return reports, nil
 }
 
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
+	record := &domain.DrivingRecord{
+		Date:               date,
+		DistanceKilometers: int64(distanceKilometers),
+		Memo:               optional.FromPtr(memo),
+	}
+	if err := r.drivingRecordCommand.RecordDrivingRecord(ctx, record); err != nil {
+		return false, fmt.Errorf("RecordDrivingRecord: %w", err)
+	}
 	return true, nil
 }
 
 func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatistics, error) {
+	total, err := r.drivingRecordQuery.CalculateTotalDistance(ctx, domain.EmptyInterval[time.Time]())
+	if err != nil {
+		return nil, err
+	}
 	return &dtos.TotalStatistics{
-		DistanceKilometers: 45678,
+		DistanceKilometers: int(total),
 	}, nil
 }
 
 func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*dtos.DrivingRecordsConnection, error) {
-	base := time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC)
-	records := slices.Collect(seq.Take(generateDummyData(base), first))
-	return &dtos.DrivingRecordsConnection{
-		Nodes: records,
-	}, nil
+	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(first))
+	if err != nil {
+		return nil, fmt.Errorf("DrivingRecordQuery.FindRecordsInPeriod: %w", err)
+	}
+	conn := &dtos.DrivingRecordsConnection{
+		Nodes: make([]*dtos.DailyReport, len(records)),
+	}
+	for i, record := range records {
+		conn.Nodes[i] = &dtos.DailyReport{
+			DistanceKilometers: int(record.DistanceKilometers),
+			RecordedAt:         record.Date,
+			Memo:               record.Memo.Ptr(),
+		}
+	}
+	return conn, nil
 }
 
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {
 	yearlyReport := &dtos.YearlyReport{Year: year}
-	baseTimes := []time.Time{
-		time.Date(year, time.October, 3, 12, 34, 56, 0, time.UTC),
-		time.Date(year, time.September, 30, 12, 34, 56, 0, time.UTC),
+	interval := domain.Interval[time.Time]{
+		Start: domain.OpenEndpoint(yearlyReport.StartOfYear()),
+		End:   domain.ClosedEndpoint(timeops.StartOfNextYear(yearlyReport.StartOfYear())),
 	}
-	for _, baseTime := range baseTimes {
-		monthlyReport := &dtos.MonthlyReport{Year: year, Month: baseTime.Month()}
-		for dailyReport := range seq.Take(generateDummyData(baseTime), 3) {
-			monthlyReport.DailyReports = append(monthlyReport.DailyReports, dailyReport)
-		}
-		yearlyReport.MonthlyReports = append(yearlyReport.MonthlyReports, monthlyReport)
+	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, interval, domain.OrderDirectionAsc, optional.None[int]())
+	if err != nil {
+		return nil, fmt.Errorf("FindRecordsInPeriod: %w", err)
+	}
+	months := coll.NewOrderedSet[time.Time]()
+	for _, record := range records {
+		d := record.Date
+		months.Append(time.Date(d.Year(), d.Month(), 1, 0, 0, 0, 0, d.Location()))
+	}
+	for m := range months.Values() {
+		yearlyReport.MonthlyReports = append(yearlyReport.MonthlyReports, &dtos.MonthlyReport{Year: m.Year(), Month: m.Month()})
 	}
 	return yearlyReport, nil
 }
 
 func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error) {
-	if year != 2025 || month != time.October {
-		return nil, errNotImplemented
-	}
-	base := time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC)
 	ret := &dtos.MonthlyReport{
-		Year:         year,
-		Month:        month,
-		DailyReports: slices.Collect(seq.Take(generateDummyData(base), 3)),
+		Year:  year,
+		Month: month,
 	}
 	return ret, nil
 }
 
 func (r *yearlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.YearlyReport) (int, error) {
-	var ret int
-	for _, monthlyReport := range obj.MonthlyReports {
-		for _, dailyReport := range monthlyReport.DailyReports {
-			ret += dailyReport.DistanceKilometers
-		}
+	interval := domain.Interval[time.Time]{
+		Start: domain.OpenEndpoint(obj.StartOfYear()),
+		End:   domain.ClosedEndpoint(timeops.StartOfNextYear(obj.StartOfYear())),
 	}
-	return ret, nil
+	total, err := r.drivingRecordQuery.CalculateTotalDistance(ctx, interval)
+	if err != nil {
+		return 0, fmt.Errorf("CalculateTotalDistance: %w", err)
+	}
+	return int(total), nil
 }
 
 func (r *Resolver) DailyReport() exec.DailyReportResolver { return &dailyReportResolver{r} }

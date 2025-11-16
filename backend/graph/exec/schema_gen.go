@@ -26,6 +26,7 @@ type DailyReportResolver interface {
 }
 type MonthlyReportResolver interface {
 	DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error)
+	DailyReports(ctx context.Context, obj *dtos.MonthlyReport) ([]*dtos.DailyReport, error)
 }
 type MutationResolver interface {
 	RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error)
@@ -433,7 +434,7 @@ func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, fie
 		field,
 		ec.fieldContext_MonthlyReport_dailyReports,
 		func(ctx context.Context) (any, error) {
-			return obj.DailyReports, nil
+			return ec.resolvers.MonthlyReport().DailyReports(ctx, obj)
 		},
 		nil,
 		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
@@ -446,8 +447,8 @@ func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Co
 	fc = &graphql.FieldContext{
 		Object:     "MonthlyReport",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "year":
@@ -1222,10 +1223,41 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dailyReports":
-			out.Values[i] = ec._MonthlyReport_dailyReports(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._MonthlyReport_dailyReports(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

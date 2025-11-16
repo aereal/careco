@@ -23,9 +23,8 @@ type DrivingRecordsConnection struct {
 }
 
 type MonthlyReport struct {
-	Year         int            `json:"year"`
-	Month        time.Month     `json:"month"`
-	DailyReports []*DailyReport `json:"dailyReports"`
+	Year  int        `json:"year"`
+	Month time.Month `json:"month"`
 }
 
 func (MonthlyReport) IsDistanceReport() {}

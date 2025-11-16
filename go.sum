@@ -12,8 +12,8 @@ cloud.google.com/go/longrunning v0.6.7 h1:IGtfDWHhQCgCjwQjV9iiLnUta9LBCo8R9QmAFs
 cloud.google.com/go/longrunning v0.6.7/go.mod h1:EAFV3IZAKmM56TyiE6VAP3VoTzhZzySwI/YI1s/nRsY=
 github.com/99designs/gqlgen v0.17.81 h1:kCkN/xVyRb5rEQpuwOHRTYq83i0IuTQg9vdIiwEerTs=
 github.com/99designs/gqlgen v0.17.81/go.mod h1:vgNcZlLwemsUhYim4dC1pvFP5FX0pr2Y+uYUoHFb1ig=
-github.com/aereal/iter v0.7.0 h1:lEGERFT0bHdzQpwtJ0eZZwMGkmMlLb3+zLS2lcqqk+M=
-github.com/aereal/iter v0.7.0/go.mod h1:90HlBmkcrMPBtQQoIfQWMlAmYXLuNuoYncn8P042b20=
+github.com/aereal/coll v0.6.0 h1:Yr/KhMPYX2vGM0eb9BETzZFvDTmFvwzipOAtEpvBNjo=
+github.com/aereal/coll v0.6.0/go.mod h1:7/Rsf/eOx8sEbWeFNjSUVG/ykfZxejX+h3leWRkaEdc=
 github.com/aereal/optional v0.2.0 h1:FsZRjDjLo6gfL/QCNImWLZt/4NJ+dpfiXMQosBNabh0=
 github.com/aereal/optional v0.2.0/go.mod h1:chZ9UTnynG+pkS2reMfpocsYluilA7n5dlNNpmKBN0s=
 github.com/aereal/otelgqlgen v0.10.2 h1:FzGerPOuO8a7B3Ict8bnbRwGF6L16O51Sjwa8RwmlC0=
