@@ -43,7 +43,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	port := providers.ProvidePort(environment)
 	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
-	client, err := firestore.ProvideEmulatorClient(contextContext, projectID, emulatorAddr)
+	client, err := firestore.ProvideEmulatorClient(contextContext, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}
