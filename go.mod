@@ -12,6 +12,7 @@ require (
 	cloud.google.com/go/firestore v1.20.0
 	github.com/99designs/gqlgen v0.17.81
 	github.com/aereal/coll v0.6.0
+	github.com/aereal/iter v0.8.0
 	github.com/aereal/optional v0.2.0
 	github.com/aereal/otelgqlgen v0.10.2
 	github.com/google/go-cmp v0.7.0

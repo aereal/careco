@@ -10,6 +10,7 @@ import (
 	"careco/backend/cmd/import-data/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/infra/firestore"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
@@ -37,11 +38,24 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	importData := interactions.ProvideImportData(tracerProvider)
+	projectID := _wireProjectIDValue
+	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
+	client, err := firestore.ProvideEmulatorClient(contextContext, projectID, emulatorAddr, tracerProvider)
+	if err != nil {
+		return nil, err
+	}
+	collectionProvider := firestore.ProvideProductionCollectionProvider(client)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, collectionProvider, client)
+	exportFileName, err := providers.ProvideExportFileName(environment)
+	if err != nil {
+		return nil, err
+	}
+	importData := interactions.ProvideImportData(tracerProvider, drivingRecordRepository, exportFileName)
 	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, importData)
 	return entrypoint, nil
 }
 
 var (
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
+	_wireProjectIDValue                 = firestore.ProjectID("dummy")
 )

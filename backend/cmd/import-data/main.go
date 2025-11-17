@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"os"
+
+	"careco/backend/log/attribute"
 )
 
 func main() { os.Exit(do()) }
@@ -25,6 +28,7 @@ func exitCodeOf(err error) int {
 	if err == nil {
 		return 0
 	}
+	slog.Error("failed", attribute.Error(err))
 	var hasExitCode interface{ ExitCode() int }
 	if errors.As(err, &hasExitCode) {
 		return hasExitCode.ExitCode()

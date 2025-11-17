@@ -25,7 +25,7 @@ func BuildDrivingRecordRepository(contextContext context.Context) (*firestore.Dr
 		return nil, err
 	}
 	collectionProvider := provideTestCollectionProvider(client)
-	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, collectionProvider)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, collectionProvider, client)
 	return drivingRecordRepository, nil
 }
 

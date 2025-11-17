@@ -10,6 +10,7 @@ import (
 
 	"careco/backend/domain"
 	"careco/backend/types"
+	"careco/backend/usecases/ports"
 
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/firestore/apiv1/firestorepb"
@@ -18,21 +19,24 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func ProvideDrivingRecordRepository(tp trace.TracerProvider, cp CollectionProvider) *DrivingRecordRepository {
+func ProvideDrivingRecordRepository(tp trace.TracerProvider, cp CollectionProvider, tr TransactionRunner) *DrivingRecordRepository {
 	return &DrivingRecordRepository{
 		collections: cp,
 		tracer:      tp.Tracer("careco/backend/infra/firestore.DrivingRecordRepository"),
+		txRunner:    tr,
 	}
 }
 
 type DrivingRecordRepository struct {
 	tracer      trace.Tracer
 	collections CollectionProvider
+	txRunner    TransactionRunner
 }
 
 var (
-	_ domain.DrivingRecordCommand = (*DrivingRecordRepository)(nil)
-	_ domain.DrivingRecordQuery   = (*DrivingRecordRepository)(nil)
+	_ domain.DrivingRecordCommand   = (*DrivingRecordRepository)(nil)
+	_ domain.DrivingRecordQuery     = (*DrivingRecordRepository)(nil)
+	_ ports.DrivingRecordBulkWriter = (*DrivingRecordRepository)(nil)
 )
 
 func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, record *domain.DrivingRecord) (err error) {
@@ -93,6 +97,30 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 		records = append(records, record)
 	}
 	return records, nil
+}
+
+func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, records []*domain.DrivingRecord) (err error) {
+	ctx, span := r.tracer.Start(ctx, "BulkWriteDrivingRecords")
+	defer span.End()
+
+	f := func(ctx context.Context, tx *firestore.Transaction) error {
+		for _, record := range records {
+			data := &dtoDrivingRecord{
+				Date:     record.Date,
+				Distance: record.DistanceKilometers,
+				Memo:     record.Memo.Ptr(),
+			}
+			docRef := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date))
+			if _, err := docRef.Set(ctx, data); err != nil {
+				return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
+			}
+		}
+		return nil
+	}
+	if err := r.txRunner.RunTransaction(ctx, f); err != nil {
+		return fmt.Errorf("RunTransaction: %w", err)
+	}
+	return nil
 }
 
 type dtoDrivingRecord struct {
