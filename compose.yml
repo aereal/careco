@@ -12,3 +12,13 @@ services:
       - './etc/otelc.yml:/etc/otelcol-contrib/config.yaml'
     environment:
       JAEGER_HOST: 'jaeger:4317'
+  firestore:
+    image: 'ghcr.io/aereal/firebase-emulator-image:v0.1.0'
+    ports:
+      - '8888:8888'
+    volumes:
+      - './data/firestore:/data'
+  test_firestore:
+    image: 'ghcr.io/aereal/firebase-emulator-image:v0.1.0'
+    ports:
+      - '8889:8888'

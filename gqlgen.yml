@@ -44,6 +44,8 @@ models:
     fields:
       distanceKilometers:
         resolver: true
+      dailyReports:
+        resolver: true
   YearlyReport:
     fields:
       distanceKilometers:

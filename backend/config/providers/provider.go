@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"careco/backend/config"
+	"careco/backend/infra/firestore"
 	"careco/backend/web"
 )
 
@@ -23,5 +24,14 @@ func ProvideLogLevel(e *config.Environment) slog.Level {
 	return config.Yield(
 		"LOG_LEVEL",
 		withDefault(retrieve),
+	)
+}
+
+func ProvideFirestoreEmulatorAddr(e *config.Environment) firestore.EmulatorAddr {
+	cast := config.Cast(config.StringAs[firestore.EmulatorAddr])
+	retrieve := cast(config.EnvSource(e))
+	return config.Yield(
+		"FIRESTORE_EMULATOR_ADDR",
+		config.WithDefaultValue[firestore.EmulatorAddr]("localhost:8888")(retrieve),
 	)
 }

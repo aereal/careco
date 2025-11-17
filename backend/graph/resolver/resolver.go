@@ -2,16 +2,22 @@
 
 package resolver
 
-import "errors"
+import (
+	"careco/backend/domain"
+)
 
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-func ProvideResolver() *Resolver {
-	return &Resolver{}
+func ProvideResolver(recordCommand domain.DrivingRecordCommand, recordQuery domain.DrivingRecordQuery) *Resolver {
+	return &Resolver{
+		drivingRecordCommand: recordCommand,
+		drivingRecordQuery:   recordQuery,
+	}
 }
 
-type Resolver struct{}
-
-var errNotImplemented = errors.New("not implemented yet")
+type Resolver struct {
+	drivingRecordCommand domain.DrivingRecordCommand
+	drivingRecordQuery   domain.DrivingRecordQuery
+}

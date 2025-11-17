@@ -3,19 +3,28 @@ package graph_test
 import (
 	"bytes"
 	stdcmp "cmp"
+	"context"
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"iter"
 	"maps"
 	"net/http"
 	"net/http/httptest"
 	"slices"
 	"testing"
+	"time"
 
+	"careco/backend/domain"
+	"careco/backend/domain/mock"
 	"careco/backend/graph/test"
+	"careco/backend/tests"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/aereal/optional"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
+	"go.uber.org/mock/gomock"
 	"gopkg.in/yaml.v3"
 )
 
@@ -26,6 +35,7 @@ func TestServer(t *testing.T) {
 	if err := yaml.NewDecoder(bytes.NewReader(caseDefs)).Decode(root); err != nil {
 		t.Fatal(err)
 	}
+	var idx int
 	for tc := range root.All() {
 		t.Run(tc.caseName, func(t *testing.T) {
 			t.Parallel()
@@ -35,7 +45,16 @@ func TestServer(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			h := test.BuildHandler()
+			ctrl := gomock.NewController(t)
+			h := test.BuildHandler(ctrl)
+			if c := mockCalls[tc.caseName]; c != nil {
+				if c.drivingRecordCommand != nil {
+					c.drivingRecordCommand(h.DrivingRecordCommand)
+				}
+				if c.drivingRecordQuery != nil {
+					c.drivingRecordQuery(h.DrivingRecordQuery)
+				}
+			}
 			srv := httptest.NewServer(h)
 			t.Cleanup(srv.Close)
 
@@ -52,6 +71,7 @@ func TestServer(t *testing.T) {
 			defer gotResp.Body.Close()
 			assertsResponse(t, tc.Response, gotResp)
 		})
+		idx++
 	}
 }
 
@@ -124,4 +144,184 @@ func transformResponse(hr *http.Response) *responseExpectation {
 		Status: hr.StatusCode,
 		Body:   m,
 	}
+}
+
+type mocks struct {
+	drivingRecordCommand func(m *mock.MockDrivingRecordCommand)
+	drivingRecordQuery   func(m *mock.MockDrivingRecordQuery)
+}
+
+var mockCalls = map[string]*mocks{
+	"mutation recordDrivingRecord/ok": {
+		drivingRecordCommand: func(m *mock.MockDrivingRecordCommand) {
+			want := &domain.DrivingRecord{
+				DistanceKilometers: 12,
+				Date:               time.Date(2025, time.October, 3, 0, 0, 0, 0, time.UTC),
+			}
+			m.EXPECT().RecordDrivingRecord(gomock.Any(), gomock.Any()).
+				DoAndReturn(func(ctx context.Context, record *domain.DrivingRecord) error {
+					return tests.Diff(want, record, cmpopts.EquateApproxTime(time.Millisecond), tests.EquateOptional[string]())
+				}).
+				Times(1)
+		},
+	},
+	"query monthlyReport/ok": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			wantInterval := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
+			}
+			ret := []*domain.DrivingRecord{
+				{
+					DistanceKilometers: 0,
+					Date:               time.Date(2025, time.October, 3, 0, 0, 0, 0, time.Local),
+				},
+				{
+					DistanceKilometers: 12,
+					Date:               time.Date(2025, time.October, 2, 0, 0, 0, 0, time.Local),
+				},
+				{
+					DistanceKilometers: 24,
+					Date:               time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local),
+				},
+			}
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(wantInterval), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(ret, nil).
+				Times(1)
+			m.EXPECT().
+				CalculateTotalDistance(gomock.Any(), eqTimeInterval(wantInterval)).
+				Return(36, nil).
+				Times(1)
+		},
+	},
+	"query recentDrivingRecords/ok": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			ret := []*domain.DrivingRecord{
+				{
+					DistanceKilometers: 0,
+					Date:               time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					DistanceKilometers: 12,
+					Date:               time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
+					Memo:               optional.Some("blah blah"),
+				},
+				{
+					DistanceKilometers: 24,
+					Date:               time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					DistanceKilometers: 36,
+					Date:               time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
+					Memo:               optional.Some("blah blah"),
+				},
+			}
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]()), domain.OrderDirectionDesc, cmpOptional(optional.Some(4))).
+				Return(ret, nil).
+				Times(1)
+		},
+	},
+	"query totalStatistics/ok": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			m.EXPECT().
+				CalculateTotalDistance(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]())).
+				Return(45678, nil).
+				Times(1)
+		},
+	},
+	"query yearlyReport/ok": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			octoberMonth := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
+			}
+			septemberMonth := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.September, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+			}
+			yearInterval := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.January, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2026, time.January, 1, 0, 0, 0, 0, time.Local)),
+			}
+
+			oct := []*domain.DrivingRecord{
+				{
+					DistanceKilometers: 0,
+					Date:               time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					DistanceKilometers: 12,
+					Date:               time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					DistanceKilometers: 24,
+					Date:               time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
+				},
+			}
+			sep := []*domain.DrivingRecord{
+				{
+					DistanceKilometers: 0,
+					Date:               time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					DistanceKilometers: 12,
+					Date:               time.Date(2025, time.September, 29, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					DistanceKilometers: 24,
+					Date:               time.Date(2025, time.September, 28, 12, 34, 56, 0, time.UTC),
+				},
+			}
+
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(yearInterval), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(slices.Concat(oct, sep), nil)
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(octoberMonth), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(oct, nil)
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(septemberMonth), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(sep, nil)
+
+			m.EXPECT().
+				CalculateTotalDistance(gomock.Any(), eqTimeInterval(yearInterval)).
+				Return(72, nil)
+			m.EXPECT().
+				CalculateTotalDistance(gomock.Any(), eqTimeInterval(octoberMonth)).
+				Return(36, nil)
+			m.EXPECT().
+				CalculateTotalDistance(gomock.Any(), eqTimeInterval(septemberMonth)).
+				Return(36, nil)
+		},
+	},
+}
+
+func eqTimeInterval(want domain.Interval[time.Time]) gomock.Matcher {
+	return gomock.WantFormatter(
+		gomock.StringerFunc(func() string { return fmt.Sprintf("%#v", want) }),
+		gomock.GotFormatterAdapter(
+			gomock.GotFormatterFunc(formatDetailed),
+			gomock.Cond(func(got domain.Interval[time.Time]) bool {
+				return want.Start.Open == got.Start.Open && want.End.Open == got.End.Open && want.Start.Value.Equal(got.Start.Value) && want.End.Value.Equal(got.End.Value)
+			}),
+		),
+	)
+}
+
+func cmpOptional[T comparable](want optional.Option[T]) gomock.Matcher {
+	return gomock.WantFormatter(
+		gomock.StringerFunc(func() string { return fmt.Sprintf("%#v", want) }),
+		gomock.GotFormatterAdapter(
+			gomock.GotFormatterFunc(formatDetailed),
+			gomock.Cond(func(got optional.Option[T]) bool {
+				return optional.Equal(want, got)
+			}),
+		),
+	)
+}
+
+func formatDetailed(got any) string {
+	return fmt.Sprintf("%#v", got)
 }
