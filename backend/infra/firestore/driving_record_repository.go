@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"careco/backend/domain"
+	"careco/backend/o11y/traceutils"
 	"careco/backend/types"
 	"careco/backend/usecases/ports"
 
@@ -41,7 +42,7 @@ var (
 
 func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, record *domain.DrivingRecord) (err error) {
 	ctx, span := r.tracer.Start(ctx, "RecordDrivingRecord")
-	defer span.End()
+	defer func() { traceutils.FinishSpan(span, err) }()
 
 	data := &dtoDrivingRecord{
 		Date:     record.Date,
@@ -56,7 +57,7 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 
 func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ int64, err error) {
 	ctx, span := r.tracer.Start(ctx, "CalculateTotalDistance")
-	defer span.End()
+	defer func() { traceutils.FinishSpan(span, err) }()
 
 	totalPath := "total"
 	query := r.collections.DrivingRecords(ctx).Query
@@ -76,7 +77,7 @@ func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, se
 
 func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) (_ []*domain.DrivingRecord, err error) {
 	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
-	defer span.End()
+	defer func() { traceutils.FinishSpan(span, err) }()
 
 	query := r.collections.DrivingRecords(ctx).Query
 	if whereClause := toWhere(searchPeriod); whereClause != nil {
@@ -101,7 +102,7 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 
 func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, records []*domain.DrivingRecord) (err error) {
 	ctx, span := r.tracer.Start(ctx, "BulkWriteDrivingRecords")
-	defer span.End()
+	defer func() { traceutils.FinishSpan(span, err) }()
 
 	f := func(ctx context.Context, tx *firestore.Transaction) error {
 		for _, record := range records {

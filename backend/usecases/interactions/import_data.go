@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"careco/backend/domain"
+	"careco/backend/o11y/traceutils"
 	"careco/backend/usecases"
 	"careco/backend/usecases/ports"
 
@@ -41,7 +42,7 @@ var _ usecases.ImportData = (*ImportData)(nil)
 
 func (u *ImportData) ImportData(ctx context.Context) (err error) {
 	ctx, span := u.tracer.Start(ctx, "ImportData")
-	defer span.End()
+	defer func() { traceutils.FinishSpan(span, err) }()
 
 	rows, err := parseRows(string(u.fileName))
 	if err != nil {
