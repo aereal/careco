@@ -111,8 +111,8 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 				Memo:     record.Memo.Ptr(),
 			}
 			docRef := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date))
-			if _, err := docRef.Set(ctx, data); err != nil {
-				return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
+			if err := tx.Set(docRef, data); err != nil {
+				return fmt.Errorf("firestore.Transaction.Set: %w", err)
 			}
 		}
 		return nil
