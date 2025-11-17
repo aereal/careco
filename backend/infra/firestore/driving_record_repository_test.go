@@ -45,8 +45,8 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 			},
 			wantErr: nil,
 			intervalToFind: domain.Interval[time.Time]{
-				Start: domain.OpenEndpoint(t2),
-				End:   domain.OpenEndpoint(t1),
+				Start: domain.ClosedEndpoint(t2),
+				End:   domain.ClosedEndpoint(t1),
 			},
 		},
 		{
@@ -61,8 +61,8 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 			},
 			wantErr: nil,
 			intervalToFind: domain.Interval[time.Time]{
-				Start: domain.OpenEndpoint(t5),
-				End:   domain.OpenEndpoint(t3),
+				Start: domain.ClosedEndpoint(t5),
+				End:   domain.ClosedEndpoint(t3),
 			},
 		},
 	}
@@ -124,8 +124,8 @@ func TestDrivingRecordRepository_CalculateTotalDistance(t *testing.T) {
 		{
 			name: "ok/with month filter",
 			interval: domain.Interval[time.Time]{
-				Start: domain.Endpoint[time.Time]{Value: baseDate, Open: true},
-				End:   domain.Endpoint[time.Time]{Value: nextMonth, Open: false},
+				Start: domain.OpenEndpoint(baseDate),
+				End:   domain.ClosedEndpoint(nextMonth),
 			},
 			wantVal: 5,
 			wantErr: nil,
@@ -207,8 +207,8 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 		{
 			name: "ok/with month filter",
 			interval: domain.Interval[time.Time]{
-				Start: domain.Endpoint[time.Time]{Value: baseDate, Open: true},
-				End:   domain.Endpoint[time.Time]{Value: nextMonth, Open: false},
+				Start: domain.OpenEndpoint(baseDate),
+				End:   domain.ClosedEndpoint(nextMonth),
 			},
 			want: []*domain.DrivingRecord{
 				{

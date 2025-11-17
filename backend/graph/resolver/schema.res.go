@@ -32,8 +32,8 @@ func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (i
 
 func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
 	interval := domain.Interval[time.Time]{
-		Start: domain.OpenEndpoint(obj.StartOfMonth()),
-		End:   domain.ClosedEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
+		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
+		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
 	}
 	total, err := r.drivingRecordQuery.CalculateTotalDistance(ctx, interval)
 	if err != nil {
@@ -44,8 +44,8 @@ func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dto
 
 func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.MonthlyReport) ([]*dtos.DailyReport, error) {
 	interval := domain.Interval[time.Time]{
-		Start: domain.OpenEndpoint(obj.StartOfMonth()),
-		End:   domain.ClosedEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
+		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
+		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
 	}
 	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, interval, domain.OrderDirectionAsc, optional.None[int]())
 	if err != nil {
@@ -105,8 +105,8 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {
 	yearlyReport := &dtos.YearlyReport{Year: year}
 	interval := domain.Interval[time.Time]{
-		Start: domain.OpenEndpoint(yearlyReport.StartOfYear()),
-		End:   domain.ClosedEndpoint(timeops.StartOfNextYear(yearlyReport.StartOfYear())),
+		Start: domain.ClosedEndpoint(yearlyReport.StartOfYear()),
+		End:   domain.OpenEndpoint(timeops.StartOfNextYear(yearlyReport.StartOfYear())),
 	}
 	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, interval, domain.OrderDirectionAsc, optional.None[int]())
 	if err != nil {
@@ -133,8 +133,8 @@ func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.
 
 func (r *yearlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.YearlyReport) (int, error) {
 	interval := domain.Interval[time.Time]{
-		Start: domain.OpenEndpoint(obj.StartOfYear()),
-		End:   domain.ClosedEndpoint(timeops.StartOfNextYear(obj.StartOfYear())),
+		Start: domain.ClosedEndpoint(obj.StartOfYear()),
+		End:   domain.OpenEndpoint(timeops.StartOfNextYear(obj.StartOfYear())),
 	}
 	total, err := r.drivingRecordQuery.CalculateTotalDistance(ctx, interval)
 	if err != nil {

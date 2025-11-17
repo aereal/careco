@@ -168,8 +168,8 @@ var mockCalls = map[string]*mocks{
 	"query monthlyReport/ok": {
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			wantInterval := domain.Interval[time.Time]{
-				Start: domain.OpenEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
-				End:   domain.ClosedEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
+				Start: domain.ClosedEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
 			}
 			ret := []*domain.DrivingRecord{
 				{
@@ -234,16 +234,16 @@ var mockCalls = map[string]*mocks{
 	"query yearlyReport/ok": {
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			octoberMonth := domain.Interval[time.Time]{
-				Start: domain.OpenEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
-				End:   domain.ClosedEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
+				Start: domain.ClosedEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
 			}
 			septemberMonth := domain.Interval[time.Time]{
-				Start: domain.OpenEndpoint(time.Date(2025, time.September, 1, 0, 0, 0, 0, time.Local)),
-				End:   domain.ClosedEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+				Start: domain.ClosedEndpoint(time.Date(2025, time.September, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
 			}
 			yearInterval := domain.Interval[time.Time]{
-				Start: domain.OpenEndpoint(time.Date(2025, time.January, 1, 0, 0, 0, 0, time.Local)),
-				End:   domain.ClosedEndpoint(time.Date(2026, time.January, 1, 0, 0, 0, 0, time.Local)),
+				Start: domain.ClosedEndpoint(time.Date(2025, time.January, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2026, time.January, 1, 0, 0, 0, 0, time.Local)),
 			}
 
 			oct := []*domain.DrivingRecord{

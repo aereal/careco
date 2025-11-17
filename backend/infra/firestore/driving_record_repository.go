@@ -159,7 +159,7 @@ func toWhere(searchPeriod domain.Interval[time.Time]) firestore.EntityFilter {
 
 func filterFragment(path string, baseOp string, endpoint domain.Endpoint[time.Time]) firestore.EntityFilter {
 	op := baseOp
-	if endpoint.Open {
+	if !endpoint.Open {
 		op += "="
 	}
 	return firestore.PropertyFilter{
