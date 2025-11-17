@@ -39,14 +39,12 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 	ctx, span := r.tracer.Start(ctx, "RecordDrivingRecord")
 	defer span.End()
 
-	utc := record.Date.UTC()
-	utcDate := time.Date(utc.Year(), utc.Month(), utc.Day(), 0, 0, 0, 0, time.UTC)
 	data := &dtoDrivingRecord{
-		Date:     utcDate,
+		Date:     record.Date,
 		Distance: record.DistanceKilometers,
 		Memo:     record.Memo.Ptr(),
 	}
-	if _, err := r.collections.DrivingRecords(ctx).Doc(epochID(utcDate)).Set(ctx, data); err != nil {
+	if _, err := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date)).Set(ctx, data); err != nil {
 		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
 	}
 	return nil

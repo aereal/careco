@@ -17,18 +17,53 @@ import (
 func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 	t.Parallel()
 
+	t1 := time.Now().Truncate(time.Microsecond)
+	t2 := t1.Add(time.Second * -1)
+	t3 := t2.Add(time.Hour * 24 * -1)
+	t4 := t3.Add(time.Second * -1)
+	t5 := t4.Add(time.Second * -1)
 	testCases := []struct {
-		name    string
-		record  *domain.DrivingRecord
-		wantErr error
+		name           string
+		inputs         []*domain.DrivingRecord
+		intervalToFind domain.Interval[time.Time]
+		wantRecords    []*domain.DrivingRecord
+		wantErr        error
 	}{
 		{
 			name: "ok",
-			record: &domain.DrivingRecord{
-				Date:               time.Now(),
-				DistanceKilometers: 123,
+			inputs: []*domain.DrivingRecord{
+				{
+					Date:               t1,
+					DistanceKilometers: 123,
+				},
+			},
+			wantRecords: []*domain.DrivingRecord{
+				{
+					Date:               t1,
+					DistanceKilometers: 123,
+				},
 			},
 			wantErr: nil,
+			intervalToFind: domain.Interval[time.Time]{
+				Start: domain.OpenEndpoint(t2),
+				End:   domain.OpenEndpoint(t1),
+			},
+		},
+		{
+			name: "multiple calls on same date",
+			inputs: []*domain.DrivingRecord{
+				{Date: t3, DistanceKilometers: 45},
+				{Date: t4, DistanceKilometers: 67},
+			},
+			wantRecords: []*domain.DrivingRecord{
+				{Date: t4, DistanceKilometers: 67},
+				{Date: t3, DistanceKilometers: 45},
+			},
+			wantErr: nil,
+			intervalToFind: domain.Interval[time.Time]{
+				Start: domain.OpenEndpoint(t5),
+				End:   domain.OpenEndpoint(t3),
+			},
 		},
 	}
 	for _, tc := range testCases {
@@ -40,8 +75,22 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			gotErr := r.RecordDrivingRecord(ctx, tc.record)
+			var gotErr error
+			for _, input := range tc.inputs {
+				err := r.RecordDrivingRecord(ctx, input)
+				if err != nil {
+					gotErr = errors.Join(gotErr, err)
+				}
+			}
 			tests.AssertsErrors(t, tc.wantErr, gotErr)
+
+			gotRecords, err := r.FindRecordsInPeriod(ctx, tc.intervalToFind, domain.OrderDirectionAsc, optional.None[int]())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := tests.Diff(tc.wantRecords, gotRecords, tests.EquateOptional[string](), tests.EquateOptional[int]()); err != nil {
+				t.Error(err)
+			}
 		})
 	}
 }
