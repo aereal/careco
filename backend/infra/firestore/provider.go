@@ -22,6 +22,7 @@ type (
 func ProvideEmulatorClient(ctx context.Context, projectID ProjectID, emulatorAddr EmulatorAddr, tp trace.TracerProvider) (*firestore.Client, error) {
 	conn, err := grpc.NewClient(string(emulatorAddr),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler(otelgrpc.WithPropagators(propagation.TraceContext{}), otelgrpc.WithTracerProvider(tp))),
+		grpc.WithStatsHandler(firestoreAttrGetter{}),
 		grpc.WithPerRPCCredentials(emulatorCreds{}),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
