@@ -53,9 +53,10 @@ func (u *ImportData) ImportData(ctx context.Context) (err error) {
 	slices.Reverse(rows)
 	for right, left := range seq.Pairwise(slices.Values(rows)) {
 		records = append(records, &domain.DrivingRecord{
-			Memo:               optional.None[string](),
-			Date:               right.date,
-			DistanceKilometers: right.distance - left.distance,
+			Memo:                    optional.None[string](),
+			Date:                    right.date,
+			DistanceKilometers:      right.distance - left.distance,
+			TotalDistanceKilometers: right.distance,
 		})
 	}
 

@@ -154,12 +154,12 @@ type mocks struct {
 var mockCalls = map[string]*mocks{
 	"mutation recordDrivingRecord/ok": {
 		drivingRecordCommand: func(m *mock.MockDrivingRecordCommand) {
-			want := &domain.DrivingRecord{
+			want := &domain.DrivingRecordToRecord{
 				DistanceKilometers: 12,
 				Date:               time.Date(2025, time.October, 3, 0, 0, 0, 0, time.UTC),
 			}
 			m.EXPECT().RecordDrivingRecord(gomock.Any(), gomock.Any()).
-				DoAndReturn(func(ctx context.Context, record *domain.DrivingRecord) error {
+				DoAndReturn(func(ctx context.Context, record *domain.DrivingRecordToRecord) error {
 					return tests.Diff(want, record, cmpopts.EquateApproxTime(time.Millisecond), tests.EquateOptional[string]())
 				}).
 				Times(1)

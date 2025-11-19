@@ -63,7 +63,7 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 }
 
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
-	record := &domain.DrivingRecord{
+	record := &domain.DrivingRecordToRecord{
 		Date:               date,
 		DistanceKilometers: int64(distanceKilometers),
 		Memo:               optional.FromPtr(memo),

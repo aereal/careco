@@ -44,7 +44,7 @@ func (m *MockDrivingRecordCommand) EXPECT() *MockDrivingRecordCommandMockRecorde
 }
 
 // RecordDrivingRecord mocks base method.
-func (m *MockDrivingRecordCommand) RecordDrivingRecord(ctx context.Context, record *domain.DrivingRecord) error {
+func (m *MockDrivingRecordCommand) RecordDrivingRecord(ctx context.Context, record *domain.DrivingRecordToRecord) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RecordDrivingRecord", ctx, record)
 	ret0, _ := ret[0].(error)
@@ -70,13 +70,13 @@ func (c *MockDrivingRecordCommandRecordDrivingRecordCall) Return(arg0 error) *Mo
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockDrivingRecordCommandRecordDrivingRecordCall) Do(f func(context.Context, *domain.DrivingRecord) error) *MockDrivingRecordCommandRecordDrivingRecordCall {
+func (c *MockDrivingRecordCommandRecordDrivingRecordCall) Do(f func(context.Context, *domain.DrivingRecordToRecord) error) *MockDrivingRecordCommandRecordDrivingRecordCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockDrivingRecordCommandRecordDrivingRecordCall) DoAndReturn(f func(context.Context, *domain.DrivingRecord) error) *MockDrivingRecordCommandRecordDrivingRecordCall {
+func (c *MockDrivingRecordCommandRecordDrivingRecordCall) DoAndReturn(f func(context.Context, *domain.DrivingRecordToRecord) error) *MockDrivingRecordCommandRecordDrivingRecordCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

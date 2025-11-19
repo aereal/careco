@@ -24,14 +24,14 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 	t5 := t4.Add(time.Second * -1)
 	testCases := []struct {
 		name           string
-		inputs         []*domain.DrivingRecord
+		inputs         []*domain.DrivingRecordToRecord
 		intervalToFind domain.Interval[time.Time]
 		wantRecords    []*domain.DrivingRecord
 		wantErr        error
 	}{
 		{
 			name: "ok",
-			inputs: []*domain.DrivingRecord{
+			inputs: []*domain.DrivingRecordToRecord{
 				{
 					Date:               t1,
 					DistanceKilometers: 123,
@@ -51,7 +51,7 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 		},
 		{
 			name: "multiple calls on same date",
-			inputs: []*domain.DrivingRecord{
+			inputs: []*domain.DrivingRecordToRecord{
 				{Date: t3, DistanceKilometers: 45},
 				{Date: t4, DistanceKilometers: 67},
 			},
@@ -115,9 +115,9 @@ func TestDrivingRecordRepository_CalculateTotalDistance(t *testing.T) {
 			wantErr:  nil,
 			prepare: func(ctx context.Context, r *firestore.DrivingRecordRepository) error {
 				return errors.Join(
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
 				)
 			},
 		},
@@ -131,9 +131,9 @@ func TestDrivingRecordRepository_CalculateTotalDistance(t *testing.T) {
 			wantErr: nil,
 			prepare: func(ctx context.Context, r *firestore.DrivingRecordRepository) error {
 				return errors.Join(
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
 				)
 			},
 		},
@@ -198,9 +198,9 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 			wantErr: nil,
 			prepare: func(ctx context.Context, r *firestore.DrivingRecordRepository) error {
 				return errors.Join(
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
 				)
 			},
 		},
@@ -223,9 +223,9 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 			wantErr: nil,
 			prepare: func(ctx context.Context, r *firestore.DrivingRecordRepository) error {
 				return errors.Join(
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
-					r.RecordDrivingRecord(ctx, &domain.DrivingRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 2, Date: time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC)}),
+					r.RecordDrivingRecord(ctx, &domain.DrivingRecordToRecord{DistanceKilometers: 3, Date: time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC)}),
 				)
 			},
 		},
