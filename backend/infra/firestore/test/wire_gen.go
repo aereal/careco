@@ -9,14 +9,13 @@ package test
 import (
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
-	"careco/backend/o11y/test"
 	"context"
 )
 
 // Injectors from wire.go:
 
 func BuildDrivingRecordRepository(contextContext context.Context) (*firestore.DrivingRecordRepository, error) {
-	tracerProvider := test.ProvideNoopTracerProvider()
+	tracerProvider := provideTracerProvider()
 	projectID := _wireProjectIDValue
 	environment := config.ProvideEnvironment()
 	emulatorAddr := provideEmulatorAddr(environment)
