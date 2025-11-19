@@ -74,8 +74,9 @@ func getQuery(payload any) (string, bool) {
 
 func addResponseAttrs(span trace.Span, resp *firestorepb.RunQueryResponse) {
 	attrs := make([]attribute.KeyValue, 1, 2)
-	attrs[0] = attribute.String("db.collection.name", path.Dir(resp.Document.Name))
-	if ns, _, ok := strings.Cut(resp.Document.Name, "/documents/"); ok {
+	name := resp.GetDocument().GetName()
+	attrs[0] = attribute.String("db.collection.name", path.Dir(name))
+	if ns, _, ok := strings.Cut(name, "/documents/"); ok {
 		attrs = append(attrs, attribute.String("db.namespace", ns))
 	}
 	span.SetAttributes(attrs...)
