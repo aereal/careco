@@ -7,15 +7,13 @@
 package main
 
 import (
-	"careco/backend/cmd/server/internal"
+	"careco/backend/cmd/import-data/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
-	"careco/backend/graph"
-	"careco/backend/graph/resolver"
 	"careco/backend/infra/firestore"
 	"careco/backend/log"
 	"careco/backend/o11y"
-	"careco/backend/web"
+	"careco/backend/usecases/interactions"
 	"context"
 )
 
@@ -40,7 +38,6 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	port := providers.ProvidePort(environment)
 	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
 	client, err := firestore.ProvideEmulatorClient(contextContext, projectID, emulatorAddr, tracerProvider)
@@ -49,10 +46,12 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	}
 	collectionProvider := firestore.ProvideProductionCollectionProvider(client)
 	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, collectionProvider, client)
-	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository)
-	server := graph.ProvideServer(tracerProvider, resolverResolver)
-	webServer := web.ProvideServer(port, tracerProvider, server)
-	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
+	exportFileName, err := providers.ProvideExportFileName(environment)
+	if err != nil {
+		return nil, err
+	}
+	importData := interactions.ProvideImportData(tracerProvider, drivingRecordRepository, exportFileName)
+	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, importData)
 	return entrypoint, nil
 }
 

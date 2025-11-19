@@ -5,6 +5,7 @@ import (
 
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
+	"careco/backend/usecases/interactions"
 	"careco/backend/web"
 )
 
@@ -33,5 +34,14 @@ func ProvideFirestoreEmulatorAddr(e *config.Environment) firestore.EmulatorAddr 
 	return config.Yield(
 		"FIRESTORE_EMULATOR_ADDR",
 		config.WithDefaultValue[firestore.EmulatorAddr]("localhost:8888")(retrieve),
+	)
+}
+
+func ProvideExportFileName(e *config.Environment) (interactions.ExportFileName, error) {
+	cast := config.Cast(config.StringAs[interactions.ExportFileName])
+	retrieve := cast(config.EnvSource(e))
+	return config.Retrieve(
+		"EXPORT_FILE_NAME",
+		retrieve,
 	)
 }
