@@ -6,8 +6,15 @@ import (
 	"github.com/aereal/optional"
 )
 
-type DrivingRecord struct {
+type DrivingRecordToRecord struct {
 	Date               time.Time
 	DistanceKilometers int64
 	Memo               optional.Option[string]
+}
+
+type DrivingRecord struct {
+	Date                    time.Time
+	DistanceKilometers      int64
+	Memo                    optional.Option[string]
+	TotalDistanceKilometers int64
 }

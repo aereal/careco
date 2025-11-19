@@ -8,7 +8,7 @@ import (
 )
 
 type DrivingRecordCommand interface {
-	RecordDrivingRecord(ctx context.Context, record *DrivingRecord) error
+	RecordDrivingRecord(ctx context.Context, record *DrivingRecordToRecord) error
 }
 
 type DrivingRecordQuery interface {

@@ -40,17 +40,32 @@ var (
 	_ ports.DrivingRecordBulkWriter = (*DrivingRecordRepository)(nil)
 )
 
-func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, record *domain.DrivingRecord) (err error) {
+func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, record *domain.DrivingRecordToRecord) (err error) {
 	ctx, span := r.tracer.Start(ctx, "RecordDrivingRecord")
 	defer func() { traceutils.FinishSpan(span, err) }()
 
-	data := &dtoDrivingRecord{
-		Date:     record.Date,
-		Distance: record.DistanceKilometers,
-		Memo:     record.Memo.Ptr(),
+	newDoc := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date))
+	query := r.collections.DrivingRecords(ctx).OrderBy("Date", firestore.Desc).Limit(1)
+	f := func(ctx context.Context, tx *firestore.Transaction) error {
+		docs := tx.Documents(query)
+		defer docs.Stop()
+		lastTotalDistance, err := getLastTotalDistance(docs)
+		if err != nil {
+			return err
+		}
+		newDTO := &dtoDrivingRecord{
+			Date:          record.Date,
+			Distance:      record.DistanceKilometers,
+			TotalDistance: lastTotalDistance,
+			Memo:          record.Memo.Ptr(),
+		}
+		if err := tx.Set(newDoc, newDTO); err != nil {
+			return fmt.Errorf("firestore.Transaction.Set: %w", err)
+		}
+		return nil
 	}
-	if _, err := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date)).Set(ctx, data); err != nil {
-		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
+	if err := r.txRunner.RunTransaction(ctx, f); err != nil {
+		return fmt.Errorf("RunTransaction: %w", err)
 	}
 	return nil
 }
@@ -100,18 +115,19 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 	return records, nil
 }
 
-func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, records []*domain.DrivingRecord) (err error) {
+func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, items []*domain.DrivingRecord) (err error) {
 	ctx, span := r.tracer.Start(ctx, "BulkWriteDrivingRecords")
 	defer func() { traceutils.FinishSpan(span, err) }()
 
 	f := func(ctx context.Context, tx *firestore.Transaction) error {
-		for _, record := range records {
+		for _, item := range items {
 			data := &dtoDrivingRecord{
-				Date:     record.Date,
-				Distance: record.DistanceKilometers,
-				Memo:     record.Memo.Ptr(),
+				Date:          item.Date,
+				Distance:      item.DistanceKilometers,
+				Memo:          item.Memo.Ptr(),
+				TotalDistance: item.TotalDistanceKilometers,
 			}
-			docRef := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date))
+			docRef := r.collections.DrivingRecords(ctx).Doc(epochID(item.Date))
 			if err := tx.Set(docRef, data); err != nil {
 				return fmt.Errorf("firestore.Transaction.Set: %w", err)
 			}
@@ -125,9 +141,10 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 }
 
 type dtoDrivingRecord struct {
-	Date     time.Time
-	Distance int64
-	Memo     *string
+	Date          time.Time
+	Distance      int64
+	TotalDistance int64
+	Memo          *string
 }
 
 func epochID(t time.Time) string {
@@ -163,9 +180,10 @@ func iterateDrivingRecords(docs *firestore.DocumentIterator) iter.Seq[*result[*d
 				return
 			}
 			record := &domain.DrivingRecord{
-				Date:               dto.Date,
-				DistanceKilometers: dto.Distance,
-				Memo:               optional.FromPtr(dto.Memo),
+				Date:                    dto.Date,
+				DistanceKilometers:      dto.Distance,
+				Memo:                    optional.FromPtr(dto.Memo),
+				TotalDistanceKilometers: dto.TotalDistance,
 			}
 			if !yield(&result[*domain.DrivingRecord]{value: record}) {
 				return
@@ -201,4 +219,19 @@ func filterFragment(path string, baseOp string, endpoint domain.Endpoint[time.Ti
 var directionMapping = map[domain.OrderDirection]firestore.Direction{
 	domain.OrderDirectionAsc:  firestore.Asc,
 	domain.OrderDirectionDesc: firestore.Desc,
+}
+
+func getLastTotalDistance(docs *firestore.DocumentIterator) (int64, error) {
+	snapshot, err := docs.Next()
+	if errors.Is(err, iterator.Done) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("firestore.DocumentIterator.Next: %w", err)
+	}
+	var dto struct{ TotalDistance int64 }
+	if err := snapshot.DataTo(&dto); err != nil {
+		return 0, fmt.Errorf("firestore.DocumentSnapshot.DataTo: %w", err)
+	}
+	return dto.TotalDistance, nil
 }
