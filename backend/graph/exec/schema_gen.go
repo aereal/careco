@@ -26,7 +26,7 @@ type DailyReportResolver interface {
 }
 type MonthlyReportResolver interface {
 	DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error)
-	DailyReports(ctx context.Context, obj *dtos.MonthlyReport) ([]*dtos.DailyReport, error)
+	DailyReports(ctx context.Context, obj *dtos.MonthlyReport) (*dtos.DrivingRecordsConnection, error)
 }
 type MutationResolver interface {
 	RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error)
@@ -437,7 +437,7 @@ func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, fie
 			return ec.resolvers.MonthlyReport().DailyReports(ctx, obj)
 		},
 		nil,
-		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
+		ec.marshalNDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDrivingRecordsConnection,
 		true,
 		true,
 	)
@@ -451,20 +451,10 @@ func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "year":
-				return ec.fieldContext_DailyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_DailyReport_month(ctx, field)
-			case "day":
-				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "distanceKilometers":
-				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
-			case "recordedAt":
-				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
-			case "memo":
-				return ec.fieldContext_DailyReport_memo(ctx, field)
+			case "nodes":
+				return ec.fieldContext_DrivingRecordsConnection_nodes(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type DrivingRecordsConnection", field.Name)
 		},
 	}
 	return fc, nil

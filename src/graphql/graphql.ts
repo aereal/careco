@@ -62,7 +62,7 @@ export type Month =
   | 'SEPTEMBER';
 
 export type MonthlyReport = DistanceReport & {
-  readonly dailyReports: ReadonlyArray<DailyReport>;
+  readonly dailyReports: DrivingRecordsConnection;
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Month;
   readonly year: Scalars['Int']['output'];

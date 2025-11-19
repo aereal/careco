@@ -404,7 +404,7 @@ type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
   distanceKilometers: Int!
-  dailyReports: [DailyReport!]!
+  dailyReports: DrivingRecordsConnection!
 }
 
 type DailyReport implements DistanceReport {
