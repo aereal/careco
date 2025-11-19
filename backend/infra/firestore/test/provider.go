@@ -3,6 +3,10 @@ package test
 import (
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
+
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace/tracetest"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func provideEmulatorAddr(e *config.Environment) firestore.EmulatorAddr {
@@ -12,4 +16,8 @@ func provideEmulatorAddr(e *config.Environment) firestore.EmulatorAddr {
 		"TEST_FIRESTORE_EMULATOR_ADDR",
 		config.WithDefaultValue[firestore.EmulatorAddr]("localhost:8889")(retrieve),
 	)
+}
+
+func provideTracerProvider() trace.TracerProvider {
+	return sdktrace.NewTracerProvider(sdktrace.WithBatcher(tracetest.NewInMemoryExporter()))
 }
