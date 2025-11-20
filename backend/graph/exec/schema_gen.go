@@ -26,7 +26,7 @@ type DailyReportResolver interface {
 }
 type MonthlyReportResolver interface {
 	DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error)
-	DailyReports(ctx context.Context, obj *dtos.MonthlyReport) ([]*dtos.DailyReport, error)
+	DailyReports(ctx context.Context, obj *dtos.MonthlyReport) (*dtos.DailyReportsConnection, error)
 }
 type MutationResolver interface {
 	RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error)
@@ -297,6 +297,49 @@ func (ec *executionContext) fieldContext_DailyReport_memo(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _DailyReportsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReportsConnection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DailyReportsConnection_nodes,
+		func(ctx context.Context) (any, error) {
+			return obj.Nodes, nil
+		},
+		nil,
+		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DailyReportsConnection_nodes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DailyReportsConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "year":
+				return ec.fieldContext_DailyReport_year(ctx, field)
+			case "month":
+				return ec.fieldContext_DailyReport_month(ctx, field)
+			case "day":
+				return ec.fieldContext_DailyReport_day(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
+			case "recordedAt":
+				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
+			case "memo":
+				return ec.fieldContext_DailyReport_memo(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _MonthlyReport_year(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -394,7 +437,7 @@ func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, fie
 			return ec.resolvers.MonthlyReport().DailyReports(ctx, obj)
 		},
 		nil,
-		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
+		ec.marshalNDailyReportsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection,
 		true,
 		true,
 	)
@@ -408,20 +451,10 @@ func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "year":
-				return ec.fieldContext_DailyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_DailyReport_month(ctx, field)
-			case "day":
-				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "distanceKilometers":
-				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
-			case "recordedAt":
-				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
-			case "memo":
-				return ec.fieldContext_DailyReport_memo(ctx, field)
+			case "nodes":
+				return ec.fieldContext_DailyReportsConnection_nodes(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type DailyReportsConnection", field.Name)
 		},
 	}
 	return fc, nil
@@ -979,6 +1012,13 @@ func (ec *executionContext) _DrivingRecordsConnection(ctx context.Context, sel a
 			return graphql.Null
 		}
 		return ec._RecentDrivingRecordsConnection(ctx, sel, obj)
+	case dtos.DailyReportsConnection:
+		return ec._DailyReportsConnection(ctx, sel, &obj)
+	case *dtos.DailyReportsConnection:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._DailyReportsConnection(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -1119,6 +1159,45 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			}
 		case "memo":
 			out.Values[i] = ec._DailyReport_memo(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var dailyReportsConnectionImplementors = []string{"DailyReportsConnection", "DrivingRecordsConnection"}
+
+func (ec *executionContext) _DailyReportsConnection(ctx context.Context, sel ast.SelectionSet, obj *dtos.DailyReportsConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dailyReportsConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DailyReportsConnection")
+		case "nodes":
+			out.Values[i] = ec._DailyReportsConnection_nodes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1667,6 +1746,20 @@ func (ec *executionContext) marshalNDailyReport2ᚖcarecoᚋbackendᚋgraphᚋdt
 		return graphql.Null
 	}
 	return ec._DailyReport(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDailyReportsConnection2carecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection(ctx context.Context, sel ast.SelectionSet, v dtos.DailyReportsConnection) graphql.Marshaler {
+	return ec._DailyReportsConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDailyReportsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.DailyReportsConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DailyReportsConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNDateTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {

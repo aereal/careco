@@ -37,7 +37,7 @@ type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
   distanceKilometers: Int!
-  dailyReports: [DailyReport!]!
+  dailyReports: DailyReportsConnection!
 }
 
 type DailyReport implements DistanceReport {
@@ -50,6 +50,10 @@ type DailyReport implements DistanceReport {
 }
 
 type RecentDrivingRecordsConnection implements DrivingRecordsConnection {
+  nodes: [DailyReport!]!
+}
+
+type DailyReportsConnection implements DrivingRecordsConnection {
   nodes: [DailyReport!]!
 }
 

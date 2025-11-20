@@ -23,6 +23,22 @@ type DailyReport struct {
 
 func (DailyReport) IsDistanceReport() {}
 
+type DailyReportsConnection struct {
+	Nodes []*DailyReport `json:"nodes"`
+}
+
+func (DailyReportsConnection) IsDrivingRecordsConnection() {}
+func (this DailyReportsConnection) GetNodes() []*DailyReport {
+	if this.Nodes == nil {
+		return nil
+	}
+	interfaceSlice := make([]*DailyReport, 0, len(this.Nodes))
+	for _, concrete := range this.Nodes {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
 type MonthlyReport struct {
 	Year  int        `json:"year"`
 	Month time.Month `json:"month"`

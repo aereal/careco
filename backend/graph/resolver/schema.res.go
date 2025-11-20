@@ -42,7 +42,7 @@ func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dto
 	return int(total), nil
 }
 
-func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.MonthlyReport) ([]*dtos.DailyReport, error) {
+func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.MonthlyReport) (*dtos.DailyReportsConnection, error) {
 	interval := domain.Interval[time.Time]{
 		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
 		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
@@ -51,15 +51,15 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 	if err != nil {
 		return nil, fmt.Errorf("FindRecordsInPeriod: %w", err)
 	}
-	reports := make([]*dtos.DailyReport, len(records))
+	conn := &dtos.DailyReportsConnection{Nodes: make([]*dtos.DailyReport, len(records))}
 	for i, record := range records {
-		reports[i] = &dtos.DailyReport{
+		conn.Nodes[i] = &dtos.DailyReport{
 			DistanceKilometers: int(record.DistanceKilometers),
 			RecordedAt:         record.Date,
 			Memo:               record.Memo.Ptr(),
 		}
 	}
-	return reports, nil
+	return conn, nil
 }
 
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {

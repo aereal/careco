@@ -39,6 +39,10 @@ export type DailyReport = DistanceReport & {
   readonly year: Scalars['Int']['output'];
 };
 
+export type DailyReportsConnection = DrivingRecordsConnection & {
+  readonly nodes: ReadonlyArray<DailyReport>;
+};
+
 export type DistanceReport = {
   readonly distanceKilometers: Scalars['Int']['output'];
 };
@@ -62,7 +66,7 @@ export type Month =
   | 'SEPTEMBER';
 
 export type MonthlyReport = DistanceReport & {
-  readonly dailyReports: ReadonlyArray<DailyReport>;
+  readonly dailyReports: DailyReportsConnection;
   readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Month;
   readonly year: Scalars['Int']['output'];
@@ -123,7 +127,9 @@ export type GetRootQuery = {
     };
   };
   readonly recentDrivingRecords: {
-    ' $fragmentRefs'?: { RecordListFragment: RecordListFragment };
+    ' $fragmentRefs'?: {
+      RecordList_RecentDrivingRecordsConnection_Fragment: RecordList_RecentDrivingRecordsConnection_Fragment;
+    };
   };
 };
 
@@ -141,12 +147,23 @@ export type MonthReportQuery = {
   };
 };
 
-export type RecordListFragment = {
+type RecordList_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
     readonly distanceKilometers: number;
     readonly recordedAt: Date;
   }>;
-} & { ' $fragmentName'?: 'RecordListFragment' };
+} & { ' $fragmentName'?: 'RecordList_DailyReportsConnection_Fragment' };
+
+type RecordList_RecentDrivingRecordsConnection_Fragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly distanceKilometers: number;
+    readonly recordedAt: Date;
+  }>;
+} & { ' $fragmentName'?: 'RecordList_RecentDrivingRecordsConnection_Fragment' };
+
+export type RecordListFragment =
+  | RecordList_DailyReportsConnection_Fragment
+  | RecordList_RecentDrivingRecordsConnection_Fragment;
 
 export type MonthlySummaryFragment = {
   readonly year: number;

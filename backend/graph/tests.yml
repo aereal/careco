@@ -52,10 +52,12 @@ cases:
             month
             distanceKilometers
             dailyReports {
-              year
-              month
-              day
-              distanceKilometers
+              nodes {
+                year
+                month
+                day
+                distanceKilometers
+              }
             }
           }
         }
@@ -69,21 +71,22 @@ cases:
           month: OCTOBER
           distanceKilometers: 36
           dailyReports:
-            -
-              distanceKilometers: 0
-              year: 2025
-              month: OCTOBER
-              day: 3
-            -
-              distanceKilometers: 12
-              year: 2025
-              month: OCTOBER
-              day: 2
-            -
-              distanceKilometers: 24
-              year: 2025
-              month: OCTOBER
-              day: 1
+            nodes:
+              -
+                distanceKilometers: 0
+                year: 2025
+                month: OCTOBER
+                day: 3
+              -
+                distanceKilometers: 12
+                year: 2025
+                month: OCTOBER
+                day: 2
+              -
+                distanceKilometers: 24
+                year: 2025
+                month: OCTOBER
+                day: 1
   'query yearlyReport/ok':
     request:
       query: |
@@ -96,10 +99,12 @@ cases:
               month
               distanceKilometers
               dailyReports {
-                year
-                month
-                day
-                distanceKilometers
+                nodes {
+                  year
+                  month
+                  day
+                  distanceKilometers
+                }
               }
             }
           }
@@ -116,40 +121,42 @@ cases:
               year: 2025
               distanceKilometers: 36
               dailyReports:
-                -
-                  distanceKilometers: 0
-                  year: 2025
-                  month: OCTOBER
-                  day: 3
-                -
-                  distanceKilometers: 12
-                  year: 2025
-                  month: OCTOBER
-                  day: 2
-                -
-                  distanceKilometers: 24
-                  year: 2025
-                  month: OCTOBER
-                  day: 1
+                nodes:
+                  -
+                    distanceKilometers: 0
+                    year: 2025
+                    month: OCTOBER
+                    day: 3
+                  -
+                    distanceKilometers: 12
+                    year: 2025
+                    month: OCTOBER
+                    day: 2
+                  -
+                    distanceKilometers: 24
+                    year: 2025
+                    month: OCTOBER
+                    day: 1
             - month: SEPTEMBER
               year: 2025
               distanceKilometers: 36
               dailyReports:
-                -
-                  distanceKilometers: 0
-                  year: 2025
-                  month: SEPTEMBER
-                  day: 30
-                -
-                  distanceKilometers: 12
-                  year: 2025
-                  month: SEPTEMBER
-                  day: 29
-                -
-                  distanceKilometers: 24
-                  year: 2025
-                  month: SEPTEMBER
-                  day: 28
+                nodes:
+                  -
+                    distanceKilometers: 0
+                    year: 2025
+                    month: SEPTEMBER
+                    day: 30
+                  -
+                    distanceKilometers: 12
+                    year: 2025
+                    month: SEPTEMBER
+                    day: 29
+                  -
+                    distanceKilometers: 24
+                    year: 2025
+                    month: SEPTEMBER
+                    day: 28
   'mutation recordDrivingRecord/ok':
     request:
       query: |
