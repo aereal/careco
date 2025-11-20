@@ -36,6 +36,7 @@ export type DailyReport = DistanceReport & {
   readonly memo?: Maybe<Scalars['String']['output']>;
   readonly month: Month;
   readonly recordedAt: Scalars['DateTime']['output'];
+  readonly totalDistanceKilometers: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
 

@@ -41,6 +41,7 @@ type DailyReport implements DistanceReport {
   month: Month!
   day: Int!
   distanceKilometers: Int!
+  totalDistanceKilometers: Int!
   recordedAt: DateTime!
   memo: String
 }

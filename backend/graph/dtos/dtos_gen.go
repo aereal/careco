@@ -11,9 +11,10 @@ type DistanceReport interface {
 }
 
 type DailyReport struct {
-	DistanceKilometers int       `json:"distanceKilometers"`
-	RecordedAt         time.Time `json:"recordedAt"`
-	Memo               *string   `json:"memo,omitempty"`
+	DistanceKilometers      int       `json:"distanceKilometers"`
+	TotalDistanceKilometers int       `json:"totalDistanceKilometers"`
+	RecordedAt              time.Time `json:"recordedAt"`
+	Memo                    *string   `json:"memo,omitempty"`
 }
 
 func (DailyReport) IsDistanceReport() {}

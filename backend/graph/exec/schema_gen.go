@@ -239,6 +239,35 @@ func (ec *executionContext) fieldContext_DailyReport_distanceKilometers(_ contex
 	return fc, nil
 }
 
+func (ec *executionContext) _DailyReport_totalDistanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DailyReport_totalDistanceKilometers,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalDistanceKilometers, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DailyReport_totalDistanceKilometers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DailyReport",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DailyReport_recordedAt(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -329,6 +358,8 @@ func (ec *executionContext) fieldContext_DrivingRecordsConnection_nodes(_ contex
 				return ec.fieldContext_DailyReport_day(ctx, field)
 			case "distanceKilometers":
 				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
+			case "totalDistanceKilometers":
+				return ec.fieldContext_DailyReport_totalDistanceKilometers(ctx, field)
 			case "recordedAt":
 				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
 			case "memo":
@@ -1083,6 +1114,11 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "distanceKilometers":
 			out.Values[i] = ec._DailyReport_distanceKilometers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "totalDistanceKilometers":
+			out.Values[i] = ec._DailyReport_totalDistanceKilometers(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

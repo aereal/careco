@@ -45,12 +45,13 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	DailyReport struct {
-		Day                func(childComplexity int) int
-		DistanceKilometers func(childComplexity int) int
-		Memo               func(childComplexity int) int
-		Month              func(childComplexity int) int
-		RecordedAt         func(childComplexity int) int
-		Year               func(childComplexity int) int
+		Day                     func(childComplexity int) int
+		DistanceKilometers      func(childComplexity int) int
+		Memo                    func(childComplexity int) int
+		Month                   func(childComplexity int) int
+		RecordedAt              func(childComplexity int) int
+		TotalDistanceKilometers func(childComplexity int) int
+		Year                    func(childComplexity int) int
 	}
 
 	DrivingRecordsConnection struct {
@@ -139,6 +140,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.DailyReport.RecordedAt(childComplexity), true
+
+	case "DailyReport.totalDistanceKilometers":
+		if e.complexity.DailyReport.TotalDistanceKilometers == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.TotalDistanceKilometers(childComplexity), true
 
 	case "DailyReport.year":
 		if e.complexity.DailyReport.Year == nil {
@@ -412,6 +420,7 @@ type DailyReport implements DistanceReport {
   month: Month!
   day: Int!
   distanceKilometers: Int!
+  totalDistanceKilometers: Int!
   recordedAt: DateTime!
   memo: String
 }

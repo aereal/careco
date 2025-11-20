@@ -54,9 +54,10 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 	conn := &dtos.DrivingRecordsConnection{Nodes: make([]*dtos.DailyReport, len(records))}
 	for i, record := range records {
 		conn.Nodes[i] = &dtos.DailyReport{
-			DistanceKilometers: int(record.DistanceKilometers),
-			RecordedAt:         record.Date,
-			Memo:               record.Memo.Ptr(),
+			DistanceKilometers:      int(record.DistanceKilometers),
+			RecordedAt:              record.Date,
+			Memo:                    record.Memo.Ptr(),
+			TotalDistanceKilometers: int(record.TotalDistanceKilometers),
 		}
 	}
 	return conn, nil
@@ -94,9 +95,10 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 	}
 	for i, record := range records {
 		conn.Nodes[i] = &dtos.DailyReport{
-			DistanceKilometers: int(record.DistanceKilometers),
-			RecordedAt:         record.Date,
-			Memo:               record.Memo.Ptr(),
+			DistanceKilometers:      int(record.DistanceKilometers),
+			RecordedAt:              record.Date,
+			Memo:                    record.Memo.Ptr(),
+			TotalDistanceKilometers: int(record.TotalDistanceKilometers),
 		}
 	}
 	return conn, nil
