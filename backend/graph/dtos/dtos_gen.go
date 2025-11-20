@@ -10,6 +10,11 @@ type DistanceReport interface {
 	IsDistanceReport()
 }
 
+type DrivingRecordsConnection interface {
+	IsDrivingRecordsConnection()
+	GetNodes() []*DailyReport
+}
+
 type DailyReport struct {
 	DistanceKilometers int       `json:"distanceKilometers"`
 	RecordedAt         time.Time `json:"recordedAt"`
@@ -18,16 +23,28 @@ type DailyReport struct {
 
 func (DailyReport) IsDistanceReport() {}
 
-type DrivingRecordsConnection struct {
-	Nodes []*DailyReport `json:"nodes"`
-}
-
 type MonthlyReport struct {
 	Year  int        `json:"year"`
 	Month time.Month `json:"month"`
 }
 
 func (MonthlyReport) IsDistanceReport() {}
+
+type RecentDrivingRecordsConnection struct {
+	Nodes []*DailyReport `json:"nodes"`
+}
+
+func (RecentDrivingRecordsConnection) IsDrivingRecordsConnection() {}
+func (this RecentDrivingRecordsConnection) GetNodes() []*DailyReport {
+	if this.Nodes == nil {
+		return nil
+	}
+	interfaceSlice := make([]*DailyReport, 0, len(this.Nodes))
+	for _, concrete := range this.Nodes {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
 
 type TotalStatistics struct {
 	DistanceKilometers int `json:"distanceKilometers"`

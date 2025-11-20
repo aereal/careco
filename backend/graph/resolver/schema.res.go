@@ -84,12 +84,12 @@ func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatist
 	}, nil
 }
 
-func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*dtos.DrivingRecordsConnection, error) {
+func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*dtos.RecentDrivingRecordsConnection, error) {
 	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(first))
 	if err != nil {
 		return nil, fmt.Errorf("DrivingRecordQuery.FindRecordsInPeriod: %w", err)
 	}
-	conn := &dtos.DrivingRecordsConnection{
+	conn := &dtos.RecentDrivingRecordsConnection{
 		Nodes: make([]*dtos.DailyReport, len(records)),
 	}
 	for i, record := range records {

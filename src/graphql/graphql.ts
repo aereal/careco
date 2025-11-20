@@ -80,7 +80,7 @@ export type MutationRecordDrivingRecordArgs = {
 
 export type Query = {
   readonly monthlyReport: MonthlyReport;
-  readonly recentDrivingRecords: DrivingRecordsConnection;
+  readonly recentDrivingRecords: RecentDrivingRecordsConnection;
   readonly totalStatistics: TotalStatistics;
   readonly yearlyReport: YearlyReport;
 };
@@ -96,6 +96,10 @@ export type QueryRecentDrivingRecordsArgs = {
 
 export type QueryYearlyReportArgs = {
   year: Scalars['Int']['input'];
+};
+
+export type RecentDrivingRecordsConnection = DrivingRecordsConnection & {
+  readonly nodes: ReadonlyArray<DailyReport>;
 };
 
 export type TotalStatistics = DistanceReport & {

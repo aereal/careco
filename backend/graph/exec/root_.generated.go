@@ -53,10 +53,6 @@ type ComplexityRoot struct {
 		Year               func(childComplexity int) int
 	}
 
-	DrivingRecordsConnection struct {
-		Nodes func(childComplexity int) int
-	}
-
 	MonthlyReport struct {
 		DailyReports       func(childComplexity int) int
 		DistanceKilometers func(childComplexity int) int
@@ -73,6 +69,10 @@ type ComplexityRoot struct {
 		RecentDrivingRecords func(childComplexity int, first int) int
 		TotalStatistics      func(childComplexity int) int
 		YearlyReport         func(childComplexity int, year int) int
+	}
+
+	RecentDrivingRecordsConnection struct {
+		Nodes func(childComplexity int) int
 	}
 
 	TotalStatistics struct {
@@ -146,13 +146,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.DailyReport.Year(childComplexity), true
-
-	case "DrivingRecordsConnection.nodes":
-		if e.complexity.DrivingRecordsConnection.Nodes == nil {
-			break
-		}
-
-		return e.complexity.DrivingRecordsConnection.Nodes(childComplexity), true
 
 	case "MonthlyReport.dailyReports":
 		if e.complexity.MonthlyReport.DailyReports == nil {
@@ -236,6 +229,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.YearlyReport(childComplexity, args["year"].(int)), true
+
+	case "RecentDrivingRecordsConnection.nodes":
+		if e.complexity.RecentDrivingRecordsConnection.Nodes == nil {
+			break
+		}
+
+		return e.complexity.RecentDrivingRecordsConnection.Nodes(childComplexity), true
 
 	case "TotalStatistics.distanceKilometers":
 		if e.complexity.TotalStatistics.DistanceKilometers == nil {
@@ -386,6 +386,10 @@ enum Month {
   DECEMBER
 }
 
+interface DrivingRecordsConnection {
+  nodes: [DailyReport!]!
+}
+
 interface DistanceReport {
   distanceKilometers: Int!
 }
@@ -416,13 +420,13 @@ type DailyReport implements DistanceReport {
   memo: String
 }
 
-type DrivingRecordsConnection {
+type RecentDrivingRecordsConnection implements DrivingRecordsConnection {
   nodes: [DailyReport!]!
 }
 
 type Query {
   totalStatistics: TotalStatistics!
-  recentDrivingRecords(first: Int!): DrivingRecordsConnection!
+  recentDrivingRecords(first: Int!): RecentDrivingRecordsConnection!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
 }

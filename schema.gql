@@ -15,6 +15,10 @@ enum Month {
   DECEMBER
 }
 
+interface DrivingRecordsConnection {
+  nodes: [DailyReport!]!
+}
+
 interface DistanceReport {
   distanceKilometers: Int!
 }
@@ -45,13 +49,13 @@ type DailyReport implements DistanceReport {
   memo: String
 }
 
-type DrivingRecordsConnection {
+type RecentDrivingRecordsConnection implements DrivingRecordsConnection {
   nodes: [DailyReport!]!
 }
 
 type Query {
   totalStatistics: TotalStatistics!
-  recentDrivingRecords(first: Int!): DrivingRecordsConnection!
+  recentDrivingRecords(first: Int!): RecentDrivingRecordsConnection!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
 }

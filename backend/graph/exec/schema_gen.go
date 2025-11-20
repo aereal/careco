@@ -33,7 +33,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	TotalStatistics(ctx context.Context) (*dtos.TotalStatistics, error)
-	RecentDrivingRecords(ctx context.Context, first int) (*dtos.DrivingRecordsConnection, error)
+	RecentDrivingRecords(ctx context.Context, first int) (*dtos.RecentDrivingRecordsConnection, error)
 	YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error)
 	MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error)
 }
@@ -297,49 +297,6 @@ func (ec *executionContext) fieldContext_DailyReport_memo(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _DrivingRecordsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.DrivingRecordsConnection) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_DrivingRecordsConnection_nodes,
-		func(ctx context.Context) (any, error) {
-			return obj.Nodes, nil
-		},
-		nil,
-		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_DrivingRecordsConnection_nodes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DrivingRecordsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_DailyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_DailyReport_month(ctx, field)
-			case "day":
-				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "distanceKilometers":
-				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
-			case "recordedAt":
-				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
-			case "memo":
-				return ec.fieldContext_DailyReport_memo(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _MonthlyReport_year(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -555,7 +512,7 @@ func (ec *executionContext) _Query_recentDrivingRecords(ctx context.Context, fie
 			return ec.resolvers.Query().RecentDrivingRecords(ctx, fc.Args["first"].(int))
 		},
 		nil,
-		ec.marshalNDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDrivingRecordsConnection,
+		ec.marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection,
 		true,
 		true,
 	)
@@ -570,9 +527,9 @@ func (ec *executionContext) fieldContext_Query_recentDrivingRecords(ctx context.
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "nodes":
-				return ec.fieldContext_DrivingRecordsConnection_nodes(ctx, field)
+				return ec.fieldContext_RecentDrivingRecordsConnection_nodes(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type DrivingRecordsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type RecentDrivingRecordsConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -797,6 +754,49 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _RecentDrivingRecordsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.RecentDrivingRecordsConnection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecentDrivingRecordsConnection_nodes,
+		func(ctx context.Context) (any, error) {
+			return obj.Nodes, nil
+		},
+		nil,
+		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecentDrivingRecordsConnection_nodes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecentDrivingRecordsConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "year":
+				return ec.fieldContext_DailyReport_year(ctx, field)
+			case "month":
+				return ec.fieldContext_DailyReport_month(ctx, field)
+			case "day":
+				return ec.fieldContext_DailyReport_day(ctx, field)
+			case "distanceKilometers":
+				return ec.fieldContext_DailyReport_distanceKilometers(ctx, field)
+			case "recordedAt":
+				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
+			case "memo":
+				return ec.fieldContext_DailyReport_memo(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TotalStatistics_distanceKilometers(ctx context.Context, field graphql.CollectedField, obj *dtos.TotalStatistics) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -968,6 +968,22 @@ func (ec *executionContext) _DistanceReport(ctx context.Context, sel ast.Selecti
 	}
 }
 
+func (ec *executionContext) _DrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, obj dtos.DrivingRecordsConnection) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case dtos.RecentDrivingRecordsConnection:
+		return ec._RecentDrivingRecordsConnection(ctx, sel, &obj)
+	case *dtos.RecentDrivingRecordsConnection:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._RecentDrivingRecordsConnection(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
@@ -1103,45 +1119,6 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			}
 		case "memo":
 			out.Values[i] = ec._DailyReport_memo(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var drivingRecordsConnectionImplementors = []string{"DrivingRecordsConnection"}
-
-func (ec *executionContext) _DrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, obj *dtos.DrivingRecordsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, drivingRecordsConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("DrivingRecordsConnection")
-		case "nodes":
-			out.Values[i] = ec._DrivingRecordsConnection_nodes(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1468,6 +1445,45 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
+var recentDrivingRecordsConnectionImplementors = []string{"RecentDrivingRecordsConnection", "DrivingRecordsConnection"}
+
+func (ec *executionContext) _RecentDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, obj *dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recentDrivingRecordsConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecentDrivingRecordsConnection")
+		case "nodes":
+			out.Values[i] = ec._RecentDrivingRecordsConnection_nodes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var totalStatisticsImplementors = []string{"TotalStatistics", "DistanceReport"}
 
 func (ec *executionContext) _TotalStatistics(ctx context.Context, sel ast.SelectionSet, obj *dtos.TotalStatistics) graphql.Marshaler {
@@ -1669,20 +1685,6 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) marshalNDrivingRecordsConnection2carecoᚋbackendᚋgraphᚋdtosᚐDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v dtos.DrivingRecordsConnection) graphql.Marshaler {
-	return ec._DrivingRecordsConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.DrivingRecordsConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._DrivingRecordsConnection(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNMonth2timeᚐMonth(ctx context.Context, v any) (time.Month, error) {
 	res, err := dtos.UnmarshalMonth(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -1763,6 +1765,20 @@ func (ec *executionContext) marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋ
 		return graphql.Null
 	}
 	return ec._MonthlyReport(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecentDrivingRecordsConnection2carecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
+	return ec._RecentDrivingRecordsConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RecentDrivingRecordsConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTotalStatistics2carecoᚋbackendᚋgraphᚋdtosᚐTotalStatistics(ctx context.Context, sel ast.SelectionSet, v dtos.TotalStatistics) graphql.Marshaler {
