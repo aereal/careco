@@ -36,9 +36,12 @@ const Page: FC<PageProps<'/reports/[year]/[month]'>> = async ({ params }) => {
     },
   } = ret;
   return (
-    <div className='max-w-2xl mx-auto'>
-      <div className='p-4'>
-        <MonthlyReport summary={monthlyReport} />
+    <div className='max-w-2xl mx-auto h-screen'>
+      <div className='my-4 px-4 h-dvh'>
+        <MonthlyReport
+          summary={monthlyReport}
+          records={monthlyReport.dailyReports}
+        />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { graphql } from '@/graphql';
 
-export const fragmentRecordList = graphql(`
-  fragment RecordList on DrivingRecordsConnection {
+export const fragmentChartDataSeries = graphql(`
+  fragment ChartDataSeries on DrivingRecordsConnection {
     nodes {
       distanceKilometers
       recordedAt

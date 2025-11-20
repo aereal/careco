@@ -1,4 +1,4 @@
-import { DrivingRecordList } from '@/components/DrivingRecordList';
+import { RecordChart } from '@/components/RecordChart';
 import { RecordDialogContainer } from '@/components/RecordDialog';
 import { SelectMonth } from '@/components/SelectMonth';
 import { TotalDrivingDistance } from '@/components/TotalDrivingDistance';
@@ -9,7 +9,7 @@ import { FC } from 'react';
 import { GetRoot } from './query.get-root';
 
 const Page: FC = async () => {
-  const ret = await readQuery(getClient(), GetRoot)({ first: 5 });
+  const ret = await readQuery(getClient(), GetRoot)({ first: 50 });
   if (Result.isFailure(ret)) {
     return <>Error: {ret.error.message}</>;
   }
@@ -24,7 +24,9 @@ const Page: FC = async () => {
         <TotalDrivingDistance {...totalStatistics} />
         <div className='my-8'>
           <h1 className='font-bold text-lg -mb-4'>最近の記録</h1>
-          <DrivingRecordList {...recentDrivingRecords} />
+          <div className='my-8 h-[60vh]'>
+            <RecordChart records={recentDrivingRecords} />
+          </div>
           <div className='my-4'>
             <h2 className='font-bold text-md mb-2'>月毎の記録を見る</h2>
             <SelectMonth />

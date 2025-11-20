@@ -120,7 +120,7 @@ export type GetRootQuery = {
     };
   };
   readonly recentDrivingRecords: {
-    ' $fragmentRefs'?: { RecordListFragment: RecordListFragment };
+    ' $fragmentRefs'?: { ChartDataSeriesFragment: ChartDataSeriesFragment };
   };
 };
 
@@ -131,6 +131,10 @@ export type MonthReportQueryVariables = Exact<{
 
 export type MonthReportQuery = {
   readonly monthlyReport: {
+    readonly dailyReports: {
+      ' $fragmentRefs'?: { ChartDataSeriesFragment: ChartDataSeriesFragment };
+    };
+  } & {
     ' $fragmentRefs'?: {
       MonthlySummaryFragment: MonthlySummaryFragment;
       TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
@@ -142,6 +146,7 @@ export type RecordListFragment = {
   readonly nodes: ReadonlyArray<{
     readonly distanceKilometers: number;
     readonly recordedAt: Date;
+    readonly totalDistanceKilometers: number;
   }>;
 } & { ' $fragmentName'?: 'RecordListFragment' };
 
@@ -149,6 +154,14 @@ export type MonthlySummaryFragment = {
   readonly year: number;
   readonly month: Month;
 } & { ' $fragmentName'?: 'MonthlySummaryFragment' };
+
+export type ChartDataSeriesFragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly distanceKilometers: number;
+    readonly recordedAt: Date;
+    readonly totalDistanceKilometers: number;
+  }>;
+} & { ' $fragmentName'?: 'ChartDataSeriesFragment' };
 
 export type RecordDriveMutationVariables = Exact<{
   date: Scalars['DateTime']['input'];
@@ -204,6 +217,10 @@ export const RecordListFragmentDoc = {
                   name: { kind: 'Name', value: 'distanceKilometers' },
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'totalDistanceKilometers' },
+                },
               ],
             },
           },
@@ -232,6 +249,42 @@ export const MonthlySummaryFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<MonthlySummaryFragment, unknown>;
+export const ChartDataSeriesFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'distanceKilometers' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'totalDistanceKilometers' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ChartDataSeriesFragment, unknown>;
 export const TotalDistanceFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -308,7 +361,7 @@ export const GetRootDocument = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RecordList' },
+                  name: { kind: 'Name', value: 'ChartDataSeries' },
                 },
               ],
             },
@@ -335,7 +388,7 @@ export const GetRootDocument = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RecordList' },
+      name: { kind: 'Name', value: 'ChartDataSeries' },
       typeCondition: {
         kind: 'NamedType',
         name: { kind: 'Name', value: 'DrivingRecordsConnection' },
@@ -354,6 +407,10 @@ export const GetRootDocument = {
                   name: { kind: 'Name', value: 'distanceKilometers' },
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'totalDistanceKilometers' },
+                },
               ],
             },
           },
@@ -425,6 +482,19 @@ export const MonthReportDocument = {
                   kind: 'FragmentSpread',
                   name: { kind: 'Name', value: 'TotalDistance' },
                 },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'dailyReports' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'FragmentSpread',
+                        name: { kind: 'Name', value: 'ChartDataSeries' },
+                      },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -459,6 +529,37 @@ export const MonthReportDocument = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'distanceKilometers' },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'distanceKilometers' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'totalDistanceKilometers' },
+                },
+              ],
+            },
           },
         ],
       },
