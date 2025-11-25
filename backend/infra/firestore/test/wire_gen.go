@@ -8,23 +8,25 @@ package test
 
 import (
 	"careco/backend/config"
+	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
-	"context"
+	"testing"
 )
 
 // Injectors from wire.go:
 
-func BuildDrivingRecordRepository(contextContext context.Context) (*firestore.DrivingRecordRepository, error) {
+func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordRepository, error) {
 	tracerProvider := provideTracerProvider()
+	context := provideContext(t)
+	databaseID := provideDatabaseID(t)
 	projectID := _wireProjectIDValue
 	environment := config.ProvideEnvironment()
-	emulatorAddr := provideEmulatorAddr(environment)
-	client, err := firestore.ProvideEmulatorClient(contextContext, projectID, emulatorAddr, tracerProvider)
+	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
+	client, err := firestore.ProvideClient(context, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}
-	collectionProvider := provideTestCollectionProvider(client)
-	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, collectionProvider, client)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	return drivingRecordRepository, nil
 }
 

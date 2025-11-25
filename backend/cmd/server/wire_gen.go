@@ -16,6 +16,7 @@ import (
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
+	firestore2 "cloud.google.com/go/firestore"
 	"context"
 )
 
@@ -41,14 +42,14 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 		return nil, err
 	}
 	port := providers.ProvidePort(environment)
+	databaseID := _wireDatabaseIDValue
 	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
-	client, err := firestore.ProvideEmulatorClient(contextContext, projectID, emulatorAddr, tracerProvider)
+	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}
-	collectionProvider := firestore.ProvideProductionCollectionProvider(client)
-	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, collectionProvider, client)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository)
 	server := graph.ProvideServer(tracerProvider, resolverResolver)
 	webServer := web.ProvideServer(port, tracerProvider, server)
@@ -58,5 +59,6 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 
 var (
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
+	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
 	_wireProjectIDValue                 = firestore.ProjectID("dummy")
 )

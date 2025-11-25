@@ -1,7 +1,11 @@
 package test
 
 import (
-	"careco/backend/config"
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"testing"
+
 	"careco/backend/infra/firestore"
 
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -9,15 +13,18 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func provideEmulatorAddr(e *config.Environment) firestore.EmulatorAddr {
-	cast := config.Cast(config.StringAs[firestore.EmulatorAddr])
-	retrieve := cast(config.EnvSource(e))
-	return config.Yield(
-		"TEST_FIRESTORE_EMULATOR_ADDR",
-		config.WithDefaultValue[firestore.EmulatorAddr]("localhost:8889")(retrieve),
-	)
-}
-
 func provideTracerProvider() trace.TracerProvider {
 	return sdktrace.NewTracerProvider(sdktrace.WithBatcher(tracetest.NewInMemoryExporter()))
+}
+
+func provideContext(t *testing.T) context.Context {
+	t.Helper()
+	return t.Context()
+}
+
+func provideDatabaseID(t *testing.T) firestore.DatabaseID {
+	t.Helper()
+	h := sha256.New()
+	h.Write([]byte(t.Name()))
+	return firestore.DatabaseID("test_" + hex.EncodeToString(h.Sum(nil)))
 }
