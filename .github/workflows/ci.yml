@@ -82,7 +82,7 @@ jobs:
       - run: go mod download
       - name: setup env
         run: |
-          echo "TEST_FIRESTORE_EMULATOR_ADDR=localhost:${firestore_emulator_port}" >> "$GITHUB_ENV"
+          echo "FIRESTORE_EMULATOR_ADDR=localhost:${firestore_emulator_port}" >> "$GITHUB_ENV"
         env:
           firestore_emulator_port: ${{ job.services.firestore.ports['8888'] }}
       - name: go test

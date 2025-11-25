@@ -70,12 +70,12 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			ctx := test.Context(t)
-			r, err := test.BuildDrivingRecordRepository(ctx)
+			r, err := test.BuildDrivingRecordRepository(t)
 			if err != nil {
 				t.Fatal(err)
 			}
 			var gotErr error
+			ctx := t.Context()
 			for _, input := range tc.inputs {
 				err := r.RecordDrivingRecord(ctx, input)
 				if err != nil {
@@ -141,11 +141,11 @@ func TestDrivingRecordRepository_CalculateTotalDistance(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			ctx := test.Context(t)
-			r, err := test.BuildDrivingRecordRepository(ctx)
+			r, err := test.BuildDrivingRecordRepository(t)
 			if err != nil {
 				t.Fatal(err)
 			}
+			ctx := t.Context()
 			if tc.prepare != nil {
 				if err := tc.prepare(ctx, r); err != nil {
 					t.Fatal(err)
@@ -233,11 +233,11 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			ctx := test.Context(t)
-			r, err := test.BuildDrivingRecordRepository(ctx)
+			r, err := test.BuildDrivingRecordRepository(t)
 			if err != nil {
 				t.Fatal(err)
 			}
+			ctx := t.Context()
 			if tc.prepare != nil {
 				if err := tc.prepare(ctx, r); err != nil {
 					t.Fatal(err)

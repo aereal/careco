@@ -24,9 +24,8 @@ import (
 func build(_ context.Context) (*internal.Entrypoint, error) {
 	wire.Build(
 		config.ProvideEnvironment,
+		firestore.ClientProvider,
 		firestore.ProvideDrivingRecordRepository,
-		firestore.ProvideEmulatorClient,
-		firestore.ProvideProductionCollectionProvider,
 		interactions.ProvideImportData,
 		internal.ProvideEntrypoint,
 		log.ProvideGlobalInstrumentation,

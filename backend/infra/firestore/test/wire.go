@@ -3,22 +3,24 @@
 package test
 
 import (
-	"context"
+	"testing"
 
 	"careco/backend/config"
+	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
 
 	sdk "cloud.google.com/go/firestore"
 	"github.com/google/wire"
 )
 
-func BuildDrivingRecordRepository(_ context.Context) (*firestore.DrivingRecordRepository, error) {
+func BuildDrivingRecordRepository(_ *testing.T) (*firestore.DrivingRecordRepository, error) {
 	wire.Build(
 		config.ProvideEnvironment,
+		firestore.ProvideClient,
 		firestore.ProvideDrivingRecordRepository,
-		firestore.ProvideEmulatorClient,
-		provideEmulatorAddr,
-		provideTestCollectionProvider,
+		provideContext,
+		provideDatabaseID,
+		providers.ProvideFirestoreEmulatorAddr,
 		provideTracerProvider,
 		wire.Bind(new(firestore.TransactionRunner), new(*sdk.Client)),
 		wire.Value(firestore.ProjectID("test")),

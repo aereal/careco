@@ -20,18 +20,18 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func ProvideDrivingRecordRepository(tp trace.TracerProvider, cp CollectionProvider, tr TransactionRunner) *DrivingRecordRepository {
+func ProvideDrivingRecordRepository(tp trace.TracerProvider, client *firestore.Client, tr TransactionRunner) *DrivingRecordRepository {
 	return &DrivingRecordRepository{
-		collections: cp,
-		tracer:      tp.Tracer("careco/backend/infra/firestore.DrivingRecordRepository"),
-		txRunner:    tr,
+		tracer:   tp.Tracer("careco/backend/infra/firestore.DrivingRecordRepository"),
+		txRunner: tr,
+		client:   client,
 	}
 }
 
 type DrivingRecordRepository struct {
-	tracer      trace.Tracer
-	collections CollectionProvider
-	txRunner    TransactionRunner
+	tracer   trace.Tracer
+	txRunner TransactionRunner
+	client   *firestore.Client
 }
 
 var (
@@ -49,7 +49,7 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 		Distance: record.DistanceKilometers,
 		Memo:     record.Memo.Ptr(),
 	}
-	if _, err := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date)).Set(ctx, data); err != nil {
+	if _, err := r.client.Collection("driving_records").Doc(epochID(record.Date)).Set(ctx, data); err != nil {
 		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
 	}
 	return nil
@@ -60,7 +60,7 @@ func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, se
 	defer func() { traceutils.FinishSpan(span, err) }()
 
 	totalPath := "total"
-	query := r.collections.DrivingRecords(ctx).Query
+	query := r.client.Collection("driving_records").Query
 	if !searchPeriod.Start.Value.IsZero() && !searchPeriod.End.Value.IsZero() {
 		query = query.WhereEntity(toWhere(searchPeriod))
 	}
@@ -79,7 +79,7 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
 	defer func() { traceutils.FinishSpan(span, err) }()
 
-	query := r.collections.DrivingRecords(ctx).Query
+	query := r.client.Collection("driving_records").Query
 	if whereClause := toWhere(searchPeriod); whereClause != nil {
 		query = query.WhereEntity(whereClause)
 	}
@@ -111,7 +111,7 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 				Distance: record.DistanceKilometers,
 				Memo:     record.Memo.Ptr(),
 			}
-			docRef := r.collections.DrivingRecords(ctx).Doc(epochID(record.Date))
+			docRef := r.client.Collection("driving_records").Doc(epochID(record.Date))
 			if err := tx.Set(docRef, data); err != nil {
 				return fmt.Errorf("firestore.Transaction.Set: %w", err)
 			}

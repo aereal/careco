@@ -18,7 +18,3 @@ services:
       - '8888:8888'
     volumes:
       - './data/firestore:/data'
-  test_firestore:
-    image: 'ghcr.io/aereal/firebase-emulator-image:v0.1.0'
-    ports:
-      - '8889:8888'
