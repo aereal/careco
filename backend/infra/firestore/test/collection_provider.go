@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"strconv"
+	"time"
 
 	"careco/backend/infra/firestore"
 
@@ -19,7 +21,10 @@ type ctxKeySuffix struct{}
 
 func Context(t tLike) context.Context {
 	ctx := t.Context()
-	sum := sha256.New().Sum([]byte(t.Name()))
+	h := sha256.New()
+	h.Write([]byte(t.Name()))
+	h.Write([]byte(strconv.FormatInt(time.Now().UnixNano(), 10)))
+	sum := h.Sum(nil)
 	suffix := "_" + hex.EncodeToString(sum)
 	return context.WithValue(ctx, ctxKeySuffix{}, suffix)
 }
