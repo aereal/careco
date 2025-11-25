@@ -9,7 +9,6 @@ import (
 	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
 
-	sdk "cloud.google.com/go/firestore"
 	"github.com/google/wire"
 )
 
@@ -22,7 +21,6 @@ func BuildDrivingRecordRepository(_ *testing.T) (*firestore.DrivingRecordReposit
 		provideDatabaseID,
 		providers.ProvideFirestoreEmulatorAddr,
 		provideTracerProvider,
-		wire.Bind(new(firestore.TransactionRunner), new(*sdk.Client)),
 		wire.Value(firestore.ProjectID("test")),
 	)
 	return nil, nil

@@ -15,7 +15,6 @@ import (
 	"careco/backend/usecases/interactions"
 	"careco/backend/usecases/ports"
 
-	sdk "cloud.google.com/go/firestore"
 	"github.com/google/wire"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -37,7 +36,6 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		providers.ProvideFirestoreEmulatorAddr,
 		providers.ProvideLogLevel,
 		providers.ProvideServiceVersionFromGitRevision,
-		wire.Bind(new(firestore.TransactionRunner), new(*sdk.Client)),
 		wire.Bind(new(ports.DrivingRecordBulkWriter), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
 		wire.Bind(new(usecases.ImportData), new(*interactions.ImportData)),

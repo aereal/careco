@@ -16,7 +16,6 @@ import (
 	"careco/backend/o11y"
 	"careco/backend/web"
 
-	sdk "cloud.google.com/go/firestore"
 	"github.com/google/wire"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -42,7 +41,6 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		web.ProvideServer,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(domain.DrivingRecordQuery), new(*firestore.DrivingRecordRepository)),
-		wire.Bind(new(firestore.TransactionRunner), new(*sdk.Client)),
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
 		wire.Value(firestore.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),

@@ -20,18 +20,16 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func ProvideDrivingRecordRepository(tp trace.TracerProvider, client *firestore.Client, tr TransactionRunner) *DrivingRecordRepository {
+func ProvideDrivingRecordRepository(tp trace.TracerProvider, client *firestore.Client) *DrivingRecordRepository {
 	return &DrivingRecordRepository{
-		tracer:   tp.Tracer("careco/backend/infra/firestore.DrivingRecordRepository"),
-		txRunner: tr,
-		client:   client,
+		tracer: tp.Tracer("careco/backend/infra/firestore.DrivingRecordRepository"),
+		client: client,
 	}
 }
 
 type DrivingRecordRepository struct {
-	tracer   trace.Tracer
-	txRunner TransactionRunner
-	client   *firestore.Client
+	tracer trace.Tracer
+	client *firestore.Client
 }
 
 var (
@@ -118,7 +116,7 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 		}
 		return nil
 	}
-	if err := r.txRunner.RunTransaction(ctx, f); err != nil {
+	if err := r.client.RunTransaction(ctx, f); err != nil {
 		return fmt.Errorf("RunTransaction: %w", err)
 	}
 	return nil

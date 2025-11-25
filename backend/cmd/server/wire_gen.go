@@ -49,7 +49,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client, client)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository)
 	server := graph.ProvideServer(tracerProvider, resolverResolver)
 	webServer := web.ProvideServer(port, tracerProvider, server)

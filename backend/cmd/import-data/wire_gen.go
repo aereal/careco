@@ -46,7 +46,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client, client)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	exportFileName, err := providers.ProvideExportFileName(environment)
 	if err != nil {
 		return nil, err

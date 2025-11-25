@@ -26,7 +26,7 @@ func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordReposit
 	if err != nil {
 		return nil, err
 	}
-	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client, client)
+	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	return drivingRecordRepository, nil
 }
 
