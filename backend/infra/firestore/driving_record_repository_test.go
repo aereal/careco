@@ -39,8 +39,9 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 			},
 			wantRecords: []*domain.DrivingRecord{
 				{
-					Date:               t1,
-					DistanceKilometers: 123,
+					Date:                    t1,
+					DistanceKilometers:      123,
+					TotalDistanceKilometers: 123,
 				},
 			},
 			wantErr: nil,
@@ -56,8 +57,8 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 				{Date: t4, DistanceKilometers: 67},
 			},
 			wantRecords: []*domain.DrivingRecord{
-				{Date: t4, DistanceKilometers: 67},
-				{Date: t3, DistanceKilometers: 45},
+				{Date: t4, DistanceKilometers: 67, TotalDistanceKilometers: 67 + 45},
+				{Date: t3, DistanceKilometers: 45, TotalDistanceKilometers: 45},
 			},
 			wantErr: nil,
 			intervalToFind: domain.Interval[time.Time]{
@@ -183,16 +184,19 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 			interval: domain.EmptyInterval[time.Time](),
 			want: []*domain.DrivingRecord{
 				{
-					DistanceKilometers: 1,
-					Date:               time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
+					DistanceKilometers:      1,
+					TotalDistanceKilometers: 1,
+					Date:                    time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 3,
-					Date:               time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC),
+					DistanceKilometers:      3,
+					TotalDistanceKilometers: 6,
+					Date:                    time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 2,
-					Date:               time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC),
+					DistanceKilometers:      2,
+					TotalDistanceKilometers: 3,
+					Date:                    time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			wantErr: nil,
@@ -212,12 +216,14 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 			},
 			want: []*domain.DrivingRecord{
 				{
-					DistanceKilometers: 3,
-					Date:               time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC),
+					DistanceKilometers:      3,
+					TotalDistanceKilometers: 6,
+					Date:                    time.Date(2025, time.February, 4, 0, 0, 0, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 2,
-					Date:               time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC),
+					DistanceKilometers:      2,
+					TotalDistanceKilometers: 3,
+					Date:                    time.Date(2025, time.February, 15, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			wantErr: nil,

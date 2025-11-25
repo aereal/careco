@@ -56,7 +56,7 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 		newDTO := &dtoDrivingRecord{
 			Date:          record.Date,
 			Distance:      record.DistanceKilometers,
-			TotalDistance: lastTotalDistance,
+			TotalDistance: lastTotalDistance + record.DistanceKilometers,
 			Memo:          record.Memo.Ptr(),
 		}
 		if err := tx.Set(newDoc, newDTO); err != nil {
