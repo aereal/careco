@@ -1741,7 +1741,7 @@ func (ec *executionContext) marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraph�
 func (ec *executionContext) marshalNDailyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.DailyReport) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1755,7 +1755,7 @@ func (ec *executionContext) marshalNDailyReportsConnection2carecoᚋbackendᚋgr
 func (ec *executionContext) marshalNDailyReportsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.DailyReportsConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1772,7 +1772,7 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 	res := dtos.MarshalDateTime(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
@@ -1788,7 +1788,7 @@ func (ec *executionContext) marshalNMonth2timeᚐMonth(ctx context.Context, sel 
 	res := dtos.MarshalMonth(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
@@ -1853,7 +1853,7 @@ func (ec *executionContext) marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraph
 func (ec *executionContext) marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.MonthlyReport) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1867,7 +1867,7 @@ func (ec *executionContext) marshalNRecentDrivingRecordsConnection2carecoᚋback
 func (ec *executionContext) marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1881,7 +1881,7 @@ func (ec *executionContext) marshalNTotalStatistics2carecoᚋbackendᚋgraphᚋd
 func (ec *executionContext) marshalNTotalStatistics2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTotalStatistics(ctx context.Context, sel ast.SelectionSet, v *dtos.TotalStatistics) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
@@ -1895,7 +1895,7 @@ func (ec *executionContext) marshalNYearlyReport2carecoᚋbackendᚋgraphᚋdtos
 func (ec *executionContext) marshalNYearlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐYearlyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.YearlyReport) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
