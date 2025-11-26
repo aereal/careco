@@ -56,10 +56,18 @@ jobs:
         with:
           version: v0.73.0
           config: octocov.frontend.yml
-      - id: build
-        run: pnpm build
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - id: test-e2e
         continue-on-error: true
-      - if: ${{ steps.lint.outcome == 'failure' || steps.build.outcome == 'failure' || steps.test.outcome == 'failure' }}
+        run: pnpm test:e2e
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+      - if: ${{ steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.test-e2e.outcome == 'failure' }}
         run: exit 1
   test-server:
     runs-on: ubuntu-24.04
