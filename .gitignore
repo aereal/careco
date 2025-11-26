@@ -2,3 +2,5 @@ node_modules
 .next
 /data/firestore
 !/data/firestore/.keep
+/playwright-report/
+/test-results/
