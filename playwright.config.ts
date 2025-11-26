@@ -2,13 +2,14 @@ import { defineConfig, devices } from '@playwright/test';
 
 const PORT = process.env.PORT || 3000;
 const baseURL = `http://localhost:${PORT}`;
+const inCI = (process.env['CI'] ?? '') !== '';
 
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+  forbidOnly: inCI,
   retries: 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: inCI ? 1 : undefined,
   reporter: 'html',
 
   use: {
@@ -26,7 +27,7 @@ export default defineConfig({
   webServer: {
     command: 'pnpm build && pnpm start',
     url: baseURL,
-    // reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !inCI,
     timeout: 120 * 1000,
   },
 });
