@@ -52,10 +52,10 @@ export type GetRootQueryVariables = Exact<{
 }>;
 
 export type GetRootQuery = {
-  readonly totalStatistics: { readonly distanceKilometers: number };
+  readonly totalStatistics: { readonly odometerValue: number };
   readonly recentDrivingRecords: {
     readonly nodes: ReadonlyArray<{
-      readonly distanceKilometers: number;
+      readonly odometerValue: number;
       readonly recordedAt: Date;
     }>;
   };
@@ -70,20 +70,20 @@ export type MonthReportQuery = {
   readonly monthlyReport: {
     readonly year: number;
     readonly month: Month;
-    readonly distanceKilometers: number;
+    readonly odometerValue: number;
   };
 };
 
 type RecordList_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
-    readonly distanceKilometers: number;
+    readonly odometerValue: number;
     readonly recordedAt: Date;
   }>;
 };
 
 type RecordList_RecentDrivingRecordsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
-    readonly distanceKilometers: number;
+    readonly odometerValue: number;
     readonly recordedAt: Date;
   }>;
 };
@@ -105,21 +105,15 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
-type TotalDistance_DailyReport_Fragment = {
-  readonly distanceKilometers: number;
-};
+type TotalDistance_DailyReport_Fragment = { readonly odometerValue: number };
 
-type TotalDistance_MonthlyReport_Fragment = {
-  readonly distanceKilometers: number;
-};
+type TotalDistance_MonthlyReport_Fragment = { readonly odometerValue: number };
 
 type TotalDistance_TotalStatistics_Fragment = {
-  readonly distanceKilometers: number;
+  readonly odometerValue: number;
 };
 
-type TotalDistance_YearlyReport_Fragment = {
-  readonly distanceKilometers: number;
-};
+type TotalDistance_YearlyReport_Fragment = { readonly odometerValue: number };
 
 export type TotalDistanceFragment =
   | TotalDistance_DailyReport_Fragment

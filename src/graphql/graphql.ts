@@ -32,9 +32,9 @@ export type Scalars = {
 
 export type DailyReport = DistanceReport & {
   readonly day: Scalars['Int']['output'];
-  readonly distanceKilometers: Scalars['Int']['output'];
   readonly memo?: Maybe<Scalars['String']['output']>;
   readonly month: Month;
+  readonly odometerValue: Scalars['Int']['output'];
   readonly recordedAt: Scalars['DateTime']['output'];
   readonly year: Scalars['Int']['output'];
 };
@@ -44,7 +44,7 @@ export type DailyReportsConnection = DrivingRecordsConnection & {
 };
 
 export type DistanceReport = {
-  readonly distanceKilometers: Scalars['Int']['output'];
+  readonly odometerValue: Scalars['Int']['output'];
 };
 
 export type DrivingRecordsConnection = {
@@ -67,8 +67,8 @@ export type Month =
 
 export type MonthlyReport = DistanceReport & {
   readonly dailyReports: DailyReportsConnection;
-  readonly distanceKilometers: Scalars['Int']['output'];
   readonly month: Month;
+  readonly odometerValue: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
 
@@ -78,8 +78,8 @@ export type Mutation = {
 
 export type MutationRecordDrivingRecordArgs = {
   date: Scalars['DateTime']['input'];
-  distanceKilometers: Scalars['Int']['input'];
   memo?: InputMaybe<Scalars['String']['input']>;
+  odometerValue: Scalars['Int']['input'];
 };
 
 export type Query = {
@@ -107,12 +107,12 @@ export type RecentDrivingRecordsConnection = DrivingRecordsConnection & {
 };
 
 export type TotalStatistics = DistanceReport & {
-  readonly distanceKilometers: Scalars['Int']['output'];
+  readonly odometerValue: Scalars['Int']['output'];
 };
 
 export type YearlyReport = DistanceReport & {
-  readonly distanceKilometers: Scalars['Int']['output'];
   readonly monthlyReports: ReadonlyArray<MonthlyReport>;
+  readonly odometerValue: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
 
@@ -149,14 +149,14 @@ export type MonthReportQuery = {
 
 type RecordList_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
-    readonly distanceKilometers: number;
+    readonly odometerValue: number;
     readonly recordedAt: Date;
   }>;
 } & { ' $fragmentName'?: 'RecordList_DailyReportsConnection_Fragment' };
 
 type RecordList_RecentDrivingRecordsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
-    readonly distanceKilometers: number;
+    readonly odometerValue: number;
     readonly recordedAt: Date;
   }>;
 } & { ' $fragmentName'?: 'RecordList_RecentDrivingRecordsConnection_Fragment' };
@@ -178,20 +178,20 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
-type TotalDistance_DailyReport_Fragment = {
-  readonly distanceKilometers: number;
-} & { ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment' };
+type TotalDistance_DailyReport_Fragment = { readonly odometerValue: number } & {
+  ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment';
+};
 
 type TotalDistance_MonthlyReport_Fragment = {
-  readonly distanceKilometers: number;
+  readonly odometerValue: number;
 } & { ' $fragmentName'?: 'TotalDistance_MonthlyReport_Fragment' };
 
 type TotalDistance_TotalStatistics_Fragment = {
-  readonly distanceKilometers: number;
+  readonly odometerValue: number;
 } & { ' $fragmentName'?: 'TotalDistance_TotalStatistics_Fragment' };
 
 type TotalDistance_YearlyReport_Fragment = {
-  readonly distanceKilometers: number;
+  readonly odometerValue: number;
 } & { ' $fragmentName'?: 'TotalDistance_YearlyReport_Fragment' };
 
 export type TotalDistanceFragment =
@@ -221,7 +221,7 @@ export const RecordListFragmentDoc = {
               selections: [
                 {
                   kind: 'Field',
-                  name: { kind: 'Name', value: 'distanceKilometers' },
+                  name: { kind: 'Name', value: 'odometerValue' },
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
               ],
@@ -265,10 +265,7 @@ export const TotalDistanceFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'distanceKilometers' },
-          },
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
         ],
       },
     },
@@ -346,10 +343,7 @@ export const GetRootDocument = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'distanceKilometers' },
-          },
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
         ],
       },
     },
@@ -371,7 +365,7 @@ export const GetRootDocument = {
               selections: [
                 {
                   kind: 'Field',
-                  name: { kind: 'Name', value: 'distanceKilometers' },
+                  name: { kind: 'Name', value: 'odometerValue' },
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
               ],
@@ -476,10 +470,7 @@ export const MonthReportDocument = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'distanceKilometers' },
-          },
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
         ],
       },
     },
@@ -538,7 +529,7 @@ export const RecordDriveDocument = {
               },
               {
                 kind: 'Argument',
-                name: { kind: 'Name', value: 'distanceKilometers' },
+                name: { kind: 'Name', value: 'odometerValue' },
                 value: {
                   kind: 'Variable',
                   name: { kind: 'Name', value: 'distance' },
