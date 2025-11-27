@@ -42,15 +42,15 @@ models:
         resolver: true
   MonthlyReport:
     fields:
-      distanceKilometers:
+      cumulativeDistance:
         resolver: true
       dailyReports:
         resolver: true
   YearlyReport:
     fields:
-      distanceKilometers:
+      cumulativeDistance:
         resolver: true
   DistanceReport:
     fields:
-      distanceKilometers:
+      cumulativeDistance:
         resolver: true

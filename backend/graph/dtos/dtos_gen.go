@@ -16,7 +16,7 @@ type DrivingRecordsConnection interface {
 }
 
 type DailyReport struct {
-	DistanceKilometers int       `json:"distanceKilometers"`
+	CumulativeDistance int       `json:"cumulativeDistance"`
 	RecordedAt         time.Time `json:"recordedAt"`
 	Memo               *string   `json:"memo,omitempty"`
 }
@@ -63,7 +63,7 @@ func (this RecentDrivingRecordsConnection) GetNodes() []*DailyReport {
 }
 
 type TotalStatistics struct {
-	DistanceKilometers int `json:"distanceKilometers"`
+	CumulativeDistance int `json:"cumulativeDistance"`
 }
 
 func (TotalStatistics) IsDistanceReport() {}

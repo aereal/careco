@@ -45,8 +45,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	DailyReport struct {
+		CumulativeDistance func(childComplexity int) int
 		Day                func(childComplexity int) int
-		DistanceKilometers func(childComplexity int) int
 		Memo               func(childComplexity int) int
 		Month              func(childComplexity int) int
 		RecordedAt         func(childComplexity int) int
@@ -58,14 +58,14 @@ type ComplexityRoot struct {
 	}
 
 	MonthlyReport struct {
+		CumulativeDistance func(childComplexity int) int
 		DailyReports       func(childComplexity int) int
-		DistanceKilometers func(childComplexity int) int
 		Month              func(childComplexity int) int
 		Year               func(childComplexity int) int
 	}
 
 	Mutation struct {
-		RecordDrivingRecord func(childComplexity int, date time.Time, distanceKilometers int, memo *string) int
+		RecordDrivingRecord func(childComplexity int, date time.Time, cumulativeDistance int, memo *string) int
 	}
 
 	Query struct {
@@ -80,11 +80,11 @@ type ComplexityRoot struct {
 	}
 
 	TotalStatistics struct {
-		DistanceKilometers func(childComplexity int) int
+		CumulativeDistance func(childComplexity int) int
 	}
 
 	YearlyReport struct {
-		DistanceKilometers func(childComplexity int) int
+		CumulativeDistance func(childComplexity int) int
 		MonthlyReports     func(childComplexity int) int
 		Year               func(childComplexity int) int
 	}
@@ -109,19 +109,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	_ = ec
 	switch typeName + "." + field {
 
+	case "DailyReport.cumulativeDistance":
+		if e.complexity.DailyReport.CumulativeDistance == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.CumulativeDistance(childComplexity), true
+
 	case "DailyReport.day":
 		if e.complexity.DailyReport.Day == nil {
 			break
 		}
 
 		return e.complexity.DailyReport.Day(childComplexity), true
-
-	case "DailyReport.distanceKilometers":
-		if e.complexity.DailyReport.DistanceKilometers == nil {
-			break
-		}
-
-		return e.complexity.DailyReport.DistanceKilometers(childComplexity), true
 
 	case "DailyReport.memo":
 		if e.complexity.DailyReport.Memo == nil {
@@ -158,19 +158,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReportsConnection.Nodes(childComplexity), true
 
+	case "MonthlyReport.cumulativeDistance":
+		if e.complexity.MonthlyReport.CumulativeDistance == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.CumulativeDistance(childComplexity), true
+
 	case "MonthlyReport.dailyReports":
 		if e.complexity.MonthlyReport.DailyReports == nil {
 			break
 		}
 
 		return e.complexity.MonthlyReport.DailyReports(childComplexity), true
-
-	case "MonthlyReport.distanceKilometers":
-		if e.complexity.MonthlyReport.DistanceKilometers == nil {
-			break
-		}
-
-		return e.complexity.MonthlyReport.DistanceKilometers(childComplexity), true
 
 	case "MonthlyReport.month":
 		if e.complexity.MonthlyReport.Month == nil {
@@ -196,7 +196,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["distanceKilometers"].(int), args["memo"].(*string)), true
+		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["cumulativeDistance"].(int), args["memo"].(*string)), true
 
 	case "Query.monthlyReport":
 		if e.complexity.Query.MonthlyReport == nil {
@@ -248,19 +248,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.RecentDrivingRecordsConnection.Nodes(childComplexity), true
 
-	case "TotalStatistics.distanceKilometers":
-		if e.complexity.TotalStatistics.DistanceKilometers == nil {
+	case "TotalStatistics.cumulativeDistance":
+		if e.complexity.TotalStatistics.CumulativeDistance == nil {
 			break
 		}
 
-		return e.complexity.TotalStatistics.DistanceKilometers(childComplexity), true
+		return e.complexity.TotalStatistics.CumulativeDistance(childComplexity), true
 
-	case "YearlyReport.distanceKilometers":
-		if e.complexity.YearlyReport.DistanceKilometers == nil {
+	case "YearlyReport.cumulativeDistance":
+		if e.complexity.YearlyReport.CumulativeDistance == nil {
 			break
 		}
 
-		return e.complexity.YearlyReport.DistanceKilometers(childComplexity), true
+		return e.complexity.YearlyReport.CumulativeDistance(childComplexity), true
 
 	case "YearlyReport.monthlyReports":
 		if e.complexity.YearlyReport.MonthlyReports == nil {
@@ -402,23 +402,23 @@ interface DrivingRecordsConnection {
 }
 
 interface DistanceReport {
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
 }
 
 type TotalStatistics implements DistanceReport {
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
 }
 
 type YearlyReport implements DistanceReport {
   year: Int!
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
   monthlyReports: [MonthlyReport!]!
 }
 
 type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
   dailyReports: DailyReportsConnection!
 }
 
@@ -426,7 +426,7 @@ type DailyReport implements DistanceReport {
   year: Int!
   month: Month!
   day: Int!
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
   recordedAt: DateTime!
   memo: String
 }
@@ -449,7 +449,7 @@ type Query {
 type Mutation {
   recordDrivingRecord(
     date: DateTime!
-    distanceKilometers: Int!
+    cumulativeDistance: Int!
     memo: String
   ): Boolean!
 }

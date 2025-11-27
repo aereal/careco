@@ -20,23 +20,23 @@ interface DrivingRecordsConnection {
 }
 
 interface DistanceReport {
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
 }
 
 type TotalStatistics implements DistanceReport {
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
 }
 
 type YearlyReport implements DistanceReport {
   year: Int!
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
   monthlyReports: [MonthlyReport!]!
 }
 
 type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
   dailyReports: DailyReportsConnection!
 }
 
@@ -44,7 +44,7 @@ type DailyReport implements DistanceReport {
   year: Int!
   month: Month!
   day: Int!
-  distanceKilometers: Int!
+  cumulativeDistance: Int!
   recordedAt: DateTime!
   memo: String
 }
@@ -67,7 +67,7 @@ type Query {
 type Mutation {
   recordDrivingRecord(
     date: DateTime!
-    distanceKilometers: Int!
+    cumulativeDistance: Int!
     memo: String
   ): Boolean!
 }

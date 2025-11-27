@@ -31,7 +31,7 @@ func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (i
 	return obj.RecordedAt.Day(), nil
 }
 
-func (r *monthlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
+func (r *monthlyReportResolver) CumulativeDistance(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
 	interval := domain.Interval[time.Time]{
 		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
 		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
@@ -55,7 +55,7 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 	conn := &dtos.DailyReportsConnection{Nodes: make([]*dtos.DailyReport, len(records))}
 	for i, record := range records {
 		conn.Nodes[i] = &dtos.DailyReport{
-			DistanceKilometers: int(record.CumulativeDistance),
+			CumulativeDistance: int(record.CumulativeDistance),
 			RecordedAt:         record.Date,
 			Memo:               record.Memo.Ptr(),
 		}
@@ -63,10 +63,10 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 	return conn, nil
 }
 
-func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
+func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, cumulativeDistance int, memo *string) (bool, error) {
 	record := &domain.DrivingRecord{
 		Date:               date,
-		CumulativeDistance: int64(distanceKilometers),
+		CumulativeDistance: int64(cumulativeDistance),
 		Memo:               optional.FromPtr(memo),
 	}
 	if err := r.drivingRecordCommand.RecordDrivingRecord(ctx, record); err != nil {
@@ -81,7 +81,7 @@ func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatist
 		return nil, err
 	}
 	return &dtos.TotalStatistics{
-		DistanceKilometers: int(total),
+		CumulativeDistance: int(total),
 	}, nil
 }
 
@@ -95,7 +95,7 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 	}
 	for i, record := range records {
 		conn.Nodes[i] = &dtos.DailyReport{
-			DistanceKilometers: int(record.CumulativeDistance),
+			CumulativeDistance: int(record.CumulativeDistance),
 			RecordedAt:         record.Date,
 			Memo:               record.Memo.Ptr(),
 		}
@@ -132,7 +132,7 @@ func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.
 	return ret, nil
 }
 
-func (r *yearlyReportResolver) DistanceKilometers(ctx context.Context, obj *dtos.YearlyReport) (int, error) {
+func (r *yearlyReportResolver) CumulativeDistance(ctx context.Context, obj *dtos.YearlyReport) (int, error) {
 	interval := domain.Interval[time.Time]{
 		Start: domain.ClosedEndpoint(obj.StartOfYear()),
 		End:   domain.OpenEndpoint(timeops.StartOfNextYear(obj.StartOfYear())),

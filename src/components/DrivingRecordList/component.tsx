@@ -16,12 +16,12 @@ export const DrivingRecordList: FC<FragmentType<typeof fragmentRecordList>> = (
         </tr>
       </thead>
       <tbody>
-        {nodes.map(({ recordedAt, distanceKilometers }) => (
+        {nodes.map(({ recordedAt, cumulativeDistance }) => (
           <tr key={recordedAt.toString()}>
             <td>
               <YMD date={recordedAt} />
             </td>
-            <td>{distanceKilometers}km</td>
+            <td>{cumulativeDistance}km</td>
           </tr>
         ))}
       </tbody>
