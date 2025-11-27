@@ -31,6 +31,12 @@ const config: CodegenConfig = {
         fragmentMasking: { unmaskFunctionName: 'getFragmentData' },
       } satisfies ClientPresetConfig,
     },
+    'e2e/types/types.gen.ts': {
+      plugins: ['typescript', 'typescript-operations', 'typescript-msw'],
+      config: {
+        onlyOperationTypes: true,
+      } satisfies TypeScriptPluginConfig,
+    },
   },
 };
 
