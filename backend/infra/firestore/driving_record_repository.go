@@ -43,9 +43,9 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 	defer func() { traceutils.FinishSpan(span, err) }()
 
 	data := &dtoDrivingRecord{
-		Date:     record.Date,
-		Distance: record.DistanceKilometers,
-		Memo:     record.Memo.Ptr(),
+		Date:          record.Date,
+		OdometerValue: record.OdometerValue,
+		Memo:          record.Memo.Ptr(),
 	}
 	if _, err := r.client.Collection("driving_records").Doc(epochID(record.Date)).Set(ctx, data); err != nil {
 		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
@@ -62,7 +62,7 @@ func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, se
 	if !searchPeriod.Start.Value.IsZero() && !searchPeriod.End.Value.IsZero() {
 		query = query.WhereEntity(toWhere(searchPeriod))
 	}
-	ret, err := query.NewAggregationQuery().WithSum("Distance", totalPath).Get(ctx)
+	ret, err := query.NewAggregationQuery().WithSum("OdometerValue", totalPath).Get(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -105,9 +105,9 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 	f := func(ctx context.Context, tx *firestore.Transaction) error {
 		for _, record := range records {
 			data := &dtoDrivingRecord{
-				Date:     record.Date,
-				Distance: record.DistanceKilometers,
-				Memo:     record.Memo.Ptr(),
+				Date:          record.Date,
+				OdometerValue: record.OdometerValue,
+				Memo:          record.Memo.Ptr(),
 			}
 			docRef := r.client.Collection("driving_records").Doc(epochID(record.Date))
 			if err := tx.Set(docRef, data); err != nil {
@@ -123,9 +123,9 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 }
 
 type dtoDrivingRecord struct {
-	Date     time.Time
-	Distance int64
-	Memo     *string
+	Date          time.Time
+	OdometerValue int64
+	Memo          *string
 }
 
 func epochID(t time.Time) string {
@@ -161,9 +161,9 @@ func iterateDrivingRecords(docs *firestore.DocumentIterator) iter.Seq[*result[*d
 				return
 			}
 			record := &domain.DrivingRecord{
-				Date:               dto.Date,
-				DistanceKilometers: dto.Distance,
-				Memo:               optional.FromPtr(dto.Memo),
+				Date:          dto.Date,
+				OdometerValue: dto.OdometerValue,
+				Memo:          optional.FromPtr(dto.Memo),
 			}
 			if !yield(&result[*domain.DrivingRecord]{value: record}) {
 				return

@@ -55,7 +55,7 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 	conn := &dtos.DailyReportsConnection{Nodes: make([]*dtos.DailyReport, len(records))}
 	for i, record := range records {
 		conn.Nodes[i] = &dtos.DailyReport{
-			DistanceKilometers: int(record.DistanceKilometers),
+			DistanceKilometers: int(record.OdometerValue),
 			RecordedAt:         record.Date,
 			Memo:               record.Memo.Ptr(),
 		}
@@ -65,9 +65,9 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 
 func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, distanceKilometers int, memo *string) (bool, error) {
 	record := &domain.DrivingRecord{
-		Date:               date,
-		DistanceKilometers: int64(distanceKilometers),
-		Memo:               optional.FromPtr(memo),
+		Date:          date,
+		OdometerValue: int64(distanceKilometers),
+		Memo:          optional.FromPtr(memo),
 	}
 	if err := r.drivingRecordCommand.RecordDrivingRecord(ctx, record); err != nil {
 		return false, fmt.Errorf("RecordDrivingRecord: %w", err)
@@ -95,7 +95,7 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 	}
 	for i, record := range records {
 		conn.Nodes[i] = &dtos.DailyReport{
-			DistanceKilometers: int(record.DistanceKilometers),
+			DistanceKilometers: int(record.OdometerValue),
 			RecordedAt:         record.Date,
 			Memo:               record.Memo.Ptr(),
 		}

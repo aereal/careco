@@ -155,8 +155,8 @@ var mockCalls = map[string]*mocks{
 	"mutation recordDrivingRecord/ok": {
 		drivingRecordCommand: func(m *mock.MockDrivingRecordCommand) {
 			want := &domain.DrivingRecord{
-				DistanceKilometers: 12,
-				Date:               time.Date(2025, time.October, 3, 0, 0, 0, 0, time.UTC),
+				OdometerValue: 12,
+				Date:          time.Date(2025, time.October, 3, 0, 0, 0, 0, time.UTC),
 			}
 			m.EXPECT().RecordDrivingRecord(gomock.Any(), gomock.Any()).
 				DoAndReturn(func(ctx context.Context, record *domain.DrivingRecord) error {
@@ -173,16 +173,16 @@ var mockCalls = map[string]*mocks{
 			}
 			ret := []*domain.DrivingRecord{
 				{
-					DistanceKilometers: 0,
-					Date:               time.Date(2025, time.October, 3, 0, 0, 0, 0, time.Local),
+					OdometerValue: 0,
+					Date:          time.Date(2025, time.October, 3, 0, 0, 0, 0, time.Local),
 				},
 				{
-					DistanceKilometers: 12,
-					Date:               time.Date(2025, time.October, 2, 0, 0, 0, 0, time.Local),
+					OdometerValue: 12,
+					Date:          time.Date(2025, time.October, 2, 0, 0, 0, 0, time.Local),
 				},
 				{
-					DistanceKilometers: 24,
-					Date:               time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local),
+					OdometerValue: 24,
+					Date:          time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local),
 				},
 			}
 			m.EXPECT().
@@ -199,22 +199,22 @@ var mockCalls = map[string]*mocks{
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			ret := []*domain.DrivingRecord{
 				{
-					DistanceKilometers: 0,
-					Date:               time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 0,
+					Date:          time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 12,
-					Date:               time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
-					Memo:               optional.Some("blah blah"),
+					OdometerValue: 12,
+					Date:          time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
+					Memo:          optional.Some("blah blah"),
 				},
 				{
-					DistanceKilometers: 24,
-					Date:               time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 24,
+					Date:          time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 36,
-					Date:               time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
-					Memo:               optional.Some("blah blah"),
+					OdometerValue: 36,
+					Date:          time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
+					Memo:          optional.Some("blah blah"),
 				},
 			}
 			m.EXPECT().
@@ -248,30 +248,30 @@ var mockCalls = map[string]*mocks{
 
 			oct := []*domain.DrivingRecord{
 				{
-					DistanceKilometers: 0,
-					Date:               time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 0,
+					Date:          time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 12,
-					Date:               time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 12,
+					Date:          time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 24,
-					Date:               time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 24,
+					Date:          time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
 				},
 			}
 			sep := []*domain.DrivingRecord{
 				{
-					DistanceKilometers: 0,
-					Date:               time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 0,
+					Date:          time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 12,
-					Date:               time.Date(2025, time.September, 29, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 12,
+					Date:          time.Date(2025, time.September, 29, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					DistanceKilometers: 24,
-					Date:               time.Date(2025, time.September, 28, 12, 34, 56, 0, time.UTC),
+					OdometerValue: 24,
+					Date:          time.Date(2025, time.September, 28, 12, 34, 56, 0, time.UTC),
 				},
 			}
 
