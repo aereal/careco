@@ -6,13 +6,13 @@ cases:
       query: |
         {
           totalStatistics {
-            distanceKilometers
+            odometerValue
           }
         }
     response:
       data:
         totalStatistics:
-          distanceKilometers: 45678
+          odometerValue: 45678
   'query recentDrivingRecords/ok':
     request:
       query: |
@@ -21,7 +21,7 @@ cases:
             nodes {
               recordedAt
               memo
-              distanceKilometers
+              odometerValue
             }
           }
         }
@@ -31,16 +31,16 @@ cases:
       data:
         recentDrivingRecords:
           nodes:
-            - distanceKilometers: 0
+            - odometerValue: 0
               recordedAt: '2025-10-03T12:34:56+00:00'
               memo: null
-            - distanceKilometers: 12
+            - odometerValue: 12
               recordedAt: '2025-10-02T12:34:56+00:00'
               memo: blah blah
-            - distanceKilometers: 24
+            - odometerValue: 24
               recordedAt: '2025-10-01T12:34:56+00:00'
               memo: null
-            - distanceKilometers: 36
+            - odometerValue: 36
               recordedAt: '2025-09-30T12:34:56+00:00'
               memo: blah blah
   'query monthlyReport/ok':
@@ -50,13 +50,13 @@ cases:
           monthlyReport(year: $year, month: $month) {
             year
             month
-            distanceKilometers
+            odometerValue
             dailyReports {
               nodes {
                 year
                 month
                 day
-                distanceKilometers
+                odometerValue
               }
             }
           }
@@ -69,21 +69,21 @@ cases:
         monthlyReport:
           year: 2025
           month: OCTOBER
-          distanceKilometers: 36
+          odometerValue: 36
           dailyReports:
             nodes:
               -
-                distanceKilometers: 0
+                odometerValue: 0
                 year: 2025
                 month: OCTOBER
                 day: 3
               -
-                distanceKilometers: 12
+                odometerValue: 12
                 year: 2025
                 month: OCTOBER
                 day: 2
               -
-                distanceKilometers: 24
+                odometerValue: 24
                 year: 2025
                 month: OCTOBER
                 day: 1
@@ -93,17 +93,17 @@ cases:
         query GetYearly($year: Int!) {
           yearlyReport(year: $year) {
             year
-            distanceKilometers
+            odometerValue
             monthlyReports {
               year
               month
-              distanceKilometers
+              odometerValue
               dailyReports {
                 nodes {
                   year
                   month
                   day
-                  distanceKilometers
+                  odometerValue
                 }
               }
             }
@@ -115,45 +115,45 @@ cases:
       data:
         yearlyReport:
           year: 2025
-          distanceKilometers: 72
+          odometerValue: 72
           monthlyReports:
             - month: OCTOBER
               year: 2025
-              distanceKilometers: 36
+              odometerValue: 36
               dailyReports:
                 nodes:
                   -
-                    distanceKilometers: 0
+                    odometerValue: 0
                     year: 2025
                     month: OCTOBER
                     day: 3
                   -
-                    distanceKilometers: 12
+                    odometerValue: 12
                     year: 2025
                     month: OCTOBER
                     day: 2
                   -
-                    distanceKilometers: 24
+                    odometerValue: 24
                     year: 2025
                     month: OCTOBER
                     day: 1
             - month: SEPTEMBER
               year: 2025
-              distanceKilometers: 36
+              odometerValue: 36
               dailyReports:
                 nodes:
                   -
-                    distanceKilometers: 0
+                    odometerValue: 0
                     year: 2025
                     month: SEPTEMBER
                     day: 30
                   -
-                    distanceKilometers: 12
+                    odometerValue: 12
                     year: 2025
                     month: SEPTEMBER
                     day: 29
                   -
-                    distanceKilometers: 24
+                    odometerValue: 24
                     year: 2025
                     month: SEPTEMBER
                     day: 28
@@ -161,7 +161,7 @@ cases:
     request:
       query: |
         mutation Record($date: DateTime!, $distance: Int!, $memo: String) {
-          recordDrivingRecord(date: $date, distanceKilometers: $distance, memo: $memo)
+          recordDrivingRecord(date: $date, odometerValue: $distance, memo: $memo)
         }
       variables:
         date: '2025-10-03T00:00:00+00:00'
