@@ -8,6 +8,6 @@ import (
 
 type DrivingRecord struct {
 	Date               time.Time
-	DistanceKilometers int64
+	CumulativeDistance int64
 	Memo               optional.Option[string]
 }

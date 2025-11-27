@@ -17,7 +17,6 @@ import (
 	"careco/backend/usecases"
 	"careco/backend/usecases/ports"
 
-	"github.com/aereal/iter/seq"
 	"github.com/aereal/optional"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -51,11 +50,11 @@ func (u *ImportData) ImportData(ctx context.Context) (err error) {
 
 	records := make([]*domain.DrivingRecord, 0, len(rows))
 	slices.Reverse(rows)
-	for right, left := range seq.Pairwise(slices.Values(rows)) {
+	for _, row := range rows {
 		records = append(records, &domain.DrivingRecord{
 			Memo:               optional.None[string](),
-			Date:               right.date,
-			DistanceKilometers: right.distance - left.distance,
+			Date:               row.date,
+			CumulativeDistance: row.cumulativeDistance,
 		})
 	}
 
@@ -66,8 +65,8 @@ func (u *ImportData) ImportData(ctx context.Context) (err error) {
 }
 
 type data struct {
-	date     time.Time
-	distance int64
+	date               time.Time
+	cumulativeDistance int64
 }
 
 func parseRecords(records []string) (*data, error) {
@@ -80,7 +79,7 @@ func parseRecords(records []string) (*data, error) {
 	r := new(data)
 	err := errors.Join(
 		parseTime(&r.date, records[0]),
-		parseInt(&r.distance, records[1]),
+		parseInt(&r.cumulativeDistance, records[1]),
 	)
 	if err != nil {
 		return nil, err
