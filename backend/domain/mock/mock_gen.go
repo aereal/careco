@@ -105,41 +105,41 @@ func (m *MockDrivingRecordQuery) EXPECT() *MockDrivingRecordQueryMockRecorder {
 	return m.recorder
 }
 
-// CalculateTotalDistance mocks base method.
-func (m *MockDrivingRecordQuery) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (int64, error) {
+// FindLastRecordInPeriod mocks base method.
+func (m *MockDrivingRecordQuery) FindLastRecordInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) (*domain.DrivingRecord, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CalculateTotalDistance", ctx, searchPeriod)
-	ret0, _ := ret[0].(int64)
+	ret := m.ctrl.Call(m, "FindLastRecordInPeriod", ctx, searchPeriod)
+	ret0, _ := ret[0].(*domain.DrivingRecord)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CalculateTotalDistance indicates an expected call of CalculateTotalDistance.
-func (mr *MockDrivingRecordQueryMockRecorder) CalculateTotalDistance(ctx, searchPeriod any) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+// FindLastRecordInPeriod indicates an expected call of FindLastRecordInPeriod.
+func (mr *MockDrivingRecordQueryMockRecorder) FindLastRecordInPeriod(ctx, searchPeriod any) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
 	mr.mock.ctrl.T.Helper()
-	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculateTotalDistance", reflect.TypeOf((*MockDrivingRecordQuery)(nil).CalculateTotalDistance), ctx, searchPeriod)
-	return &MockDrivingRecordQueryCalculateTotalDistanceCall{Call: call}
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindLastRecordInPeriod", reflect.TypeOf((*MockDrivingRecordQuery)(nil).FindLastRecordInPeriod), ctx, searchPeriod)
+	return &MockDrivingRecordQueryFindLastRecordInPeriodCall{Call: call}
 }
 
-// MockDrivingRecordQueryCalculateTotalDistanceCall wrap *gomock.Call
-type MockDrivingRecordQueryCalculateTotalDistanceCall struct {
+// MockDrivingRecordQueryFindLastRecordInPeriodCall wrap *gomock.Call
+type MockDrivingRecordQueryFindLastRecordInPeriodCall struct {
 	*gomock.Call
 }
 
 // Return rewrite *gomock.Call.Return
-func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) Return(arg0 int64, arg1 error) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+func (c *MockDrivingRecordQueryFindLastRecordInPeriodCall) Return(arg0 *domain.DrivingRecord, arg1 error) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
 	c.Call = c.Call.Return(arg0, arg1)
 	return c
 }
 
 // Do rewrite *gomock.Call.Do
-func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) Do(f func(context.Context, domain.Interval[time.Time]) (int64, error)) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+func (c *MockDrivingRecordQueryFindLastRecordInPeriodCall) Do(f func(context.Context, domain.Interval[time.Time]) (*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
 	c.Call = c.Call.Do(f)
 	return c
 }
 
 // DoAndReturn rewrite *gomock.Call.DoAndReturn
-func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) DoAndReturn(f func(context.Context, domain.Interval[time.Time]) (int64, error)) *MockDrivingRecordQueryCalculateTotalDistanceCall {
+func (c *MockDrivingRecordQueryFindLastRecordInPeriodCall) DoAndReturn(f func(context.Context, domain.Interval[time.Time]) (*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
 	c.Call = c.Call.DoAndReturn(f)
 	return c
 }

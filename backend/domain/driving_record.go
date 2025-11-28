@@ -7,7 +7,10 @@ import (
 )
 
 type DrivingRecord struct {
-	Date               time.Time
-	DistanceKilometers int64
-	Memo               optional.Option[string]
+	Date time.Time
+	Memo optional.Option[string]
+	// OdometerValue はこの日時時点での総走行距離。
+	//
+	// 日時は [Date] で表される。
+	OdometerValue int64
 }

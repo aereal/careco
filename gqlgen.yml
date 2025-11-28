@@ -42,15 +42,15 @@ models:
         resolver: true
   MonthlyReport:
     fields:
-      distanceKilometers:
+      odometerValue:
         resolver: true
       dailyReports:
         resolver: true
   YearlyReport:
     fields:
-      distanceKilometers:
+      odometerValue:
         resolver: true
   DistanceReport:
     fields:
-      distanceKilometers:
+      odometerValue:
         resolver: true

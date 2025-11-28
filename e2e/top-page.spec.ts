@@ -25,7 +25,7 @@ test.describe('トップページ', () => {
     await page.goto('/');
 
     // モックデータの総走行距離が表示されることを確認
-    const totalDistance = mockGetRootData.totalStatistics.distanceKilometers;
+    const totalDistance = mockGetRootData.totalStatistics.odometerValue;
     await expect(page.getByText(totalDistance.toString())).toBeVisible();
   });
 
@@ -35,7 +35,7 @@ test.describe('トップページ', () => {
     // モックデータの最初の記録の距離が表示されることを確認
     const firstRecord = mockGetRootData.recentDrivingRecords.nodes[0];
     await expect(
-      page.getByText(firstRecord.distanceKilometers.toString()),
+      page.getByText(firstRecord.odometerValue.toString()),
     ).toBeVisible();
   });
 });

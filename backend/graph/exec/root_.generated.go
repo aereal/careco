@@ -45,12 +45,12 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	DailyReport struct {
-		Day                func(childComplexity int) int
-		DistanceKilometers func(childComplexity int) int
-		Memo               func(childComplexity int) int
-		Month              func(childComplexity int) int
-		RecordedAt         func(childComplexity int) int
-		Year               func(childComplexity int) int
+		Day           func(childComplexity int) int
+		Memo          func(childComplexity int) int
+		Month         func(childComplexity int) int
+		OdometerValue func(childComplexity int) int
+		RecordedAt    func(childComplexity int) int
+		Year          func(childComplexity int) int
 	}
 
 	DailyReportsConnection struct {
@@ -58,14 +58,14 @@ type ComplexityRoot struct {
 	}
 
 	MonthlyReport struct {
-		DailyReports       func(childComplexity int) int
-		DistanceKilometers func(childComplexity int) int
-		Month              func(childComplexity int) int
-		Year               func(childComplexity int) int
+		DailyReports  func(childComplexity int) int
+		Month         func(childComplexity int) int
+		OdometerValue func(childComplexity int) int
+		Year          func(childComplexity int) int
 	}
 
 	Mutation struct {
-		RecordDrivingRecord func(childComplexity int, date time.Time, distanceKilometers int, memo *string) int
+		RecordDrivingRecord func(childComplexity int, date time.Time, odometerValue int, memo *string) int
 	}
 
 	Query struct {
@@ -80,13 +80,13 @@ type ComplexityRoot struct {
 	}
 
 	TotalStatistics struct {
-		DistanceKilometers func(childComplexity int) int
+		OdometerValue func(childComplexity int) int
 	}
 
 	YearlyReport struct {
-		DistanceKilometers func(childComplexity int) int
-		MonthlyReports     func(childComplexity int) int
-		Year               func(childComplexity int) int
+		MonthlyReports func(childComplexity int) int
+		OdometerValue  func(childComplexity int) int
+		Year           func(childComplexity int) int
 	}
 }
 
@@ -116,13 +116,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReport.Day(childComplexity), true
 
-	case "DailyReport.distanceKilometers":
-		if e.complexity.DailyReport.DistanceKilometers == nil {
-			break
-		}
-
-		return e.complexity.DailyReport.DistanceKilometers(childComplexity), true
-
 	case "DailyReport.memo":
 		if e.complexity.DailyReport.Memo == nil {
 			break
@@ -136,6 +129,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.DailyReport.Month(childComplexity), true
+
+	case "DailyReport.odometerValue":
+		if e.complexity.DailyReport.OdometerValue == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.OdometerValue(childComplexity), true
 
 	case "DailyReport.recordedAt":
 		if e.complexity.DailyReport.RecordedAt == nil {
@@ -165,19 +165,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.MonthlyReport.DailyReports(childComplexity), true
 
-	case "MonthlyReport.distanceKilometers":
-		if e.complexity.MonthlyReport.DistanceKilometers == nil {
-			break
-		}
-
-		return e.complexity.MonthlyReport.DistanceKilometers(childComplexity), true
-
 	case "MonthlyReport.month":
 		if e.complexity.MonthlyReport.Month == nil {
 			break
 		}
 
 		return e.complexity.MonthlyReport.Month(childComplexity), true
+
+	case "MonthlyReport.odometerValue":
+		if e.complexity.MonthlyReport.OdometerValue == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.OdometerValue(childComplexity), true
 
 	case "MonthlyReport.year":
 		if e.complexity.MonthlyReport.Year == nil {
@@ -196,7 +196,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["distanceKilometers"].(int), args["memo"].(*string)), true
+		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string)), true
 
 	case "Query.monthlyReport":
 		if e.complexity.Query.MonthlyReport == nil {
@@ -248,19 +248,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.RecentDrivingRecordsConnection.Nodes(childComplexity), true
 
-	case "TotalStatistics.distanceKilometers":
-		if e.complexity.TotalStatistics.DistanceKilometers == nil {
+	case "TotalStatistics.odometerValue":
+		if e.complexity.TotalStatistics.OdometerValue == nil {
 			break
 		}
 
-		return e.complexity.TotalStatistics.DistanceKilometers(childComplexity), true
-
-	case "YearlyReport.distanceKilometers":
-		if e.complexity.YearlyReport.DistanceKilometers == nil {
-			break
-		}
-
-		return e.complexity.YearlyReport.DistanceKilometers(childComplexity), true
+		return e.complexity.TotalStatistics.OdometerValue(childComplexity), true
 
 	case "YearlyReport.monthlyReports":
 		if e.complexity.YearlyReport.MonthlyReports == nil {
@@ -268,6 +261,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.YearlyReport.MonthlyReports(childComplexity), true
+
+	case "YearlyReport.odometerValue":
+		if e.complexity.YearlyReport.OdometerValue == nil {
+			break
+		}
+
+		return e.complexity.YearlyReport.OdometerValue(childComplexity), true
 
 	case "YearlyReport.year":
 		if e.complexity.YearlyReport.Year == nil {
@@ -402,23 +402,23 @@ interface DrivingRecordsConnection {
 }
 
 interface DistanceReport {
-  distanceKilometers: Int!
+  odometerValue: Int!
 }
 
 type TotalStatistics implements DistanceReport {
-  distanceKilometers: Int!
+  odometerValue: Int!
 }
 
 type YearlyReport implements DistanceReport {
   year: Int!
-  distanceKilometers: Int!
+  odometerValue: Int!
   monthlyReports: [MonthlyReport!]!
 }
 
 type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
-  distanceKilometers: Int!
+  odometerValue: Int!
   dailyReports: DailyReportsConnection!
 }
 
@@ -426,7 +426,7 @@ type DailyReport implements DistanceReport {
   year: Int!
   month: Month!
   day: Int!
-  distanceKilometers: Int!
+  odometerValue: Int!
   recordedAt: DateTime!
   memo: String
 }
@@ -449,7 +449,7 @@ type Query {
 type Mutation {
   recordDrivingRecord(
     date: DateTime!
-    distanceKilometers: Int!
+    odometerValue: Int!
     memo: String
   ): Boolean!
 }

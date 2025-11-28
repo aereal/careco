@@ -5,20 +5,20 @@ import { type GetRootQuery } from '../types';
  */
 export const mockGetRootData: GetRootQuery = {
   totalStatistics: {
-    distanceKilometers: 12345,
+    odometerValue: 12345,
   },
   recentDrivingRecords: {
     nodes: [
       {
-        distanceKilometers: 150,
+        odometerValue: 150,
         recordedAt: new Date('2025-11-26T10:00:00Z'),
       },
       {
-        distanceKilometers: 200,
+        odometerValue: 200,
         recordedAt: new Date('2025-11-25T09:30:00Z'),
       },
       {
-        distanceKilometers: 175,
+        odometerValue: 175,
         recordedAt: new Date('2025-11-24T14:15:00Z'),
       },
     ],

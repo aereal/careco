@@ -10,11 +10,9 @@ import (
 
 	"careco/backend/domain"
 	"careco/backend/o11y/traceutils"
-	"careco/backend/types"
 	"careco/backend/usecases/ports"
 
 	"cloud.google.com/go/firestore"
-	"cloud.google.com/go/firestore/apiv1/firestorepb"
 	"github.com/aereal/optional"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/api/iterator"
@@ -43,9 +41,9 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 	defer func() { traceutils.FinishSpan(span, err) }()
 
 	data := &dtoDrivingRecord{
-		Date:     record.Date,
-		Distance: record.DistanceKilometers,
-		Memo:     record.Memo.Ptr(),
+		Date:          record.Date,
+		OdometerValue: record.OdometerValue,
+		Memo:          record.Memo.Ptr(),
 	}
 	if _, err := r.client.Collection("driving_records").Doc(epochID(record.Date)).Set(ctx, data); err != nil {
 		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
@@ -53,42 +51,12 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 	return nil
 }
 
-func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ int64, err error) {
-	ctx, span := r.tracer.Start(ctx, "CalculateTotalDistance")
-	defer func() { traceutils.FinishSpan(span, err) }()
-
-	totalPath := "total"
-	query := r.client.Collection("driving_records").Query
-	if !searchPeriod.Start.Value.IsZero() && !searchPeriod.End.Value.IsZero() {
-		query = query.WhereEntity(toWhere(searchPeriod))
-	}
-	ret, err := query.NewAggregationQuery().WithSum("Distance", totalPath).Get(ctx)
-	if err != nil {
-		return 0, err
-	}
-	val, err := types.Cast[*firestorepb.Value](ret[totalPath])
-	if err != nil {
-		return 0, err
-	}
-	return val.GetIntegerValue(), nil
-}
-
 func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) (_ []*domain.DrivingRecord, err error) {
 	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
 	defer func() { traceutils.FinishSpan(span, err) }()
 
-	query := r.client.Collection("driving_records").Query
-	if whereClause := toWhere(searchPeriod); whereClause != nil {
-		query = query.WhereEntity(whereClause)
-	}
-	if l, ok := optional.Unwrap(limit); ok {
-		query = query.Limit(l)
-	}
-	docs := query.
-		OrderBy("Date", directionMapping[direction]).
-		Documents(ctx)
 	records := make([]*domain.DrivingRecord, 0)
-	for ret := range iterateDrivingRecords(docs) {
+	for ret := range r.findRecords(ctx, searchPeriod, direction, limit) {
 		record, err := ret.Value()
 		if err != nil {
 			return nil, err
@@ -98,6 +66,16 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 	return records, nil
 }
 
+func (r *DrivingRecordRepository) FindLastRecordInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ *domain.DrivingRecord, err error) {
+	ctx, span := r.tracer.Start(ctx, "FindLastRecordInPeriod")
+	defer func() { traceutils.FinishSpan(span, err) }()
+
+	for ret := range r.findRecords(ctx, searchPeriod, domain.OrderDirectionDesc, optional.Some(1)) {
+		return ret.Value()
+	}
+	return nil, domain.ErrDrivingRecordNotFound
+}
+
 func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, records []*domain.DrivingRecord) (err error) {
 	ctx, span := r.tracer.Start(ctx, "BulkWriteDrivingRecords")
 	defer func() { traceutils.FinishSpan(span, err) }()
@@ -105,9 +83,9 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 	f := func(ctx context.Context, tx *firestore.Transaction) error {
 		for _, record := range records {
 			data := &dtoDrivingRecord{
-				Date:     record.Date,
-				Distance: record.DistanceKilometers,
-				Memo:     record.Memo.Ptr(),
+				Date:          record.Date,
+				OdometerValue: record.OdometerValue,
+				Memo:          record.Memo.Ptr(),
 			}
 			docRef := r.client.Collection("driving_records").Doc(epochID(record.Date))
 			if err := tx.Set(docRef, data); err != nil {
@@ -122,10 +100,24 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 	return nil
 }
 
+func (r *DrivingRecordRepository) findRecords(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) iter.Seq[*result[*domain.DrivingRecord]] {
+	query := r.client.Collection("driving_records").Query
+	if whereClause := toWhere(searchPeriod); whereClause != nil {
+		query = query.WhereEntity(whereClause)
+	}
+	if l, ok := optional.Unwrap(limit); ok {
+		query = query.Limit(l)
+	}
+	docs := query.
+		OrderBy("Date", directionMapping[direction]).
+		Documents(ctx)
+	return iterateDrivingRecords(docs)
+}
+
 type dtoDrivingRecord struct {
-	Date     time.Time
-	Distance int64
-	Memo     *string
+	Date          time.Time
+	OdometerValue int64
+	Memo          *string
 }
 
 func epochID(t time.Time) string {
@@ -161,9 +153,9 @@ func iterateDrivingRecords(docs *firestore.DocumentIterator) iter.Seq[*result[*d
 				return
 			}
 			record := &domain.DrivingRecord{
-				Date:               dto.Date,
-				DistanceKilometers: dto.Distance,
-				Memo:               optional.FromPtr(dto.Memo),
+				Date:          dto.Date,
+				OdometerValue: dto.OdometerValue,
+				Memo:          optional.FromPtr(dto.Memo),
 			}
 			if !yield(&result[*domain.DrivingRecord]{value: record}) {
 				return
