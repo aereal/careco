@@ -12,7 +12,6 @@ type DrivingRecordCommand interface {
 }
 
 type DrivingRecordQuery interface {
-	CalculateTotalDistance(ctx context.Context, searchPeriod Interval[time.Time]) (int64, error)
 	FindRecordsInPeriod(ctx context.Context, searchPeriod Interval[time.Time], direction OrderDirection, limit optional.Option[int]) ([]*DrivingRecord, error)
 	FindLastRecordInPeriod(ctx context.Context, searchPeriod Interval[time.Time]) (*DrivingRecord, error)
 }

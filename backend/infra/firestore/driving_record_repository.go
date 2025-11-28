@@ -10,11 +10,9 @@ import (
 
 	"careco/backend/domain"
 	"careco/backend/o11y/traceutils"
-	"careco/backend/types"
 	"careco/backend/usecases/ports"
 
 	"cloud.google.com/go/firestore"
-	"cloud.google.com/go/firestore/apiv1/firestorepb"
 	"github.com/aereal/optional"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/api/iterator"
@@ -51,26 +49,6 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
 	}
 	return nil
-}
-
-func (r *DrivingRecordRepository) CalculateTotalDistance(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ int64, err error) {
-	ctx, span := r.tracer.Start(ctx, "CalculateTotalDistance")
-	defer func() { traceutils.FinishSpan(span, err) }()
-
-	totalPath := "total"
-	query := r.client.Collection("driving_records").Query
-	if !searchPeriod.Start.Value.IsZero() && !searchPeriod.End.Value.IsZero() {
-		query = query.WhereEntity(toWhere(searchPeriod))
-	}
-	ret, err := query.NewAggregationQuery().WithSum("OdometerValue", totalPath).Get(ctx)
-	if err != nil {
-		return 0, err
-	}
-	val, err := types.Cast[*firestorepb.Value](ret[totalPath])
-	if err != nil {
-		return 0, err
-	}
-	return val.GetIntegerValue(), nil
 }
 
 func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) (_ []*domain.DrivingRecord, err error) {
