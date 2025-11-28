@@ -88,6 +88,16 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 	return records, nil
 }
 
+func (r *DrivingRecordRepository) FindLastRecordInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) (_ *domain.DrivingRecord, err error) {
+	ctx, span := r.tracer.Start(ctx, "FindLastRecordInPeriod")
+	defer func() { traceutils.FinishSpan(span, err) }()
+
+	for ret := range r.findRecords(ctx, searchPeriod, domain.OrderDirectionDesc, optional.Some(1)) {
+		return ret.Value()
+	}
+	return nil, domain.ErrDrivingRecordNotFound
+}
+
 func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, records []*domain.DrivingRecord) (err error) {
 	ctx, span := r.tracer.Start(ctx, "BulkWriteDrivingRecords")
 	defer func() { traceutils.FinishSpan(span, err) }()

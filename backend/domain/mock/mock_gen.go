@@ -144,6 +144,45 @@ func (c *MockDrivingRecordQueryCalculateTotalDistanceCall) DoAndReturn(f func(co
 	return c
 }
 
+// FindLastRecordInPeriod mocks base method.
+func (m *MockDrivingRecordQuery) FindLastRecordInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time]) (*domain.DrivingRecord, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindLastRecordInPeriod", ctx, searchPeriod)
+	ret0, _ := ret[0].(*domain.DrivingRecord)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindLastRecordInPeriod indicates an expected call of FindLastRecordInPeriod.
+func (mr *MockDrivingRecordQueryMockRecorder) FindLastRecordInPeriod(ctx, searchPeriod any) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
+	mr.mock.ctrl.T.Helper()
+	call := mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindLastRecordInPeriod", reflect.TypeOf((*MockDrivingRecordQuery)(nil).FindLastRecordInPeriod), ctx, searchPeriod)
+	return &MockDrivingRecordQueryFindLastRecordInPeriodCall{Call: call}
+}
+
+// MockDrivingRecordQueryFindLastRecordInPeriodCall wrap *gomock.Call
+type MockDrivingRecordQueryFindLastRecordInPeriodCall struct {
+	*gomock.Call
+}
+
+// Return rewrite *gomock.Call.Return
+func (c *MockDrivingRecordQueryFindLastRecordInPeriodCall) Return(arg0 *domain.DrivingRecord, arg1 error) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
+	c.Call = c.Call.Return(arg0, arg1)
+	return c
+}
+
+// Do rewrite *gomock.Call.Do
+func (c *MockDrivingRecordQueryFindLastRecordInPeriodCall) Do(f func(context.Context, domain.Interval[time.Time]) (*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
+	c.Call = c.Call.Do(f)
+	return c
+}
+
+// DoAndReturn rewrite *gomock.Call.DoAndReturn
+func (c *MockDrivingRecordQueryFindLastRecordInPeriodCall) DoAndReturn(f func(context.Context, domain.Interval[time.Time]) (*domain.DrivingRecord, error)) *MockDrivingRecordQueryFindLastRecordInPeriodCall {
+	c.Call = c.Call.DoAndReturn(f)
+	return c
+}
+
 // FindRecordsInPeriod mocks base method.
 func (m *MockDrivingRecordQuery) FindRecordsInPeriod(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) ([]*domain.DrivingRecord, error) {
 	m.ctrl.T.Helper()

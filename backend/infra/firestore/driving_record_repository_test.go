@@ -254,3 +254,58 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 		})
 	}
 }
+
+func TestDrivingRecordRepository_FindLastRecordInPeriod(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name     string
+		interval domain.Interval[time.Time]
+		wantVal  *domain.DrivingRecord
+		wantErr  error
+		prepare  func(ctx context.Context, r *firestore.DrivingRecordRepository) error
+	}{
+		{
+			name:     "no records in period",
+			interval: domain.EmptyInterval[time.Time](),
+			wantVal:  nil,
+			wantErr:  domain.ErrDrivingRecordNotFound,
+		},
+		{
+			name:     "found record",
+			interval: domain.EmptyInterval[time.Time](),
+			wantVal: &domain.DrivingRecord{
+				OdometerValue: 1,
+				Date:          time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
+			},
+			wantErr: nil,
+			prepare: func(ctx context.Context, r *firestore.DrivingRecordRepository) error {
+				return r.RecordDrivingRecord(ctx, &domain.DrivingRecord{OdometerValue: 1, Date: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)})
+			},
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			r, err := test.BuildDrivingRecordRepository(t)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := t.Context()
+			if tc.prepare != nil {
+				if err := tc.prepare(ctx, r); err != nil {
+					t.Fatal(err)
+				}
+			}
+			got, gotErr := r.FindLastRecordInPeriod(ctx, tc.interval)
+			tests.AssertsErrors(t, tc.wantErr, gotErr)
+			if gotErr != nil {
+				return
+			}
+			if err := tests.Diff(tc.wantVal, got, tests.EquateOptional[string]()); err != nil {
+				t.Error(err)
+			}
+		})
+	}
+}
