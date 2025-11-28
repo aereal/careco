@@ -54,7 +54,7 @@ func (u *ImportData) ImportData(ctx context.Context) (err error) {
 		records = append(records, &domain.DrivingRecord{
 			Memo:          optional.None[string](),
 			Date:          row.date,
-			OdometerValue: row.otometerValue,
+			OdometerValue: row.odometerValue,
 		})
 	}
 
@@ -66,7 +66,7 @@ func (u *ImportData) ImportData(ctx context.Context) (err error) {
 
 type data struct {
 	date          time.Time
-	otometerValue int64
+	odometerValue int64
 }
 
 func parseRecords(records []string) (*data, error) {
@@ -79,7 +79,7 @@ func parseRecords(records []string) (*data, error) {
 	r := new(data)
 	err := errors.Join(
 		parseTime(&r.date, records[0]),
-		parseInt(&r.otometerValue, records[1]),
+		parseInt(&r.odometerValue, records[1]),
 	)
 	if err != nil {
 		return nil, err
