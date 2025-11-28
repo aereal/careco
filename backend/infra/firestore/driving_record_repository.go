@@ -77,18 +77,8 @@ func (r *DrivingRecordRepository) FindRecordsInPeriod(ctx context.Context, searc
 	ctx, span := r.tracer.Start(ctx, "FindRecordsInPeriod")
 	defer func() { traceutils.FinishSpan(span, err) }()
 
-	query := r.client.Collection("driving_records").Query
-	if whereClause := toWhere(searchPeriod); whereClause != nil {
-		query = query.WhereEntity(whereClause)
-	}
-	if l, ok := optional.Unwrap(limit); ok {
-		query = query.Limit(l)
-	}
-	docs := query.
-		OrderBy("Date", directionMapping[direction]).
-		Documents(ctx)
 	records := make([]*domain.DrivingRecord, 0)
-	for ret := range iterateDrivingRecords(docs) {
+	for ret := range r.findRecords(ctx, searchPeriod, direction, limit) {
 		record, err := ret.Value()
 		if err != nil {
 			return nil, err
@@ -120,6 +110,20 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 		return fmt.Errorf("RunTransaction: %w", err)
 	}
 	return nil
+}
+
+func (r *DrivingRecordRepository) findRecords(ctx context.Context, searchPeriod domain.Interval[time.Time], direction domain.OrderDirection, limit optional.Option[int]) iter.Seq[*result[*domain.DrivingRecord]] {
+	query := r.client.Collection("driving_records").Query
+	if whereClause := toWhere(searchPeriod); whereClause != nil {
+		query = query.WhereEntity(whereClause)
+	}
+	if l, ok := optional.Unwrap(limit); ok {
+		query = query.Limit(l)
+	}
+	docs := query.
+		OrderBy("Date", directionMapping[direction]).
+		Documents(ctx)
+	return iterateDrivingRecords(docs)
 }
 
 type dtoDrivingRecord struct {
