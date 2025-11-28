@@ -105,22 +105,6 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {
 	yearlyReport := &dtos.YearlyReport{Year: year}
-	interval := domain.Interval[time.Time]{
-		Start: domain.ClosedEndpoint(yearlyReport.StartOfYear()),
-		End:   domain.OpenEndpoint(timeops.StartOfNextYear(yearlyReport.StartOfYear())),
-	}
-	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, interval, domain.OrderDirectionAsc, optional.None[int]())
-	if err != nil {
-		return nil, fmt.Errorf("FindRecordsInPeriod: %w", err)
-	}
-	months := coll.NewOrderedSet[time.Time]()
-	for _, record := range records {
-		d := record.Date
-		months.Append(time.Date(d.Year(), d.Month(), 1, 0, 0, 0, 0, d.Location()))
-	}
-	for m := range months.Values() {
-		yearlyReport.MonthlyReports = append(yearlyReport.MonthlyReports, &dtos.MonthlyReport{Year: m.Year(), Month: m.Month()})
-	}
 	return yearlyReport, nil
 }
 
@@ -142,6 +126,27 @@ func (r *yearlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.Year
 		return 0, fmt.Errorf("FindLastRecordInPeriod: %w", err)
 	}
 	return int(record.OdometerValue), nil
+}
+
+func (r *yearlyReportResolver) MonthlyReports(ctx context.Context, obj *dtos.YearlyReport) ([]*dtos.MonthlyReport, error) {
+	interval := domain.Interval[time.Time]{
+		Start: domain.ClosedEndpoint(obj.StartOfYear()),
+		End:   domain.OpenEndpoint(timeops.StartOfNextYear(obj.StartOfYear())),
+	}
+	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, interval, domain.OrderDirectionAsc, optional.None[int]())
+	if err != nil {
+		return nil, fmt.Errorf("FindRecordsInPeriod: %w", err)
+	}
+	months := coll.NewOrderedSet[time.Time]()
+	for _, record := range records {
+		d := record.Date
+		months.Append(time.Date(d.Year(), d.Month(), 1, 0, 0, 0, 0, d.Location()))
+	}
+	reports := make([]*dtos.MonthlyReport, 0, months.Len())
+	for m := range months.Values() {
+		reports = append(reports, &dtos.MonthlyReport{Year: m.Year(), Month: m.Month()})
+	}
+	return reports, nil
 }
 
 func (r *Resolver) DailyReport() exec.DailyReportResolver { return &dailyReportResolver{r} }

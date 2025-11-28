@@ -69,8 +69,7 @@ type TotalStatistics struct {
 func (TotalStatistics) IsDistanceReport() {}
 
 type YearlyReport struct {
-	Year           int              `json:"year"`
-	MonthlyReports []*MonthlyReport `json:"monthlyReports"`
+	Year int `json:"year"`
 }
 
 func (YearlyReport) IsDistanceReport() {}

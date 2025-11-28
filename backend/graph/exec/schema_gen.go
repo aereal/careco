@@ -39,6 +39,7 @@ type QueryResolver interface {
 }
 type YearlyReportResolver interface {
 	OdometerValue(ctx context.Context, obj *dtos.YearlyReport) (int, error)
+	MonthlyReports(ctx context.Context, obj *dtos.YearlyReport) ([]*dtos.MonthlyReport, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
@@ -924,7 +925,7 @@ func (ec *executionContext) _YearlyReport_monthlyReports(ctx context.Context, fi
 		field,
 		ec.fieldContext_YearlyReport_monthlyReports,
 		func(ctx context.Context) (any, error) {
-			return obj.MonthlyReports, nil
+			return ec.resolvers.YearlyReport().MonthlyReports(ctx, obj)
 		},
 		nil,
 		ec.marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReportᚄ,
@@ -937,8 +938,8 @@ func (ec *executionContext) fieldContext_YearlyReport_monthlyReports(_ context.C
 	fc = &graphql.FieldContext{
 		Object:     "YearlyReport",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "year":
@@ -1655,10 +1656,41 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "monthlyReports":
-			out.Values[i] = ec._YearlyReport_monthlyReports(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._YearlyReport_monthlyReports(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
