@@ -155,7 +155,7 @@ var mockCalls = map[string]*mocks{
 	"mutation recordDrivingRecord/ok": {
 		drivingRecordCommand: func(m *mock.MockDrivingRecordCommand) {
 			want := &domain.DrivingRecord{
-				OdometerValue: 12,
+				OdometerValue: 10001,
 				Date:          time.Date(2025, time.October, 3, 0, 0, 0, 0, time.UTC),
 			}
 			m.EXPECT().RecordDrivingRecord(gomock.Any(), gomock.Any()).
@@ -173,15 +173,15 @@ var mockCalls = map[string]*mocks{
 			}
 			ret := []*domain.DrivingRecord{
 				{
-					OdometerValue: 0,
+					OdometerValue: 10003,
 					Date:          time.Date(2025, time.October, 3, 0, 0, 0, 0, time.Local),
 				},
 				{
-					OdometerValue: 12,
+					OdometerValue: 10002,
 					Date:          time.Date(2025, time.October, 2, 0, 0, 0, 0, time.Local),
 				},
 				{
-					OdometerValue: 24,
+					OdometerValue: 10001,
 					Date:          time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local),
 				},
 			}
@@ -191,7 +191,7 @@ var mockCalls = map[string]*mocks{
 				Times(1)
 			m.EXPECT().
 				CalculateTotalDistance(gomock.Any(), eqTimeInterval(wantInterval)).
-				Return(36, nil).
+				Return(10003, nil).
 				Times(1)
 		},
 	},
@@ -199,20 +199,20 @@ var mockCalls = map[string]*mocks{
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			ret := []*domain.DrivingRecord{
 				{
-					OdometerValue: 0,
+					OdometerValue: 10004,
 					Date:          time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					OdometerValue: 12,
+					OdometerValue: 10003,
 					Date:          time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
 					Memo:          optional.Some("blah blah"),
 				},
 				{
-					OdometerValue: 24,
+					OdometerValue: 10002,
 					Date:          time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					OdometerValue: 36,
+					OdometerValue: 10001,
 					Date:          time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
 					Memo:          optional.Some("blah blah"),
 				},
@@ -248,29 +248,29 @@ var mockCalls = map[string]*mocks{
 
 			oct := []*domain.DrivingRecord{
 				{
-					OdometerValue: 0,
+					OdometerValue: 10007,
 					Date:          time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					OdometerValue: 12,
+					OdometerValue: 10006,
 					Date:          time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					OdometerValue: 24,
+					OdometerValue: 10005,
 					Date:          time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
 				},
 			}
 			sep := []*domain.DrivingRecord{
 				{
-					OdometerValue: 0,
+					OdometerValue: 10004,
 					Date:          time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					OdometerValue: 12,
+					OdometerValue: 10003,
 					Date:          time.Date(2025, time.September, 29, 12, 34, 56, 0, time.UTC),
 				},
 				{
-					OdometerValue: 24,
+					OdometerValue: 10002,
 					Date:          time.Date(2025, time.September, 28, 12, 34, 56, 0, time.UTC),
 				},
 			}
@@ -287,13 +287,13 @@ var mockCalls = map[string]*mocks{
 
 			m.EXPECT().
 				CalculateTotalDistance(gomock.Any(), eqTimeInterval(yearInterval)).
-				Return(72, nil)
+				Return(10007, nil)
 			m.EXPECT().
 				CalculateTotalDistance(gomock.Any(), eqTimeInterval(octoberMonth)).
-				Return(36, nil)
+				Return(10007, nil)
 			m.EXPECT().
 				CalculateTotalDistance(gomock.Any(), eqTimeInterval(septemberMonth)).
-				Return(36, nil)
+				Return(10004, nil)
 		},
 	},
 }
