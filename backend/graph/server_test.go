@@ -190,8 +190,8 @@ var mockCalls = map[string]*mocks{
 				Return(ret, nil).
 				Times(1)
 			m.EXPECT().
-				CalculateTotalDistance(gomock.Any(), eqTimeInterval(wantInterval)).
-				Return(10003, nil).
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(wantInterval)).
+				Return(ret[0], nil).
 				Times(1)
 		},
 	},
@@ -226,8 +226,8 @@ var mockCalls = map[string]*mocks{
 	"query totalStatistics/ok": {
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			m.EXPECT().
-				CalculateTotalDistance(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]())).
-				Return(45678, nil).
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]())).
+				Return(&domain.DrivingRecord{OdometerValue: 45678}, nil).
 				Times(1)
 		},
 	},
@@ -286,14 +286,17 @@ var mockCalls = map[string]*mocks{
 				Return(sep, nil)
 
 			m.EXPECT().
-				CalculateTotalDistance(gomock.Any(), eqTimeInterval(yearInterval)).
-				Return(10007, nil)
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(yearInterval)).
+				Return(oct[0], nil).
+				Times(1)
 			m.EXPECT().
-				CalculateTotalDistance(gomock.Any(), eqTimeInterval(octoberMonth)).
-				Return(10007, nil)
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(octoberMonth)).
+				Return(oct[0], nil).
+				Times(1)
 			m.EXPECT().
-				CalculateTotalDistance(gomock.Any(), eqTimeInterval(septemberMonth)).
-				Return(10004, nil)
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(septemberMonth)).
+				Return(sep[0], nil).
+				Times(1)
 		},
 	},
 }
