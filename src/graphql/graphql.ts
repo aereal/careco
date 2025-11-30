@@ -36,6 +36,7 @@ export type DailyReport = DistanceReport & {
   readonly month: Month;
   readonly odometerValue: Scalars['Int']['output'];
   readonly recordedAt: Scalars['DateTime']['output'];
+  readonly tripDistance: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
 
@@ -69,6 +70,7 @@ export type MonthlyReport = DistanceReport & {
   readonly dailyReports: DailyReportsConnection;
   readonly month: Month;
   readonly odometerValue: Scalars['Int']['output'];
+  readonly tripDistance: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
 

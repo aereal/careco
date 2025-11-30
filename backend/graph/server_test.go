@@ -6,6 +6,7 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"iter"
 	"maps"
@@ -277,18 +278,150 @@ var mockCalls = map[string]*mocks{
 
 			m.EXPECT().
 				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(yearInterval), domain.OrderDirectionAsc, optional.None[int]()).
-				Return(slices.Concat(oct, sep), nil)
+				Return(slices.Concat(oct, sep), nil).
+				Times(1)
 			m.EXPECT().
 				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(octoberMonth), domain.OrderDirectionAsc, optional.None[int]()).
-				Return(oct, nil)
+				Return(oct, nil).
+				Times(1)
 			m.EXPECT().
 				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(septemberMonth), domain.OrderDirectionAsc, optional.None[int]()).
-				Return(sep, nil)
+				Return(sep, nil).
+				Times(1)
 
 			m.EXPECT().
 				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(yearInterval)).
 				Return(oct[0], nil).
 				Times(1)
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(octoberMonth)).
+				Return(oct[0], nil).
+				Times(1)
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(septemberMonth)).
+				Return(sep[0], nil).
+				Times(1)
+		},
+	},
+	"query tripDistance": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			octoberMonth := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.November, 1, 0, 0, 0, 0, time.Local)),
+			}
+			septemberMonth := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.September, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+			}
+			yearInterval := domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(time.Date(2025, time.January, 1, 0, 0, 0, 0, time.Local)),
+				End:   domain.OpenEndpoint(time.Date(2026, time.January, 1, 0, 0, 0, 0, time.Local)),
+			}
+
+			oct := []*domain.DrivingRecord{
+				{
+					OdometerValue: 10007,
+					Date:          time.Date(2025, time.October, 3, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					OdometerValue: 10006,
+					Date:          time.Date(2025, time.October, 2, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					OdometerValue: 10005,
+					Date:          time.Date(2025, time.October, 1, 12, 34, 56, 0, time.UTC),
+				},
+			}
+			sep := []*domain.DrivingRecord{
+				{
+					OdometerValue: 10004,
+					Date:          time.Date(2025, time.September, 30, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					OdometerValue: 10003,
+					Date:          time.Date(2025, time.September, 29, 12, 34, 56, 0, time.UTC),
+				},
+				{
+					OdometerValue: 10002,
+					Date:          time.Date(2025, time.September, 28, 12, 34, 56, 0, time.UTC),
+				},
+			}
+
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(yearInterval), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(slices.Concat(oct, sep), nil).
+				Times(1)
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(octoberMonth), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(oct, nil).
+				Times(1)
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), eqTimeInterval(septemberMonth), domain.OrderDirectionAsc, optional.None[int]()).
+				Return(sep, nil).
+				Times(1)
+
+			beforeOctober := domain.Interval[time.Time]{
+				Start: domain.OpenEndpoint(time.Time{}),
+				End:   domain.OpenEndpoint(time.Date(2025, time.October, 1, 0, 0, 0, 0, time.Local)),
+			}
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(beforeOctober)).
+				Return(&domain.DrivingRecord{OdometerValue: 10004}, nil).
+				Times(1)
+
+			beforeSeptember := domain.Interval[time.Time]{
+				Start: domain.OpenEndpoint(time.Time{}),
+				End:   domain.OpenEndpoint(time.Date(2025, time.September, 1, 0, 0, 0, 0, time.Local)),
+			}
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(beforeSeptember)).
+				Return(nil, errNotFound).
+				Times(1)
+
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.Interval[time.Time]{
+					Start: domain.OpenEndpoint(time.Time{}),
+					End:   domain.OpenEndpoint(oct[2].Date), // Oct 1
+				})).
+				Return(&domain.DrivingRecord{OdometerValue: 10004}, nil).
+				Times(1)
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.Interval[time.Time]{
+					Start: domain.OpenEndpoint(time.Time{}),
+					End:   domain.OpenEndpoint(oct[1].Date), // Oct 2
+				})).
+				Return(&domain.DrivingRecord{OdometerValue: 10005}, nil).
+				Times(1)
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.Interval[time.Time]{
+					Start: domain.OpenEndpoint(time.Time{}),
+					End:   domain.OpenEndpoint(oct[0].Date), // Oct 3
+				})).
+				Return(&domain.DrivingRecord{OdometerValue: 10006}, nil).
+				Times(1)
+
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.Interval[time.Time]{
+					Start: domain.OpenEndpoint(time.Time{}),
+					End:   domain.OpenEndpoint(sep[2].Date), // Sep 28
+				})).
+				Return(&domain.DrivingRecord{OdometerValue: 10001}, nil).
+				Times(1)
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.Interval[time.Time]{
+					Start: domain.OpenEndpoint(time.Time{}),
+					End:   domain.OpenEndpoint(sep[1].Date), // Sep 29
+				})).
+				Return(&domain.DrivingRecord{OdometerValue: 10002}, nil).
+				Times(1)
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.Interval[time.Time]{
+					Start: domain.OpenEndpoint(time.Time{}),
+					End:   domain.OpenEndpoint(sep[0].Date), // Sep 30
+				})).
+				Return(&domain.DrivingRecord{OdometerValue: 10003}, nil).
+				Times(1)
+
 			m.EXPECT().
 				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(octoberMonth)).
 				Return(oct[0], nil).
@@ -328,3 +461,5 @@ func cmpOptional[T comparable](want optional.Option[T]) gomock.Matcher {
 func formatDetailed(got any) string {
 	return fmt.Sprintf("%#v", got)
 }
+
+var errNotFound = errors.New("not found")
