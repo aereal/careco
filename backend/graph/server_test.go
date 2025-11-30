@@ -6,7 +6,6 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"iter"
 	"maps"
@@ -375,7 +374,7 @@ var mockCalls = map[string]*mocks{
 			}
 			m.EXPECT().
 				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(beforeSeptember)).
-				Return(nil, errNotFound).
+				Return(nil, domain.ErrDrivingRecordNotFound).
 				Times(1)
 
 			m.EXPECT().
@@ -461,5 +460,3 @@ func cmpOptional[T comparable](want optional.Option[T]) gomock.Matcher {
 func formatDetailed(got any) string {
 	return fmt.Sprintf("%#v", got)
 }
-
-var errNotFound = errors.New("not found")
