@@ -37,6 +37,7 @@ type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
   odometerValue: Int!
+  tripDistance: Int!
   dailyReports: DailyReportsConnection!
 }
 
@@ -45,6 +46,7 @@ type DailyReport implements DistanceReport {
   month: Month!
   day: Int!
   odometerValue: Int!
+  tripDistance: Int!
   recordedAt: DateTime!
   memo: String
 }

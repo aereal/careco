@@ -40,11 +40,15 @@ models:
         resolver: true
       day:
         resolver: true
+      tripDistance:
+        resolver: true
   MonthlyReport:
     fields:
       odometerValue:
         resolver: true
       dailyReports:
+        resolver: true
+      tripDistance:
         resolver: true
   YearlyReport:
     fields:

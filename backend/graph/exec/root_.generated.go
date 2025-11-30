@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 		Month         func(childComplexity int) int
 		OdometerValue func(childComplexity int) int
 		RecordedAt    func(childComplexity int) int
+		TripDistance  func(childComplexity int) int
 		Year          func(childComplexity int) int
 	}
 
@@ -61,6 +62,7 @@ type ComplexityRoot struct {
 		DailyReports  func(childComplexity int) int
 		Month         func(childComplexity int) int
 		OdometerValue func(childComplexity int) int
+		TripDistance  func(childComplexity int) int
 		Year          func(childComplexity int) int
 	}
 
@@ -144,6 +146,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReport.RecordedAt(childComplexity), true
 
+	case "DailyReport.tripDistance":
+		if e.complexity.DailyReport.TripDistance == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.TripDistance(childComplexity), true
+
 	case "DailyReport.year":
 		if e.complexity.DailyReport.Year == nil {
 			break
@@ -178,6 +187,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MonthlyReport.OdometerValue(childComplexity), true
+
+	case "MonthlyReport.tripDistance":
+		if e.complexity.MonthlyReport.TripDistance == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.TripDistance(childComplexity), true
 
 	case "MonthlyReport.year":
 		if e.complexity.MonthlyReport.Year == nil {
@@ -419,6 +435,7 @@ type MonthlyReport implements DistanceReport {
   year: Int!
   month: Month!
   odometerValue: Int!
+  tripDistance: Int!
   dailyReports: DailyReportsConnection!
 }
 
@@ -427,6 +444,7 @@ type DailyReport implements DistanceReport {
   month: Month!
   day: Int!
   odometerValue: Int!
+  tripDistance: Int!
   recordedAt: DateTime!
   memo: String
 }

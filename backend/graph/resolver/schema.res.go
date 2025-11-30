@@ -7,6 +7,7 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -31,6 +32,22 @@ func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (i
 	return obj.RecordedAt.Day(), nil
 }
 
+func (r *dailyReportResolver) TripDistance(ctx context.Context, obj *dtos.DailyReport) (int, error) {
+	beforeInterval := domain.Interval[time.Time]{
+		Start: domain.OpenEndpoint(time.Time{}),
+		End:   domain.OpenEndpoint(obj.RecordedAt),
+	}
+	prevRecord, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, beforeInterval)
+	if errors.Is(err, domain.ErrDrivingRecordNotFound) {
+		// 前の記録がない場合は0を返す
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("FindLastRecordInPeriod: %w", err)
+	}
+	return obj.OdometerValue - int(prevRecord.OdometerValue), nil
+}
+
 func (r *monthlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
 	interval := domain.Interval[time.Time]{
 		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
@@ -41,6 +58,31 @@ func (r *monthlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.Mon
 		return 0, fmt.Errorf("FindLastRecordInPeriod: %w", err)
 	}
 	return int(record.OdometerValue), nil
+}
+
+func (r *monthlyReportResolver) TripDistance(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
+	interval := domain.Interval[time.Time]{
+		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
+		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
+	}
+	lastRecord, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, interval)
+	if err != nil {
+		return 0, fmt.Errorf("FindLastRecordInPeriod: %w", err)
+	}
+
+	beforeInterval := domain.Interval[time.Time]{
+		Start: domain.OpenEndpoint(time.Time{}),
+		End:   domain.OpenEndpoint(obj.StartOfMonth()),
+	}
+	prevRecord, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, beforeInterval)
+	if errors.Is(err, domain.ErrDrivingRecordNotFound) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("FindLastRecordInPeriod: %w", err)
+	}
+
+	return int(lastRecord.OdometerValue - prevRecord.OdometerValue), nil
 }
 
 func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.MonthlyReport) (*dtos.DailyReportsConnection, error) {

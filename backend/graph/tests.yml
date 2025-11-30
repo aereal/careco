@@ -169,3 +169,71 @@ cases:
     response:
       data:
         recordDrivingRecord: true
+  'query tripDistance':
+    request:
+      query: |
+        query TripDistance($year: Int!) {
+          yearlyReport(year: $year) {
+            year
+            monthlyReports {
+              year
+              month
+              tripDistance
+              dailyReports {
+                nodes {
+                  year
+                  month
+                  day
+                  tripDistance
+                }
+              }
+            }
+          }
+        }
+      variables:
+        year: 2025
+    response:
+      data:
+        yearlyReport:
+          year: 2025
+          monthlyReports:
+            - month: OCTOBER
+              year: 2025
+              tripDistance: 3
+              dailyReports:
+                nodes:
+                  -
+                    tripDistance: 1
+                    year: 2025
+                    month: OCTOBER
+                    day: 3
+                  -
+                    tripDistance: 1
+                    year: 2025
+                    month: OCTOBER
+                    day: 2
+                  -
+                    tripDistance: 1
+                    year: 2025
+                    month: OCTOBER
+                    day: 1
+            - month: SEPTEMBER
+              year: 2025
+              tripDistance: 0
+              dailyReports:
+                nodes:
+                  -
+                    tripDistance: 1
+                    year: 2025
+                    month: SEPTEMBER
+                    day: 30
+                  -
+                    tripDistance: 1
+                    year: 2025
+                    month: SEPTEMBER
+                    day: 29
+                  -
+                    tripDistance: 1
+                    year: 2025
+                    month: SEPTEMBER
+                    day: 28
