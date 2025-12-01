@@ -16,3 +16,7 @@ func StartOfNextYear(t time.Time) time.Time {
 func startOfMonth(year int, month time.Month, loc *time.Location) time.Time {
 	return time.Date(year, month, 1, 0, 0, 0, 0, loc)
 }
+
+func StartOfDay(t time.Time) time.Time {
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+}

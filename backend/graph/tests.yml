@@ -199,21 +199,21 @@ cases:
           monthlyReports:
             - month: OCTOBER
               year: 2025
-              tripDistance: 3
+              tripDistance: 10
               dailyReports:
                 nodes:
                   -
-                    tripDistance: 1
+                    tripDistance: 5
                     year: 2025
                     month: OCTOBER
                     day: 3
                   -
-                    tripDistance: 1
+                    tripDistance: 3
                     year: 2025
                     month: OCTOBER
                     day: 2
                   -
-                    tripDistance: 1
+                    tripDistance: 2
                     year: 2025
                     month: OCTOBER
                     day: 1

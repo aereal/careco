@@ -33,9 +33,11 @@ func (r *dailyReportResolver) Day(ctx context.Context, obj *dtos.DailyReport) (i
 }
 
 func (r *dailyReportResolver) TripDistance(ctx context.Context, obj *dtos.DailyReport) (int, error) {
+	startOfRecordedOn := timeops.StartOfDay(obj.RecordedAt)
+	startOfYesterday := startOfRecordedOn.AddDate(0, 0, -1)
 	beforeInterval := domain.Interval[time.Time]{
-		Start: domain.OpenEndpoint(time.Time{}),
-		End:   domain.OpenEndpoint(obj.RecordedAt),
+		Start: domain.ClosedEndpoint(startOfYesterday),
+		End:   domain.OpenEndpoint(startOfRecordedOn),
 	}
 	prevRecord, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, beforeInterval)
 	if errors.Is(err, domain.ErrDrivingRecordNotFound) {
@@ -61,9 +63,10 @@ func (r *monthlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.Mon
 }
 
 func (r *monthlyReportResolver) TripDistance(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
+	currentStartOfMonth := obj.StartOfMonth()
 	interval := domain.Interval[time.Time]{
-		Start: domain.ClosedEndpoint(obj.StartOfMonth()),
-		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(obj.StartOfMonth())),
+		Start: domain.ClosedEndpoint(currentStartOfMonth),
+		End:   domain.OpenEndpoint(timeops.StartOfNextMonth(currentStartOfMonth)),
 	}
 	lastRecord, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, interval)
 	if err != nil {
@@ -71,8 +74,8 @@ func (r *monthlyReportResolver) TripDistance(ctx context.Context, obj *dtos.Mont
 	}
 
 	beforeInterval := domain.Interval[time.Time]{
-		Start: domain.OpenEndpoint(time.Time{}),
-		End:   domain.OpenEndpoint(obj.StartOfMonth()),
+		Start: domain.ClosedEndpoint(currentStartOfMonth.AddDate(0, -1, 0)),
+		End:   domain.OpenEndpoint(currentStartOfMonth),
 	}
 	prevRecord, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, beforeInterval)
 	if errors.Is(err, domain.ErrDrivingRecordNotFound) {
