@@ -115,6 +115,7 @@ jobs:
           cache: pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm codegen
+      - run: node ./tools/check-diff.js
   test-server:
     runs-on: ubuntu-24.04
     permissions:
