@@ -434,15 +434,7 @@ var mockCalls = map[string]*mocks{
 }
 
 func eqTimeInterval(want domain.Interval[time.Time]) gomock.Matcher {
-	return gomock.WantFormatter(
-		gomock.StringerFunc(func() string { return fmt.Sprintf("%#v", want) }),
-		gomock.GotFormatterAdapter(
-			gomock.GotFormatterFunc(formatDetailed),
-			gomock.Cond(func(got domain.Interval[time.Time]) bool {
-				return want.Start.Open == got.Start.Open && want.End.Open == got.End.Open && want.Start.Value.Equal(got.Start.Value) && want.End.Value.Equal(got.End.Value)
-			}),
-		),
-	)
+	return &timeIntervalMatcher{Interval: want}
 }
 
 func cmpOptional[T comparable](want optional.Option[T]) gomock.Matcher {
@@ -459,4 +451,55 @@ func cmpOptional[T comparable](want optional.Option[T]) gomock.Matcher {
 
 func formatDetailed(got any) string {
 	return fmt.Sprintf("%#v", got)
+}
+
+type timeIntervalMatcher struct {
+	domain.Interval[time.Time]
+}
+
+var (
+	_ gomock.Matcher      = (*timeIntervalMatcher)(nil)
+	_ gomock.GotFormatter = (*timeIntervalMatcher)(nil)
+)
+
+func (*timeIntervalMatcher) Got(got any) string {
+	interval, ok := got.(domain.Interval[time.Time])
+	if !ok {
+		return fmt.Sprintf(" %#v", got)
+	}
+	return formatTimeInterval(interval)
+}
+
+func (m *timeIntervalMatcher) Matches(x any) bool {
+	rhs, ok := x.(domain.Interval[time.Time])
+	if !ok {
+		return false
+	}
+	lhs := m.Interval
+	return eqTimeEndpoint(lhs.Start, rhs.Start) && eqTimeEndpoint(lhs.End, rhs.End)
+}
+
+func (m *timeIntervalMatcher) String() string {
+	return formatTimeInterval(m.Interval)
+}
+
+func formatEndpoint(endpoint domain.Endpoint[time.Time]) string {
+	buf := new(bytes.Buffer)
+	if endpoint.Open {
+		buf.WriteString("  OPEN")
+	} else {
+		buf.WriteString("closed")
+	}
+	buf.WriteRune('(')
+	buf.WriteString(endpoint.Value.Format(time.RFC3339Nano))
+	buf.WriteRune(')')
+	return buf.String()
+}
+
+func formatTimeInterval(interval domain.Interval[time.Time]) string {
+	return fmt.Sprintf("{\n\tstart=%s\n\t  end=%s\n}", formatEndpoint(interval.Start), formatEndpoint(interval.End))
+}
+
+func eqTimeEndpoint(a, b domain.Endpoint[time.Time]) bool {
+	return a.Open == b.Open && a.Value.Equal(b.Value)
 }
