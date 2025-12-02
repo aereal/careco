@@ -32,10 +32,8 @@ test.describe('トップページ', () => {
   test('最近の走行記録が表示される', async ({ page }) => {
     await page.goto('/');
 
-    // モックデータの最初の記録の距離が表示されることを確認
-    const firstRecord = mockGetRootData.recentDrivingRecords.nodes[0];
-    await expect(
-      page.getByText(firstRecord.odometerValue.toString()),
-    ).toBeVisible();
+    // Rechartsのグラフは role="application" を持つSVG要素として描画される
+    const chartSvg = page.getByRole('application');
+    await expect(chartSvg).toBeVisible();
   });
 });

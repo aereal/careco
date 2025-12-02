@@ -10,15 +10,18 @@ export const mockGetRootData: GetRootQuery = {
   recentDrivingRecords: {
     nodes: [
       {
-        odometerValue: 150,
+        odometerValue: 275,
+        tripDistance: 75,
         recordedAt: new Date('2025-11-26T10:00:00Z'),
       },
       {
         odometerValue: 200,
+        tripDistance: 25,
         recordedAt: new Date('2025-11-25T09:30:00Z'),
       },
       {
         odometerValue: 175,
+        tripDistance: 100,
         recordedAt: new Date('2025-11-24T14:15:00Z'),
       },
     ],

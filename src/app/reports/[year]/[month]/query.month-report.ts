@@ -5,6 +5,9 @@ export const queryMonthReport = graphql(`
     monthlyReport(year: $year, month: $month) {
       ...MonthlySummary
       ...TotalDistance
+      dailyReports {
+        ...ChartDataSeries
+      }
     }
   }
 `);

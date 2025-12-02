@@ -6,7 +6,7 @@ export const GetRoot = graphql(`
       ...TotalDistance
     }
     recentDrivingRecords(first: $first) {
-      ...RecordList
+      ...ChartDataSeries
     }
   }
 `);
