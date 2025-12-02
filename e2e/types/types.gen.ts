@@ -57,6 +57,7 @@ export type GetRootQuery = {
     readonly nodes: ReadonlyArray<{
       readonly odometerValue: number;
       readonly recordedAt: Date;
+      readonly tripDistance: number;
     }>;
   };
 };
@@ -71,8 +72,35 @@ export type MonthReportQuery = {
     readonly year: number;
     readonly month: Month;
     readonly odometerValue: number;
+    readonly dailyReports: {
+      readonly nodes: ReadonlyArray<{
+        readonly odometerValue: number;
+        readonly recordedAt: Date;
+        readonly tripDistance: number;
+      }>;
+    };
   };
 };
+
+type ChartDataSeries_DailyReportsConnection_Fragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly odometerValue: number;
+    readonly recordedAt: Date;
+    readonly tripDistance: number;
+  }>;
+};
+
+type ChartDataSeries_RecentDrivingRecordsConnection_Fragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly odometerValue: number;
+    readonly recordedAt: Date;
+    readonly tripDistance: number;
+  }>;
+};
+
+export type ChartDataSeriesFragment =
+  | ChartDataSeries_DailyReportsConnection_Fragment
+  | ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
 
 type RecordList_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{

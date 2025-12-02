@@ -130,7 +130,7 @@ export type GetRootQuery = {
   };
   readonly recentDrivingRecords: {
     ' $fragmentRefs'?: {
-      RecordList_RecentDrivingRecordsConnection_Fragment: RecordList_RecentDrivingRecordsConnection_Fragment;
+      ChartDataSeries_RecentDrivingRecordsConnection_Fragment: ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
     };
   };
 };
@@ -142,12 +142,40 @@ export type MonthReportQueryVariables = Exact<{
 
 export type MonthReportQuery = {
   readonly monthlyReport: {
+    readonly dailyReports: {
+      ' $fragmentRefs'?: {
+        ChartDataSeries_DailyReportsConnection_Fragment: ChartDataSeries_DailyReportsConnection_Fragment;
+      };
+    };
+  } & {
     ' $fragmentRefs'?: {
       MonthlySummaryFragment: MonthlySummaryFragment;
       TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
     };
   };
 };
+
+type ChartDataSeries_DailyReportsConnection_Fragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly odometerValue: number;
+    readonly recordedAt: Date;
+    readonly tripDistance: number;
+  }>;
+} & { ' $fragmentName'?: 'ChartDataSeries_DailyReportsConnection_Fragment' };
+
+type ChartDataSeries_RecentDrivingRecordsConnection_Fragment = {
+  readonly nodes: ReadonlyArray<{
+    readonly odometerValue: number;
+    readonly recordedAt: Date;
+    readonly tripDistance: number;
+  }>;
+} & {
+  ' $fragmentName'?: 'ChartDataSeries_RecentDrivingRecordsConnection_Fragment';
+};
+
+export type ChartDataSeriesFragment =
+  | ChartDataSeries_DailyReportsConnection_Fragment
+  | ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
 
 type RecordList_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
@@ -202,6 +230,42 @@ export type TotalDistanceFragment =
   | TotalDistance_TotalStatistics_Fragment
   | TotalDistance_YearlyReport_Fragment;
 
+export const ChartDataSeriesFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'odometerValue' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'tripDistance' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ChartDataSeriesFragment, unknown>;
 export const RecordListFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -327,7 +391,7 @@ export const GetRootDocument = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'RecordList' },
+                  name: { kind: 'Name', value: 'ChartDataSeries' },
                 },
               ],
             },
@@ -351,7 +415,7 @@ export const GetRootDocument = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'RecordList' },
+      name: { kind: 'Name', value: 'ChartDataSeries' },
       typeCondition: {
         kind: 'NamedType',
         name: { kind: 'Name', value: 'DrivingRecordsConnection' },
@@ -370,6 +434,10 @@ export const GetRootDocument = {
                   name: { kind: 'Name', value: 'odometerValue' },
                 },
                 { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'tripDistance' },
+                },
               ],
             },
           },
@@ -441,6 +509,19 @@ export const MonthReportDocument = {
                   kind: 'FragmentSpread',
                   name: { kind: 'Name', value: 'TotalDistance' },
                 },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'dailyReports' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'FragmentSpread',
+                        name: { kind: 'Name', value: 'ChartDataSeries' },
+                      },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -473,6 +554,37 @@ export const MonthReportDocument = {
         kind: 'SelectionSet',
         selections: [
           { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'odometerValue' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'tripDistance' },
+                },
+              ],
+            },
+          },
         ],
       },
     },

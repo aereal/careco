@@ -5,6 +5,7 @@ import {
 import { FragmentType, getFragmentData } from '@/graphql';
 import { numberOf } from '@/month';
 import { FC } from 'react';
+import { DriveRecordChart, fragmentChartDataSeries } from '../DriveRecordChart';
 import { fragmentMonthlySummary } from './fragment.monthly-report';
 
 type Data = FragmentType<typeof fragmentMonthlySummary> &
@@ -12,9 +13,10 @@ type Data = FragmentType<typeof fragmentMonthlySummary> &
 
 interface MonthlyReportProps {
   readonly summary: Data;
+  readonly records: FragmentType<typeof fragmentChartDataSeries>;
 }
 
-export const MonthlyReport: FC<MonthlyReportProps> = ({ summary }) => {
+export const MonthlyReport: FC<MonthlyReportProps> = ({ summary, records }) => {
   const { year, month } = getFragmentData(fragmentMonthlySummary, summary);
   return (
     <div>
@@ -22,6 +24,9 @@ export const MonthlyReport: FC<MonthlyReportProps> = ({ summary }) => {
         {year}年{numberOf(month)}月の走行記録
       </h1>
       <TotalDrivingDistance {...summary} />
+      <div className='my-8 h-[70vh]'>
+        <DriveRecordChart records={records} />
+      </div>
     </div>
   );
 };
