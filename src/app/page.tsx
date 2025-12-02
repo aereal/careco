@@ -1,14 +1,27 @@
 import { DriveRecordChart } from '@/components/DriveRecordChart';
+import { LoginButton } from '@/components/LoginButton';
+import { LogoutButton } from '@/components/LogoutButton';
 import { RecordDialogContainer } from '@/components/RecordDialog';
 import { SelectMonth } from '@/components/SelectMonth';
 import { TotalDrivingDistance } from '@/components/TotalDrivingDistance';
 import { getClient } from '@/get-client';
+import { client } from '@/lib/auth0';
 import { readQuery } from '@/run-operation';
 import { Result } from '@praha/byethrow';
 import { FC } from 'react';
 import { GetRoot } from './query.get-root';
 
 const Page: FC = async () => {
+  const session = await client.getSession();
+  if (!session?.user) {
+    return (
+      <div className='max-w-2xl mx-auto'>
+        <div className='p-4'>
+          <LoginButton />
+        </div>
+      </div>
+    );
+  }
   const ret = await readQuery(getClient(), GetRoot)({ first: 30 });
   if (Result.isFailure(ret)) {
     return <>Error: {ret.error.message}</>;
@@ -33,6 +46,7 @@ const Page: FC = async () => {
           </div>
         </div>
         <RecordDialogContainer />
+        <LogoutButton />
       </div>
     </div>
   );
