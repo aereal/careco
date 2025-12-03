@@ -41,6 +41,9 @@ importers:
       '@urql/core':
         specifier: 6.0.1
         version: 6.0.1(graphql@16.12.0)
+      '@urql/exchange-auth':
+        specifier: 3.0.0
+        version: 3.0.0(@urql/core@6.0.1(graphql@16.12.0))
       '@urql/next':
         specifier: 2.0.0
         version: 2.0.0(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(urql@5.0.1(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0))
@@ -2067,6 +2070,11 @@ packages:
 
   '@urql/core@6.0.1':
     resolution: {integrity: sha512-FZDiQk6jxbj5hixf2rEPv0jI+IZz0EqqGW8mJBEug68/zHTtT+f34guZDmyjJZyiWbj0vL165LoMr/TkeDHaug==}
+
+  '@urql/exchange-auth@3.0.0':
+    resolution: {integrity: sha512-tj09xiOR2f1J2h8TE9uZWjRZipCdmDoTewEytOacDQ+0Teo+yIZxm3ppHxolQtiA51OHrGYiNTkMte8HtfvaBw==}
+    peerDependencies:
+      '@urql/core': ^6.0.0
 
   '@urql/next@2.0.0':
     resolution: {integrity: sha512-X7q/+MOUtX1suaDxGJdgjAqE/eyhcGr1XnTO0VpUnSPdPOkVUKm5RNDIQy4ecupTYKs++1j2YWcmAfLc9R/Gkw==}
@@ -6731,6 +6739,11 @@ snapshots:
       wonka: 6.3.5
     transitivePeerDependencies:
       - graphql
+
+  '@urql/exchange-auth@3.0.0(@urql/core@6.0.1(graphql@16.12.0))':
+    dependencies:
+      '@urql/core': 6.0.1(graphql@16.12.0)
+      wonka: 6.3.5
 
   '@urql/next@2.0.0(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(urql@5.0.1(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0))':
     dependencies:
