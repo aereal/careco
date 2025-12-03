@@ -3,6 +3,7 @@ package providers
 import (
 	"log/slog"
 
+	"careco/backend/authz"
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
 	"careco/backend/usecases/interactions"
@@ -42,6 +43,24 @@ func ProvideExportFileName(e *config.Environment) (interactions.ExportFileName, 
 	retrieve := cast(config.EnvSource(e))
 	return config.Retrieve(
 		"EXPORT_FILE_NAME",
+		retrieve,
+	)
+}
+
+func ProvideAudience(e *config.Environment) (authz.Audience, error) {
+	cast := config.Cast(parseAudience)
+	retrieve := cast(config.EnvSource(e))
+	return config.Retrieve(
+		"AUTH0_AUDIENCE",
+		retrieve,
+	)
+}
+
+func ProvideIssuer(e *config.Environment) (*authz.Issuer, error) {
+	cast := config.Cast(parseIssuer)
+	retrieve := cast(config.EnvSource(e))
+	return config.Retrieve(
+		"AUTH0_ISSUER",
 		retrieve,
 	)
 }

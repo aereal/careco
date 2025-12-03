@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 
+	"careco/backend/authz"
 	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
@@ -12,6 +13,7 @@ import (
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/http"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
@@ -23,17 +25,21 @@ import (
 
 func build(_ context.Context) (*internal.Entrypoint, error) {
 	wire.Build(
+		authz.ProvideAuth0Middleware,
 		config.ProvideEnvironment,
 		firestore.ClientProvider,
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,
+		http.ProvideClient,
 		internal.ProvideEntrypoint,
 		log.ProvideGlobalInstrumentation,
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,
 		o11y.ProvideResource,
 		o11y.ProvideTracerProvider,
+		providers.ProvideAudience,
 		providers.ProvideFirestoreEmulatorAddr,
+		providers.ProvideIssuer,
 		providers.ProvideLogLevel,
 		providers.ProvidePort,
 		providers.ProvideServiceVersionFromGitRevision,

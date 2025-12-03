@@ -7,6 +7,8 @@ import (
 	neturl "net/url"
 	"time"
 
+	"careco/backend/authz"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/rs/cors"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
@@ -16,18 +18,20 @@ import (
 
 type Port string
 
-func ProvideServer(port Port, tp trace.TracerProvider, gh *handler.Server) *Server {
+func ProvideServer(port Port, tp trace.TracerProvider, gh *handler.Server, authMiddleware authz.Middleware) *Server {
 	return &Server{
-		port: port,
-		tp:   tp,
-		gh:   gh,
+		port:   port,
+		tp:     tp,
+		gh:     gh,
+		authMW: authMiddleware,
 	}
 }
 
 type Server struct {
-	port Port
-	tp   trace.TracerProvider
-	gh   *handler.Server
+	port   Port
+	tp     trace.TracerProvider
+	gh     *handler.Server
+	authMW authz.Middleware
 }
 
 func (s *Server) Start(ctx context.Context) error {
@@ -47,7 +51,7 @@ func (s *Server) handler() http.Handler {
 		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string { return r.Method + " " + r.URL.Path }),
 		otelhttp.WithTracerProvider(s.tp),
 	)
-	return withOtel(withCors(mux))
+	return withOtel(withCors(s.authMW(mux)))
 }
 
 func withCors(next http.Handler) http.Handler {
