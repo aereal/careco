@@ -24,7 +24,14 @@ const Page: FC = async () => {
   }
   const ret = await readQuery(getClient(), GetRoot)({ first: 30 });
   if (Result.isFailure(ret)) {
-    return <>Error: {ret.error.message}</>;
+    return (
+      <div className='max-w-2xl mx-auto'>
+        <div className='p-4'>
+          <p>Error: {ret.error.message}</p>
+          <LoginButton />
+        </div>
+      </div>
+    );
   }
   const {
     value: {
