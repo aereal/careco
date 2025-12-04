@@ -1,17 +1,11 @@
-import {
-  auth0TokenYielder,
-  fetchM2MTokenOptionsFromEnv,
-  M2MTokenProvider,
-} from '@/m2m-token';
+import { M2MTokenProvider } from '@/authz';
 import { createClient, fetchExchange } from '@urql/core';
 import { authExchange } from '@urql/exchange-auth';
 import { registerUrql } from '@urql/next/rsc';
 
 const isServerSide = () => typeof window === 'undefined';
 
-const tokenProvider = new M2MTokenProvider(
-  auth0TokenYielder(fetchM2MTokenOptionsFromEnv(process.env)),
-);
+const tokenProvider = M2MTokenProvider.fromEnv();
 
 const makeClient = () =>
   createClient({
