@@ -1,11 +1,13 @@
-import { M2MTokenProvider } from '@/authz';
+import { ClientTokenProvider, M2MTokenProvider } from '@/authz';
 import { createClient, fetchExchange } from '@urql/core';
 import { authExchange } from '@urql/exchange-auth';
 import { registerUrql } from '@urql/next/rsc';
 
 const isServerSide = () => typeof window === 'undefined';
 
-const tokenProvider = M2MTokenProvider.fromEnv();
+const tokenProvider = isServerSide()
+  ? M2MTokenProvider.fromEnv()
+  : new ClientTokenProvider();
 
 const makeClient = () =>
   createClient({
@@ -13,13 +15,11 @@ const makeClient = () =>
     exchanges: [
       authExchange(async (utils) => ({
         addAuthToOperation(op) {
-          if (isServerSide()) {
-            const token = tokenProvider.getToken();
-            if (token !== null) {
-              return utils.appendHeaders(op, {
-                authorization: `Bearer ${token}`,
-              });
-            }
+          const token = tokenProvider.getToken();
+          if (token !== null) {
+            return utils.appendHeaders(op, {
+              authorization: `Bearer ${token}`,
+            });
           }
           return op;
         },
