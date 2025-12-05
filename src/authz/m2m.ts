@@ -22,14 +22,14 @@ const envClientID = 'AUTH0_CLIENT_ID' as const;
 const envClientSecret = 'AUTH0_CLIENT_SECRET' as const;
 const envAudience = 'AUTH0_AUDIENCE' as const;
 
-type MandantoryAuth0Env =
+type MandatoryAuth0Env =
   | typeof envAudience
   | typeof envDomain
   | typeof envClientID
   | typeof envClientSecret;
 
 class MissingAuth0EnvError extends Error {
-  constructor(envs: Set<MandantoryAuth0Env>) {
+  constructor(envs: Set<MandatoryAuth0Env>) {
     const envArray = Array.from(envs);
     envArray.sort();
     super(`missing Auth0 env: ${envArray.join(', ')}`);
@@ -96,7 +96,7 @@ export const m2mTokenYielder =
 export const buildFetchM2MTokenOptionsFromEnv = (
   env: Record<string, string | undefined>,
 ): FetchM2MTokenOptions => {
-  const envs = new Set<MandantoryAuth0Env>();
+  const envs = new Set<MandatoryAuth0Env>();
   const domain = env[envDomain];
   if (domain === undefined) {
     envs.add(envDomain);
