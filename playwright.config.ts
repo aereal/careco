@@ -1,8 +1,13 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type Project } from '@playwright/test';
 
 const PORT = process.env.PORT || 3000;
 const baseURL = `http://localhost:${PORT}`;
 const inCI = (process.env['CI'] ?? '') !== '';
+
+const setupProject = {
+  name: 'setup',
+  testMatch: /.*\.setup\.ts/,
+} satisfies Project;
 
 export default defineConfig({
   testDir: './e2e',
@@ -18,9 +23,14 @@ export default defineConfig({
   },
 
   projects: [
+    setupProject,
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: [setupProject.name],
     },
   ],
 
