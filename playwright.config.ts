@@ -1,4 +1,9 @@
-import { defineConfig, devices, type Project } from '@playwright/test';
+import {
+  defineConfig,
+  devices,
+  type Project,
+  type ReporterDescription,
+} from '@playwright/test';
 
 const PORT = process.env.PORT || 3000;
 const baseURL = `http://localhost:${PORT}`;
@@ -15,7 +20,10 @@ export default defineConfig({
   forbidOnly: inCI,
   retries: 0,
   workers: inCI ? 1 : undefined,
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ...(inCI ? ([['github']] satisfies ReporterDescription[]) : []),
+  ],
 
   use: {
     baseURL,
