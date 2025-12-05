@@ -24,7 +24,7 @@ export const POST = async (
       tokenSet: { accessToken },
     } = session;
     headers.set('authorization', `Bearer ${accessToken}`);
-  } catch (err: unknown) {}
+  } catch {}
   const init: RequestInit = {
     method: 'POST',
     headers,
