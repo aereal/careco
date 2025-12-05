@@ -54,7 +54,10 @@ export class M2MTokenProvider implements TokenProvider {
 
   async refresh(): Promise<void> {
     const { access_token, expires_in } = await this.#yielder();
-    this.#cachedValue.update(access_token, new Date(expires_in));
+    this.#cachedValue.update(
+      access_token,
+      new Date(Date.now() + expires_in * 1000),
+    );
   }
 
   willExpire(): boolean {
