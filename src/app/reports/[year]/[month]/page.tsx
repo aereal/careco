@@ -3,15 +3,22 @@ import {
   MonthlyReport,
 } from '@/components/MonthlyReport';
 import { getFragmentData } from '@/graphql';
+import { client } from '@/lib/auth0';
 import { numberOf } from '@/month';
 import { Result } from '@praha/byethrow';
-import { type Metadata } from 'next';
+import { type Metadata, type Route } from 'next';
+import { redirect } from 'next/navigation';
 import { FC } from 'react';
 import { fetchMonthReport } from './fetch-month-report';
 
 export const generateMetadata = async (
   props: PageProps<'/reports/[year]/[month]'>,
 ): Promise<Metadata> => {
+  const session = await client.getSession();
+  if (!session?.user) {
+    return {};
+  }
+
   const ret = await fetchMonthReport(await props.params);
   if (Result.isFailure(ret)) {
     throw ret.error;
@@ -26,6 +33,10 @@ export const generateMetadata = async (
 };
 
 const Page: FC<PageProps<'/reports/[year]/[month]'>> = async ({ params }) => {
+  const session = await client.getSession();
+  if (!session?.user) {
+    redirect('/auth/login' as Route);
+  }
   const ret = await fetchMonthReport(await params);
   if (Result.isFailure(ret)) {
     return <>Error: {ret.error.message}</>;

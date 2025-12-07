@@ -4,3 +4,4 @@ node_modules
 !/data/firestore/.keep
 /playwright-report/
 /test-results/
+/playwright/.auth/

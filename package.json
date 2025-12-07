@@ -19,6 +19,7 @@
     "node": "v24.11.1"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "4.13.1",
     "@graphql-typed-document-node/core": "3.2.0",
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/core": "2.2.0",
@@ -29,6 +30,7 @@
     "@opentelemetry/semantic-conventions": "1.38.0",
     "@praha/byethrow": "0.8.1",
     "@urql/core": "6.0.1",
+    "@urql/exchange-auth": "3.0.0",
     "@urql/next": "2.0.0",
     "@vercel/otel": "2.1.0",
     "date-fns": "4.1.0",

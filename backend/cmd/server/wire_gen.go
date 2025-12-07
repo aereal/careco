@@ -7,12 +7,14 @@
 package main
 
 import (
+	"careco/backend/authz"
 	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/http"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
@@ -52,7 +54,20 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository)
 	server := graph.ProvideServer(tracerProvider, resolverResolver)
-	webServer := web.ProvideServer(port, tracerProvider, server)
+	issuer, err := providers.ProvideIssuer(environment)
+	if err != nil {
+		return nil, err
+	}
+	audience, err := providers.ProvideAudience(environment)
+	if err != nil {
+		return nil, err
+	}
+	httpClient := http.ProvideClient(tracerProvider)
+	middleware, err := authz.ProvideAuth0Middleware(issuer, audience, httpClient)
+	if err != nil {
+		return nil, err
+	}
+	webServer := web.ProvideServer(port, tracerProvider, server, middleware)
 	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil
 }
