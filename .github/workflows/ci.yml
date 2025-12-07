@@ -163,6 +163,8 @@ jobs:
       id-token: write
     env:
       REGISTRY: asia-northeast1-docker.pkg.dev
+    outputs:
+      image: ${{ steps.build.outputs.image }}
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d # v0.9
@@ -192,6 +194,10 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    needs:
+      - build-backend
+    environment:
+      name: production-backend
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       -
@@ -203,5 +209,11 @@ jobs:
       - uses: 'google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db' # v3.0.1
         with:
           version: '548.0.0'
-      - run: gcloud info
-      - run: gcloud run services list
+      - uses: google-github-actions/deploy-cloudrun@2028e2d7d30a78c6910e0632e48dd561b064884d # v3.0.1
+        with:
+          service: production-backend
+          image: ${{ needs.build-backend.outputs.image }}
+          region: asia-northeast1
+          env_vars: |-
+            AUTH0_AUDIENCE=https://aereal.org/#careco-dev
+            AUTH0_ISSUER=https://careco-dev.jp.auth0.com/
