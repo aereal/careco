@@ -154,6 +154,39 @@ jobs:
         with:
           version: v0.73.0
           config: octocov.backend.yml
+  build-backend:
+    runs-on: ubuntu-24.04
+    needs:
+      - test-server
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      REGISTRY: asia-northeast1-docker.pkg.dev
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d # v0.9
+        with:
+          version: v0.18.0
+      - id: auth
+        uses: 'google-github-actions/auth@3a3c4c57d294ef65efaaee4ff17b22fa88dd3c69' # v1.3.0
+        with:
+          create_credentials_file: true
+          workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.GCP_POOL_ID }}/providers/${{ secrets.GCP_PROVIDER_ID }}'
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+      - uses: 'google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db' # v3.0.1
+        with:
+          version: '548.0.0'
+      - name: configure docker authz
+        run: gcloud auth configure-docker "$REGISTRY"
+      - id: build
+        name: build
+        run: |
+          image="$(ko build --bare --platform linux/amd64 --tags "$image_tag" ./backend/cmd/server)"
+          echo "image=${image}" >> "$GITHUB_OUTPUT"
+        env:
+          image_tag: ${{ github.sha }}
+          KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ steps.auth.outputs.project_id }}/backend
   deploy-backend:
     runs-on: ubuntu-24.04
     permissions:
