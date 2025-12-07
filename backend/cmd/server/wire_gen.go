@@ -28,10 +28,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
-	serviceVersion, err := providers.ProvideServiceVersionFromGitRevision(contextContext)
-	if err != nil {
-		return nil, err
-	}
+	serviceVersion := _wireServiceVersionValue
 	logger := log.ProvideJSONLogger(output, level, serviceVersion)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
@@ -73,6 +70,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 }
 
 var (
+	_wireServiceVersionValue            = o11y.ServiceVersion("latest")
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
 	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
 	_wireProjectIDValue                 = firestore.ProjectID("dummy")

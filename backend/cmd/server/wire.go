@@ -42,7 +42,6 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		providers.ProvideIssuer,
 		providers.ProvideLogLevel,
 		providers.ProvidePort,
-		providers.ProvideServiceVersionFromGitRevision,
 		resolver.ProvideResolver,
 		web.ProvideServer,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*firestore.DrivingRecordRepository)),
@@ -50,6 +49,7 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
 		wire.Value(firestore.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
+		wire.Value(o11y.ServiceVersion("latest")),
 	)
 	return nil, nil
 }
