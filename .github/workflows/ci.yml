@@ -186,7 +186,7 @@ jobs:
           echo "image=${image}" >> "$GITHUB_OUTPUT"
         env:
           image_tag: ${{ github.sha }}
-          KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ steps.auth.outputs.project_id }}/backend
+          KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ steps.auth.outputs.project_id }}/backend/backend
   deploy-backend:
     runs-on: ubuntu-24.04
     permissions:
