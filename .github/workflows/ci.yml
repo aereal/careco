@@ -217,3 +217,5 @@ jobs:
           env_vars: |-
             AUTH0_AUDIENCE=https://aereal.org/#careco-dev
             AUTH0_ISSUER=https://careco-dev.jp.auth0.com/
+          flags: |
+            --service-account cloud-run-runner@careco-477008.iam.gserviceaccount.com
