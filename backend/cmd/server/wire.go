@@ -38,18 +38,19 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		o11y.ProvideResource,
 		o11y.ProvideTracerProvider,
 		providers.ProvideAudience,
+		providers.ProvideDeploymentEnvironmentName,
+		providers.ProvideFirestoreDatabaseID,
 		providers.ProvideFirestoreEmulatorAddr,
+		providers.ProvideGoogleProjectID,
 		providers.ProvideIssuer,
 		providers.ProvideLogLevel,
 		providers.ProvidePort,
+		providers.ProvideServiceVersion,
 		resolver.ProvideResolver,
 		web.ProvideServer,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(domain.DrivingRecordQuery), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
-		wire.Value(firestore.ProjectID("dummy")),
-		wire.Value(o11y.DeploymentEnvironmentName("local")),
-		wire.Value(o11y.ServiceVersion("latest")),
 	)
 	return nil, nil
 }

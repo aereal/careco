@@ -18,7 +18,6 @@ import (
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
-	firestore2 "cloud.google.com/go/firestore"
 	"context"
 )
 
@@ -28,10 +27,16 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
-	serviceVersion := _wireServiceVersionValue
+	serviceVersion, err := providers.ProvideServiceVersion(contextContext, environment)
+	if err != nil {
+		return nil, err
+	}
 	logger := log.ProvideJSONLogger(output, level, serviceVersion)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
-	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
+	deploymentEnvironmentName, err := providers.ProvideDeploymentEnvironmentName(environment)
+	if err != nil {
+		return nil, err
+	}
 	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
 	if err != nil {
 		return nil, err
@@ -41,8 +46,14 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 		return nil, err
 	}
 	port := providers.ProvidePort(environment)
-	databaseID := _wireDatabaseIDValue
-	projectID := _wireProjectIDValue
+	databaseID, err := providers.ProvideFirestoreDatabaseID(environment)
+	if err != nil {
+		return nil, err
+	}
+	projectID, err := providers.ProvideGoogleProjectID(environment)
+	if err != nil {
+		return nil, err
+	}
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
 	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
@@ -68,10 +79,3 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil
 }
-
-var (
-	_wireServiceVersionValue            = o11y.ServiceVersion("latest")
-	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
-	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
-	_wireProjectIDValue                 = firestore.ProjectID("dummy")
-)

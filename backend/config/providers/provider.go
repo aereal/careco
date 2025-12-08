@@ -1,11 +1,13 @@
 package providers
 
 import (
+	"context"
 	"log/slog"
 
 	"careco/backend/authz"
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
+	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
 	"careco/backend/web"
 )
@@ -38,6 +40,10 @@ func ProvideFirestoreEmulatorAddr(e *config.Environment) firestore.EmulatorAddr 
 	)
 }
 
+func ProvideFirestoreDatabaseID(e *config.Environment) (firestore.DatabaseID, error) {
+	return provideFirestoreDatabaseID(e)
+}
+
 func ProvideExportFileName(e *config.Environment) (interactions.ExportFileName, error) {
 	cast := config.Cast(config.StringAs[interactions.ExportFileName])
 	retrieve := cast(config.EnvSource(e))
@@ -63,4 +69,16 @@ func ProvideIssuer(e *config.Environment) (*authz.Issuer, error) {
 		"AUTH0_ISSUER",
 		retrieve,
 	)
+}
+
+func ProvideGoogleProjectID(e *config.Environment) (firestore.ProjectID, error) {
+	return provideGoogleProjectID(e)
+}
+
+func ProvideDeploymentEnvironmentName(e *config.Environment) (o11y.DeploymentEnvironmentName, error) {
+	return provideDeploymentEnvironmentName(e)
+}
+
+func ProvideServiceVersion(ctx context.Context, e *config.Environment) (o11y.ServiceVersion, error) {
+	return provideServiceVersion(ctx, e)
 }

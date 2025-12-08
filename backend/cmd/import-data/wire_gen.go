@@ -14,7 +14,6 @@ import (
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
-	firestore2 "cloud.google.com/go/firestore"
 	"context"
 )
 
@@ -24,7 +23,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
-	serviceVersion, err := providers.ProvideServiceVersionFromGitRevision(contextContext)
+	serviceVersion, err := providers.ProvideServiceVersion(contextContext, environment)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +38,10 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	databaseID := _wireDatabaseIDValue
+	databaseID, err := providers.ProvideFirestoreDatabaseID(environment)
+	if err != nil {
+		return nil, err
+	}
 	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
 	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
@@ -58,6 +60,5 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 
 var (
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
-	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
 	_wireProjectIDValue                 = firestore.ProjectID("dummy")
 )

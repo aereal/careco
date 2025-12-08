@@ -24,7 +24,6 @@ type (
 var (
 	ClientProvider = wire.NewSet(
 		ProvideClient,
-		wire.Value(DatabaseID(firestore.DefaultDatabaseID)),
 	)
 )
 
