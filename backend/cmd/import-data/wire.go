@@ -28,6 +28,7 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		interactions.ProvideImportData,
 		internal.ProvideEntrypoint,
 		log.ProvideGlobalInstrumentation,
+		log.ProvideHandler,
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,
 		o11y.ProvideResource,

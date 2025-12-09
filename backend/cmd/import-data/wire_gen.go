@@ -27,7 +27,8 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger := log.ProvideJSONLogger(output, level, serviceVersion)
+	handler := log.ProvideHandler(output, level, serviceVersion)
+	logger := log.ProvideJSONLogger(handler)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
 	exporter, err := o11y.ProvideTraceExporter(contextContext)
 	if err != nil {

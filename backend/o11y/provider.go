@@ -2,8 +2,11 @@ package o11y
 
 import (
 	"context"
+	"log/slog"
 
+	"github.com/go-logr/logr"
 	"go.opentelemetry.io/contrib/detectors/gcp"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -14,6 +17,13 @@ type (
 	ServiceVersion            string
 	DeploymentEnvironmentName string
 )
+
+type GlobalLogger struct{}
+
+func ProvideGlobalLogger(handler slog.Handler) GlobalLogger {
+	otel.SetLogger(logr.FromSlogHandler(handler))
+	return GlobalLogger{}
+}
 
 func ProvideResource(ctx context.Context, svcVersion ServiceVersion, depEnv DeploymentEnvironmentName) (*resource.Resource, error) {
 	return resource.New(ctx,

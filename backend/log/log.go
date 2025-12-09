@@ -12,13 +12,16 @@ type Output io.Writer
 
 func ProvideStdoutOutput() Output { return os.Stdout }
 
-func ProvideJSONLogger(out Output, level slog.Level, svcVersion o11y.ServiceVersion) *slog.Logger {
-	handler := stack(
+func ProvideHandler(out Output, level slog.Level, svcVersion o11y.ServiceVersion) slog.Handler {
+	return stack(
 		slog.NewJSONHandler(out, &slog.HandlerOptions{Level: level}),
 		injectOtelAttrs,
 		injectServiceVersion(svcVersion),
 		transformError,
 	)
+}
+
+func ProvideJSONLogger(handler slog.Handler) *slog.Logger {
 	return slog.New(handler)
 }
 

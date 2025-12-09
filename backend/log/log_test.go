@@ -141,7 +141,7 @@ func TestLogger_handler(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			buf := new(bytes.Buffer)
-			logger := log.ProvideJSONLogger(buf, tc.level, "latest")
+			logger := log.ProvideJSONLogger(log.ProvideHandler(buf, tc.level, "latest"))
 			tc.do(logger)
 			got := make([]logEntry, 0)
 			for line := range bytes.Lines(buf.Bytes()) {
