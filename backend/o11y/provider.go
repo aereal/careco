@@ -3,6 +3,7 @@ package o11y
 import (
 	"context"
 
+	"go.opentelemetry.io/contrib/detectors/gcp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -22,6 +23,7 @@ func ProvideResource(ctx context.Context, svcVersion ServiceVersion, depEnv Depl
 			semconv.ServiceVersion(string(svcVersion)),
 			semconv.DeploymentEnvironmentName(string(depEnv)),
 		),
+		resource.WithDetectors(gcp.NewDetector()),
 	)
 }
 
