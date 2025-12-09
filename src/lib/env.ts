@@ -28,6 +28,17 @@ export class MissingAuth0EnvError extends Error {
   }
 }
 
+const getAppBaseUrl = (env: Record<string, string | undefined>): string => {
+  if (env['APP_BASE_URL'] !== undefined) {
+    return env['APP_BASE_URL'];
+  }
+  const url = env['VERCEL_URL'];
+  if (url !== undefined) {
+    return `https://${url}`;
+  }
+  throw new Error('no appBaseURL provided');
+};
+
 export const provideAuth0Config = (
   env: Record<string, string | undefined>,
 ): Auth0Config => {
@@ -55,10 +66,7 @@ export const provideAuth0Config = (
   if (envs.size > 0) {
     throw new MissingAuth0EnvError(envs);
   }
-  const appBaseURL = process.env['APP_BASE_URL'] ?? process.env['VERCEL_URL'];
-  if (appBaseURL === undefined) {
-    throw new Error('no appBaseURL provided');
-  }
+  const appBaseURL = getAppBaseUrl(env);
   return {
     domain: domain!,
     clientID: clientID!,
