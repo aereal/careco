@@ -165,6 +165,7 @@ jobs:
       REGISTRY: asia-northeast1-docker.pkg.dev
     outputs:
       image: ${{ steps.build.outputs.image }}
+      revision: ${{ steps.build.outputs.revision }}
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d # v0.9
@@ -186,6 +187,7 @@ jobs:
         run: |
           image="$(ko build --bare --platform linux/amd64 --tags "$image_tag" ./backend/cmd/server)"
           echo "image=${image}" >> "$GITHUB_OUTPUT"
+          echo "revision=${image_tag}" >> "$GITHUB_OUTPUT"
         env:
           image_tag: ${{ github.sha }}
           KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ steps.auth.outputs.project_id }}/backend/backend
@@ -218,5 +220,7 @@ jobs:
             AUTH0_AUDIENCE=https://aereal.org/#careco-dev
             AUTH0_ISSUER=https://careco-dev.jp.auth0.com/
             GOOGLE_CLOUD_PROJECT=${{ steps.auth.outputs.project_id }}
+            OTEL_SERVICE_VERSION=${{ needs.build-backend.outputs.revision }}
+            FIRESTORE_DATABASE_ID=driving-records
           flags: |
             --service-account cloud-run-runner@careco-477008.iam.gserviceaccount.com
