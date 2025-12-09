@@ -11,6 +11,7 @@ import (
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
@@ -65,5 +66,5 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 
 var (
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
-	_wireProjectIDValue                 = firestore.ProjectID("dummy")
+	_wireProjectIDValue                 = gcp.ProjectID("dummy")
 )

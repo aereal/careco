@@ -10,6 +10,7 @@ import (
 
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"careco/backend/o11y"
 
 	sdk "cloud.google.com/go/firestore"
@@ -19,7 +20,7 @@ func ProvideFirestoreDatabaseID(_ *config.Environment) (firestore.DatabaseID, er
 	return sdk.DefaultDatabaseID, nil
 }
 
-func ProvideGoogleProjectID(_ *config.Environment) (firestore.ProjectID, error) {
+func ProvideGoogleProjectID(_ *config.Environment) (gcp.ProjectID, error) {
 	return "dummy", nil
 }
 

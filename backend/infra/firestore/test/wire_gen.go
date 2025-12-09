@@ -10,6 +10,7 @@ import (
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"testing"
 )
 
@@ -31,5 +32,5 @@ func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordReposit
 }
 
 var (
-	_wireProjectIDValue = firestore.ProjectID("test")
+	_wireProjectIDValue = gcp.ProjectID("test")
 )

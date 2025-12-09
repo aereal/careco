@@ -9,6 +9,7 @@ import (
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/usecases"
@@ -42,7 +43,7 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		wire.Bind(new(ports.DrivingRecordBulkWriter), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
 		wire.Bind(new(usecases.ImportData), new(*interactions.ImportData)),
-		wire.Value(firestore.ProjectID("dummy")),
+		wire.Value(gcp.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
 	)
 	return nil, nil

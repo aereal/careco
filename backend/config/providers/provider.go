@@ -7,6 +7,7 @@ import (
 	"careco/backend/authz"
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
 	"careco/backend/web"
@@ -71,7 +72,7 @@ func ProvideIssuer(e *config.Environment) (*authz.Issuer, error) {
 	)
 }
 
-func ProvideGoogleProjectID(e *config.Environment) (firestore.ProjectID, error) {
+func ProvideGoogleProjectID(e *config.Environment) (gcp.ProjectID, error) {
 	return provideGoogleProjectID(e)
 }
 
