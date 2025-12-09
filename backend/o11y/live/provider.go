@@ -16,7 +16,7 @@ func ProvideGoogleTelemetryTraceExporter(ctx context.Context) (*otlptrace.Export
 		return nil, fmt.Errorf("oauth.NewApplicationDefault: %w", err)
 	}
 	return otlptracegrpc.New(ctx,
-		otlptracegrpc.WithEndpoint("https://telemetry.googleapis.com"),
+		otlptracegrpc.WithEndpoint("telemetry.googleapis.com:443"),
 		otlptracegrpc.WithDialOption(grpc.WithPerRPCCredentials(creds)),
 	)
 }
