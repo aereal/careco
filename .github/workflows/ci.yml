@@ -200,7 +200,7 @@ jobs:
       name: production-backend
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      -
+      - id: auth
         uses: 'google-github-actions/auth@3a3c4c57d294ef65efaaee4ff17b22fa88dd3c69' # v1.3.0
         with:
           create_credentials_file: true
@@ -217,5 +217,6 @@ jobs:
           env_vars: |-
             AUTH0_AUDIENCE=https://aereal.org/#careco-dev
             AUTH0_ISSUER=https://careco-dev.jp.auth0.com/
+            GOOGLE_CLOUD_PROJECT=${{ steps.auth.outputs.project_id }}
           flags: |
             --service-account cloud-run-runner@careco-477008.iam.gserviceaccount.com
