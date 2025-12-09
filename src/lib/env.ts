@@ -3,18 +3,22 @@ export interface Auth0Config {
   readonly clientID: string;
   readonly clientSecret: string;
   readonly audience: string;
+  readonly secret: string;
+  readonly appBaseURL: string;
 }
 
 const envDomain = 'AUTH0_DOMAIN' as const;
 const envClientID = 'AUTH0_CLIENT_ID' as const;
 const envClientSecret = 'AUTH0_CLIENT_SECRET' as const;
 const envAudience = 'AUTH0_AUDIENCE' as const;
+const envSecret = 'AUTH0_SECRET' as const;
 
 type MandatoryAuth0Env =
   | typeof envAudience
   | typeof envDomain
   | typeof envClientID
-  | typeof envClientSecret;
+  | typeof envClientSecret
+  | typeof envSecret;
 
 export class MissingAuth0EnvError extends Error {
   constructor(envs: Set<MandatoryAuth0Env>) {
@@ -44,13 +48,23 @@ export const provideAuth0Config = (
   if (audience === undefined) {
     envs.add(envAudience);
   }
+  const secret = env[envSecret];
+  if (secret === undefined) {
+    envs.add(envSecret);
+  }
   if (envs.size > 0) {
     throw new MissingAuth0EnvError(envs);
+  }
+  const appBaseURL = process.env['APP_BASE_URL'] ?? process.env['VERCEL_URL'];
+  if (appBaseURL === undefined) {
+    throw new Error('no appBaseURL provided');
   }
   return {
     domain: domain!,
     clientID: clientID!,
     clientSecret: clientSecret!,
     audience: audience!,
+    secret: secret!,
+    appBaseURL,
   };
 };
