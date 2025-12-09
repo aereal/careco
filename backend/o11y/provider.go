@@ -4,9 +4,12 @@ import (
 	"context"
 	"log/slog"
 
+	infragcp "careco/backend/infra/gcp"
+
 	"github.com/go-logr/logr"
 	"go.opentelemetry.io/contrib/detectors/gcp"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -25,13 +28,14 @@ func ProvideGlobalLogger(handler slog.Handler) GlobalLogger {
 	return GlobalLogger{}
 }
 
-func ProvideResource(ctx context.Context, svcVersion ServiceVersion, depEnv DeploymentEnvironmentName) (*resource.Resource, error) {
+func ProvideResource(ctx context.Context, svcVersion ServiceVersion, depEnv DeploymentEnvironmentName, projectID infragcp.ProjectID) (*resource.Resource, error) {
 	return resource.New(ctx,
 		resource.WithTelemetrySDK(),
 		resource.WithAttributes(
 			semconv.ServiceName("careco-backend"),
 			semconv.ServiceVersion(string(svcVersion)),
 			semconv.DeploymentEnvironmentName(string(depEnv)),
+			attribute.String("gcp.project_id", string(projectID)),
 		),
 		resource.WithDetectors(gcp.NewDetector()),
 	)

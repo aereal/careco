@@ -36,7 +36,8 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 		return nil, err
 	}
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
-	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
+	projectID := _wireProjectIDValue
+	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +49,6 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
 	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
