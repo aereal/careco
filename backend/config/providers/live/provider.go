@@ -21,7 +21,7 @@ func ProvideGoogleProjectID(e *config.Environment) (firestore.ProjectID, error) 
 	cast := config.Cast(config.StringAs[firestore.ProjectID])
 	retrieve := cast(config.EnvSource(e))
 	return config.Retrieve(
-		"GOOGLE_PROJECT_ID",
+		"GOOGLE_CLOUD_PROJECT",
 		retrieve,
 	)
 }
