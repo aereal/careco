@@ -2,9 +2,8 @@ package o11y
 
 import (
 	"context"
-	"fmt"
 
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
@@ -26,13 +25,13 @@ func ProvideResource(ctx context.Context, svcVersion ServiceVersion, depEnv Depl
 	)
 }
 
-func ProvideTracerProvider(ctx context.Context, res *resource.Resource) (*sdktrace.TracerProvider, error) {
-	exporter, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
-	if err != nil {
-		return nil, fmt.Errorf("otlptracegrpc.New: %w", err)
-	}
+func ProvideTracerProvider(ctx context.Context, exporter *otlptrace.Exporter, res *resource.Resource) (*sdktrace.TracerProvider, error) {
 	return sdktrace.NewTracerProvider(
 		sdktrace.WithResource(res),
 		sdktrace.WithBatcher(exporter),
 	), nil
+}
+
+func ProvideTraceExporter(ctx context.Context) (*otlptrace.Exporter, error) {
+	return provideTraceExporter(ctx)
 }

@@ -29,12 +29,16 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	}
 	logger := log.ProvideJSONLogger(output, level, serviceVersion)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
+	exporter, err := o11y.ProvideTraceExporter(contextContext)
+	if err != nil {
+		return nil, err
+	}
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
 	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
 	if err != nil {
 		return nil, err
 	}
-	tracerProvider, err := o11y.ProvideTracerProvider(contextContext, resource)
+	tracerProvider, err := o11y.ProvideTracerProvider(contextContext, exporter, resource)
 	if err != nil {
 		return nil, err
 	}

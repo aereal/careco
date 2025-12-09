@@ -31,6 +31,7 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,
 		o11y.ProvideResource,
+		o11y.ProvideTraceExporter,
 		o11y.ProvideTracerProvider,
 		providers.ProvideExportFileName,
 		providers.ProvideFirestoreDatabaseID,
