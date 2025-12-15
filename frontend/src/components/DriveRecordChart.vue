@@ -1,7 +1,7 @@
-<script setup lang="ts">
-import { getFragmentData, graphql, type FragmentType } from '@/graphql';
+<script lang="ts">
+import { graphql } from '@/graphql';
 
-const fragmentChartDataSeries = graphql(`
+export const fragmentChartDataSeries = graphql(`
   fragment ChartDataSeries on DrivingRecordsConnection {
     nodes {
       odometerValue
@@ -10,11 +10,14 @@ const fragmentChartDataSeries = graphql(`
     }
   }
 `);
+</script>
+
+<script setup lang="ts">
+import { getFragmentData, type FragmentType } from '@/graphql';
 
 const props = defineProps<{
   data: FragmentType<typeof fragmentChartDataSeries>;
 }>();
-
 const data = getFragmentData(fragmentChartDataSeries, props.data);
 </script>
 

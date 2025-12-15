@@ -14,16 +14,22 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+  '\n  query MonthReport($year: Int!, $month: Month!) {\n    monthlyReport(year: $year, month: $month) {\n      ...MonthlySummary\n      ...TotalDistance\n      dailyReports {\n        ...ChartDataSeries\n      }\n    }\n  }\n': typeof types.MonthReportDocument;
   '\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      ...TotalDistance\n    }\n    recentDrivingRecords(first: $first) {\n      ...ChartDataSeries\n    }\n  }\n': typeof types.GetRootDocument;
   '\n  fragment ChartDataSeries on DrivingRecordsConnection {\n    nodes {\n      odometerValue\n      recordedAt\n      tripDistance\n    }\n  }\n': typeof types.ChartDataSeriesFragmentDoc;
+  '\n  fragment MonthlySummary on MonthlyReport {\n    year\n    month\n    ...TotalDistance\n    dailyReports {\n      ...ChartDataSeries\n    }\n  }\n': typeof types.MonthlySummaryFragmentDoc;
   '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, odometerValue: $distance, memo: $memo)\n  }\n': typeof types.RecordDriveDocument;
   '\n  fragment TotalDistance on DistanceReport {\n    odometerValue\n  }\n': typeof types.TotalDistanceFragmentDoc;
 };
 const documents: Documents = {
+  '\n  query MonthReport($year: Int!, $month: Month!) {\n    monthlyReport(year: $year, month: $month) {\n      ...MonthlySummary\n      ...TotalDistance\n      dailyReports {\n        ...ChartDataSeries\n      }\n    }\n  }\n':
+    types.MonthReportDocument,
   '\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      ...TotalDistance\n    }\n    recentDrivingRecords(first: $first) {\n      ...ChartDataSeries\n    }\n  }\n':
     types.GetRootDocument,
   '\n  fragment ChartDataSeries on DrivingRecordsConnection {\n    nodes {\n      odometerValue\n      recordedAt\n      tripDistance\n    }\n  }\n':
     types.ChartDataSeriesFragmentDoc,
+  '\n  fragment MonthlySummary on MonthlyReport {\n    year\n    month\n    ...TotalDistance\n    dailyReports {\n      ...ChartDataSeries\n    }\n  }\n':
+    types.MonthlySummaryFragmentDoc,
   '\n  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {\n    recordDrivingRecord(date: $date, odometerValue: $distance, memo: $memo)\n  }\n':
     types.RecordDriveDocument,
   '\n  fragment TotalDistance on DistanceReport {\n    odometerValue\n  }\n':
@@ -48,6 +54,12 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: '\n  query MonthReport($year: Int!, $month: Month!) {\n    monthlyReport(year: $year, month: $month) {\n      ...MonthlySummary\n      ...TotalDistance\n      dailyReports {\n        ...ChartDataSeries\n      }\n    }\n  }\n',
+): (typeof documents)['\n  query MonthReport($year: Int!, $month: Month!) {\n    monthlyReport(year: $year, month: $month) {\n      ...MonthlySummary\n      ...TotalDistance\n      dailyReports {\n        ...ChartDataSeries\n      }\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: '\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      ...TotalDistance\n    }\n    recentDrivingRecords(first: $first) {\n      ...ChartDataSeries\n    }\n  }\n',
 ): (typeof documents)['\n  query GetRoot($first: Int!) {\n    totalStatistics {\n      ...TotalDistance\n    }\n    recentDrivingRecords(first: $first) {\n      ...ChartDataSeries\n    }\n  }\n'];
 /**
@@ -56,6 +68,12 @@ export function graphql(
 export function graphql(
   source: '\n  fragment ChartDataSeries on DrivingRecordsConnection {\n    nodes {\n      odometerValue\n      recordedAt\n      tripDistance\n    }\n  }\n',
 ): (typeof documents)['\n  fragment ChartDataSeries on DrivingRecordsConnection {\n    nodes {\n      odometerValue\n      recordedAt\n      tripDistance\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  fragment MonthlySummary on MonthlyReport {\n    year\n    month\n    ...TotalDistance\n    dailyReports {\n      ...ChartDataSeries\n    }\n  }\n',
+): (typeof documents)['\n  fragment MonthlySummary on MonthlyReport {\n    year\n    month\n    ...TotalDistance\n    dailyReports {\n      ...ChartDataSeries\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

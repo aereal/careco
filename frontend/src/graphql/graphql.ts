@@ -118,6 +118,26 @@ export type YearlyReport = DistanceReport & {
   readonly year: Scalars['Int']['output'];
 };
 
+export type MonthReportQueryVariables = Exact<{
+  year: Scalars['Int']['input'];
+  month: Month;
+}>;
+
+export type MonthReportQuery = {
+  readonly monthlyReport: {
+    readonly dailyReports: {
+      ' $fragmentRefs'?: {
+        ChartDataSeries_DailyReportsConnection_Fragment: ChartDataSeries_DailyReportsConnection_Fragment;
+      };
+    };
+  } & {
+    ' $fragmentRefs'?: {
+      MonthlySummaryFragment: MonthlySummaryFragment;
+      TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
+    };
+  };
+};
+
 export type GetRootQueryVariables = Exact<{
   first: Scalars['Int']['input'];
 }>;
@@ -157,6 +177,20 @@ export type ChartDataSeriesFragment =
   | ChartDataSeries_DailyReportsConnection_Fragment
   | ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
 
+export type MonthlySummaryFragment = ({
+  readonly year: number;
+  readonly month: Month;
+  readonly dailyReports: {
+    ' $fragmentRefs'?: {
+      ChartDataSeries_DailyReportsConnection_Fragment: ChartDataSeries_DailyReportsConnection_Fragment;
+    };
+  };
+} & {
+  ' $fragmentRefs'?: {
+    TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
+  };
+}) & { ' $fragmentName'?: 'MonthlySummaryFragment' };
+
 export type RecordDriveMutationVariables = Exact<{
   date: Scalars['DateTime']['input'];
   distance: Scalars['Int']['input'];
@@ -187,6 +221,25 @@ export type TotalDistanceFragment =
   | TotalDistance_TotalStatistics_Fragment
   | TotalDistance_YearlyReport_Fragment;
 
+export const TotalDistanceFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TotalDistanceFragment, unknown>;
 export const ChartDataSeriesFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -223,9 +276,41 @@ export const ChartDataSeriesFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<ChartDataSeriesFragment, unknown>;
-export const TotalDistanceFragmentDoc = {
+export const MonthlySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'MonthlySummary' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'MonthlyReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'year' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'month' } },
+          {
+            kind: 'FragmentSpread',
+            name: { kind: 'Name', value: 'TotalDistance' },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'dailyReports' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ChartDataSeries' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
     {
       kind: 'FragmentDefinition',
       name: { kind: 'Name', value: 'TotalDistance' },
@@ -240,8 +325,200 @@ export const TotalDistanceFragmentDoc = {
         ],
       },
     },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'odometerValue' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'tripDistance' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
   ],
-} as unknown as DocumentNode<TotalDistanceFragment, unknown>;
+} as unknown as DocumentNode<MonthlySummaryFragment, unknown>;
+export const MonthReportDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'MonthReport' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'year' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'month' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Month' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'monthlyReport' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'year' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'year' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'month' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'month' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'MonthlySummary' },
+                },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TotalDistance' },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'dailyReports' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      {
+                        kind: 'FragmentSpread',
+                        name: { kind: 'Name', value: 'ChartDataSeries' },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'odometerValue' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'tripDistance' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'MonthlySummary' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'MonthlyReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'year' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'month' } },
+          {
+            kind: 'FragmentSpread',
+            name: { kind: 'Name', value: 'TotalDistance' },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'dailyReports' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ChartDataSeries' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<MonthReportQuery, MonthReportQueryVariables>;
 export const GetRootDocument = {
   kind: 'Document',
   definitions: [
