@@ -5,7 +5,7 @@ import { type TypeScriptPluginConfig } from '@graphql-codegen/typescript';
 const config: CodegenConfig = {
   ignoreNoDocuments: true,
   schema: './schema.gql',
-  documents: ['./src/**/!(*.gen).{ts,tsx}'],
+  documents: ['./frontend/src/**/!(*.gen).{ts,tsx}', './frontend/src/**/*.vue'],
   hooks: {
     afterAllFileWrite: ['prettier --write'],
   },
@@ -25,17 +25,11 @@ const config: CodegenConfig = {
     skipTypename: true,
   } satisfies TypeScriptPluginConfig,
   generates: {
-    'src/graphql/': {
+    'frontend/src/graphql/': {
       preset: 'client',
       presetConfig: {
         fragmentMasking: { unmaskFunctionName: 'getFragmentData' },
       } satisfies ClientPresetConfig,
-    },
-    'e2e/types/types.gen.ts': {
-      plugins: ['typescript', 'typescript-operations', 'typescript-msw'],
-      config: {
-        onlyOperationTypes: true,
-      } satisfies TypeScriptPluginConfig,
     },
   },
 };
