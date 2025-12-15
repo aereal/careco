@@ -56,6 +56,9 @@ importers:
       date-fns:
         specifier: 4.1.0
         version: 4.1.0
+      echarts:
+        specifier: 6.0.0
+        version: 6.0.0
       graphql:
         specifier: 16.12.0
         version: 16.12.0
@@ -86,6 +89,9 @@ importers:
       vue:
         specifier: 3.5.25
         version: 3.5.25(typescript@5.9.3)
+      vue-echarts:
+        specifier: 8.0.1
+        version: 8.0.1(echarts@6.0.0)(vue@3.5.25(typescript@5.9.3))
       vue-router:
         specifier: 4.6.4
         version: 4.6.4(vue@3.5.25(typescript@5.9.3))
@@ -2920,6 +2926,9 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
+  echarts@6.0.0:
+    resolution: {integrity: sha512-Tte/grDQRiETQP4xz3iZWSvoHrkCQtwqd6hs+mifXcjrCuo2iKWbajFObuLJVBlDIJlOzgQPd1hsaKt/3+OMkQ==}
+
   editorconfig@1.0.4:
     resolution: {integrity: sha512-L9Qe08KWTlqYMVvMcTIvMAdl1cDUubzRNYL+WfA4bLDMHe4nemKkpmYzkznE1FwLKu0EEmy6obgQKzMJrg4x9Q==}
     engines: {node: '>=14'}
@@ -4838,6 +4847,9 @@ packages:
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
 
+  tslib@2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
+
   tslib@2.4.1:
     resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
 
@@ -5066,6 +5078,12 @@ packages:
   vue-component-type-helpers@2.2.12:
     resolution: {integrity: sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==}
 
+  vue-echarts@8.0.1:
+    resolution: {integrity: sha512-23rJTFLu1OUEGRWjJGmdGt8fP+8+ja1gVgzMYPIPaHWpXegcO1viIAaeu2H4QHESlVeHzUAHIxKXGrwjsyXAaA==}
+    peerDependencies:
+      echarts: ^6.0.0
+      vue: ^3.3.0
+
   vue-eslint-parser@10.2.0:
     resolution: {integrity: sha512-CydUvFOQKD928UzZhTp4pr2vWz1L+H99t7Pkln2QSPdvmURT0MoC4wUccfCnuEaihNsu9aYYyk+bep8rlfkUXw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -5255,6 +5273,9 @@ packages:
 
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
+  zrender@6.0.0:
+    resolution: {integrity: sha512-41dFXEEXuJpNecuUQq6JlbybmnHaqqpGlbH1yxnA5V9MMP4SbohSVZsJIwz+zdjQXSSlR1Vc34EgH1zxyTDvhg==}
 
 snapshots:
 
@@ -8281,6 +8302,11 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
+  echarts@6.0.0:
+    dependencies:
+      tslib: 2.3.0
+      zrender: 6.0.0
+
   editorconfig@1.0.4:
     dependencies:
       '@one-ini/wasm': 0.1.1
@@ -10419,6 +10445,8 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
+  tslib@2.3.0: {}
+
   tslib@2.4.1: {}
 
   tslib@2.6.3: {}
@@ -10699,6 +10727,11 @@ snapshots:
 
   vue-component-type-helpers@2.2.12: {}
 
+  vue-echarts@8.0.1(echarts@6.0.0)(vue@3.5.25(typescript@5.9.3)):
+    dependencies:
+      echarts: 6.0.0
+      vue: 3.5.25(typescript@5.9.3)
+
   vue-eslint-parser@10.2.0(eslint@9.39.0(jiti@2.6.1)):
     dependencies:
       debug: 4.4.3
@@ -10904,3 +10937,7 @@ snapshots:
       zod: 4.1.12
 
   zod@4.1.12: {}
+
+  zrender@6.0.0:
+    dependencies:
+      tslib: 2.3.0
