@@ -27,7 +27,7 @@ const summary = getFragmentData(fragmentMonthlySummary, props.summary);
       {{ summary.year }}年{{ numberOf(summary.month) }}月の走行記録
     </h1>
     <TotalDistance :total-distance="summary" />
-    <div class="my-8 h-[v70vh]">
+    <div class="my-8 h-[70vh]">
       <DriveRecordChart :data="summary.dailyReports" />
     </div>
   </div>
