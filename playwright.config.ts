@@ -34,7 +34,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: inCI ? 'pnpm run preview' : 'pnpm run dev',
+    command: inCI ? 'pnpm run start' : 'pnpm run dev',
     url: baseURL,
     reuseExistingServer: !inCI,
     timeout: 120 * 1000,
