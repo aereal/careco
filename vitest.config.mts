@@ -4,21 +4,21 @@ import viteConfig from './vite.config';
 
 const inCI = process.env['CI'] !== '';
 
-const testPattern = ['./frontend/src/**/*.test.{ts,tsx}'];
+const testPattern = ['./frontend/src/**/*.{test,spec}.{ts,tsx}'];
 
 const config = mergeConfig(
   viteConfig,
   defineConfig({
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**'],
+      exclude: [...configDefaults.exclude, 'frontend/e2e/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       coverage: {
         enabled: inCI,
         provider: 'v8',
         reporter: ['clover', 'html'],
         reportsDirectory: './coverage.front',
-        include: ['./frontend/src/**/*.{ts,tsx}'],
+        include: ['./frontend/src/**/*.{ts,vue}'],
         exclude: testPattern,
       },
     },
