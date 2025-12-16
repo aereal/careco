@@ -53,8 +53,8 @@ export default {
 </script>
 
 <template>
-  <div className="max-w-2xl mx-auto">
-    <div className="p-4">
+  <div class="max-w-2xl mx-auto">
+    <div class="p-4">
       <div v-if="authOngoing">...</div>
       <div v-else-if="!isAuthenticated">
         <div v-if="!isAuthenticated">
@@ -66,13 +66,13 @@ export default {
         <div v-if="error">Error: {{ error.message }}</div>
         <div v-else-if="data">
           <TotalDistance :total-distance="data.totalStatistics" />
-          <div className="my-4">
-            <h2 className="font-bold text-md mb-2">月毎の記録を見る</h2>
+          <div class="my-4">
+            <h2 class="font-bold text-md mb-2">月毎の記録を見る</h2>
             <SelectMonth />
           </div>
-          <div className="my-8">
-            <h1 className="font-bold text-lg -mb-4">最近の記録</h1>
-            <div className="my-8 h-[60vh]">
+          <div class="my-8">
+            <h1 class="font-bold text-lg -mb-4">最近の記録</h1>
+            <div class="my-8 h-[60vh]">
               <DriveRecordChart :data="data.recentDrivingRecords" />
             </div>
           </div>

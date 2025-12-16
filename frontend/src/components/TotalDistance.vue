@@ -18,10 +18,10 @@ const { odometerValue } = getFragmentData(
 </script>
 
 <template>
-  <div className="stats shadow mt-8">
-    <div className="stat pl-4">
-      <h2 className="stat-title">総走行距離</h2>
-      <div className="stat-value">{{ odometerValue }}km</div>
+  <div class="stats shadow mt-8">
+    <div class="stat pl-4">
+      <h2 class="stat-title">総走行距離</h2>
+      <div class="stat-value">{{ odometerValue }}km</div>
     </div>
   </div>
 </template>
