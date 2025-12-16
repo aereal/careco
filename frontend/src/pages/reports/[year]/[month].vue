@@ -27,7 +27,7 @@ export default {
   components: { MonthlyReport },
   setup() {
     const auth0 = useAuth0();
-    const { params } = useRoute('/reports/:year/:month');
+    const { params } = useRoute('/reports/[year]/[month]');
     const ret = Result.pipe(
       Result.sequence({
         year: getFirstParam('year', params.year),

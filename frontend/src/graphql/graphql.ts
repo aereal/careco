@@ -118,43 +118,6 @@ export type YearlyReport = DistanceReport & {
   readonly year: Scalars['Int']['output'];
 };
 
-export type MonthReportQueryVariables = Exact<{
-  year: Scalars['Int']['input'];
-  month: Month;
-}>;
-
-export type MonthReportQuery = {
-  readonly monthlyReport: {
-    readonly dailyReports: {
-      ' $fragmentRefs'?: {
-        ChartDataSeries_DailyReportsConnection_Fragment: ChartDataSeries_DailyReportsConnection_Fragment;
-      };
-    };
-  } & {
-    ' $fragmentRefs'?: {
-      MonthlySummaryFragment: MonthlySummaryFragment;
-      TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
-    };
-  };
-};
-
-export type GetRootQueryVariables = Exact<{
-  first: Scalars['Int']['input'];
-}>;
-
-export type GetRootQuery = {
-  readonly totalStatistics: {
-    ' $fragmentRefs'?: {
-      TotalDistance_TotalStatistics_Fragment: TotalDistance_TotalStatistics_Fragment;
-    };
-  };
-  readonly recentDrivingRecords: {
-    ' $fragmentRefs'?: {
-      ChartDataSeries_RecentDrivingRecordsConnection_Fragment: ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
-    };
-  };
-};
-
 type ChartDataSeries_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
     readonly odometerValue: number;
@@ -220,6 +183,43 @@ export type TotalDistanceFragment =
   | TotalDistance_MonthlyReport_Fragment
   | TotalDistance_TotalStatistics_Fragment
   | TotalDistance_YearlyReport_Fragment;
+
+export type GetRootQueryVariables = Exact<{
+  first: Scalars['Int']['input'];
+}>;
+
+export type GetRootQuery = {
+  readonly totalStatistics: {
+    ' $fragmentRefs'?: {
+      TotalDistance_TotalStatistics_Fragment: TotalDistance_TotalStatistics_Fragment;
+    };
+  };
+  readonly recentDrivingRecords: {
+    ' $fragmentRefs'?: {
+      ChartDataSeries_RecentDrivingRecordsConnection_Fragment: ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
+    };
+  };
+};
+
+export type MonthReportQueryVariables = Exact<{
+  year: Scalars['Int']['input'];
+  month: Month;
+}>;
+
+export type MonthReportQuery = {
+  readonly monthlyReport: {
+    readonly dailyReports: {
+      ' $fragmentRefs'?: {
+        ChartDataSeries_DailyReportsConnection_Fragment: ChartDataSeries_DailyReportsConnection_Fragment;
+      };
+    };
+  } & {
+    ' $fragmentRefs'?: {
+      MonthlySummaryFragment: MonthlySummaryFragment;
+      TotalDistance_MonthlyReport_Fragment: TotalDistance_MonthlyReport_Fragment;
+    };
+  };
+};
 
 export const TotalDistanceFragmentDoc = {
   kind: 'Document',
@@ -358,6 +358,189 @@ export const MonthlySummaryFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<MonthlySummaryFragment, unknown>;
+export const RecordDriveDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RecordDrive' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'date' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'DateTime' },
+            },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'distance' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'memo' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'recordDrivingRecord' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'date' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'date' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'odometerValue' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'distance' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'memo' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'memo' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RecordDriveMutation, RecordDriveMutationVariables>;
+export const GetRootDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetRoot' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'first' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'totalStatistics' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TotalDistance' },
+                },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'recentDrivingRecords' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'first' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ChartDataSeries' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TotalDistance' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ChartDataSeries' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'nodes' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'odometerValue' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'tripDistance' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetRootQuery, GetRootQueryVariables>;
 export const MonthReportDocument = {
   kind: 'Document',
   definitions: [
@@ -519,186 +702,3 @@ export const MonthReportDocument = {
     },
   ],
 } as unknown as DocumentNode<MonthReportQuery, MonthReportQueryVariables>;
-export const GetRootDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetRoot' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'first' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-          },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'totalStatistics' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'TotalDistance' },
-                },
-              ],
-            },
-          },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'recentDrivingRecords' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'first' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'first' },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: 'ChartDataSeries' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'TotalDistance' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'DistanceReport' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
-        ],
-      },
-    },
-    {
-      kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: 'ChartDataSeries' },
-      typeCondition: {
-        kind: 'NamedType',
-        name: { kind: 'Name', value: 'DrivingRecordsConnection' },
-      },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'nodes' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'odometerValue' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'recordedAt' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'tripDistance' },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetRootQuery, GetRootQueryVariables>;
-export const RecordDriveDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'RecordDrive' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'date' } },
-          type: {
-            kind: 'NonNullType',
-            type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'DateTime' },
-            },
-          },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'distance' },
-          },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-          },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'memo' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'recordDrivingRecord' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'date' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'date' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'odometerValue' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'distance' },
-                },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'memo' },
-                value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'memo' },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<RecordDriveMutation, RecordDriveMutationVariables>;
