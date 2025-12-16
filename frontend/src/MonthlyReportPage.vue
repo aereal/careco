@@ -4,10 +4,11 @@ import { graphql } from '@/graphql';
 import { getFirstParam } from '@/utils/get-first-param';
 import { formatMonth } from '@/utils/month';
 import { parseDateParams } from '@/utils/parse-date-params';
+import { useAuth0 } from '@auth0/auth0-vue';
 import type { ResultOf } from '@graphql-typed-document-node/core';
 import { Result } from '@praha/byethrow';
 import { CombinedError, useQuery } from '@urql/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const queryMonthReport = graphql(`
@@ -25,6 +26,7 @@ const queryMonthReport = graphql(`
 export default {
   components: { MonthlyReport },
   setup() {
+    const auth0 = useAuth0();
     const { params } = useRoute('/reports/:year/:month');
     const ret = Result.pipe(
       Result.sequence({
@@ -42,13 +44,24 @@ export default {
         const { fetching, data, error } = useQuery({
           query: queryMonthReport,
           variables: { year: input.year, month: input.month },
+          pause: computed(
+            () => auth0.isLoading.value || !auth0.isAuthenticated.value,
+          ),
         });
-        return { fetching, data, error };
+        return {
+          authOngoing: auth0.isLoading,
+          isAuthenticated: auth0.isAuthenticated,
+          queryFetching: fetching,
+          data,
+          error,
+        };
       }),
       Result.orElse((error) =>
         Result.succeed({
+          authOngoing: auth0.isLoading,
+          isAuthenticated: auth0.isAuthenticated,
           error: ref(new CombinedError({ networkError: error })),
-          fetching: ref(false),
+          queryFetching: ref(false),
           data: ref<ResultOf<typeof queryMonthReport> | undefined>(undefined),
         }),
       ),
@@ -64,7 +77,13 @@ export default {
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="p-4">
-      <div v-if="fetching">Loading...</div>
+      <div v-if="authOngoing">...</div>
+      <div v-else-if="!isAuthenticated">
+        <div v-if="!isAuthenticated">
+          <LoginButton />
+        </div>
+      </div>
+      <div v-else-if="queryFetching">Loading...</div>
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div v-else-if="data">
         <MonthlyReport :summary="data.monthlyReport" />
