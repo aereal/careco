@@ -27,6 +27,11 @@ const eslintConfig = defineConfigWithVueTs(
     files: ['frontend/src/**/*.{test,spec}.ts'],
   },
   { ...playwright.configs['flat/recommended'], files: ['frontend/e2e/**/*'] },
+  {
+    rules: {
+      'vue/multi-word-component-names': ['off'],
+    },
+  },
   skipFormatting,
 );
 
