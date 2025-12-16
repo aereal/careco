@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-// See here how to get started:
-// https://playwright.dev/docs/intro
-test('visits the app root url', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('h1')).toHaveText('You did it!');
+test.describe('ログイン画面', () => {
+  test('Loginボタンが表示される', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
+  });
 });
