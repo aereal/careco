@@ -1,4 +1,4 @@
-import { config } from '@/config';
+import { getConfig } from '@/config';
 import { type Auth0VueClient } from '@auth0/auth0-vue';
 import { VolatileToken } from './volatile-token';
 
@@ -16,7 +16,7 @@ export class ClientTokenProvider {
         detailedResponse: true,
         cacheMode: 'off',
         authorizationParams: {
-          audience: config.AUTH0_AUDIENCE,
+          audience: getConfig('auth0Audience'),
         },
       });
     const expiresAt = new Date(Date.now() + expires_in * 1000);

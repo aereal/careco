@@ -3,15 +3,15 @@ import { createAuth0 } from '@auth0/auth0-vue';
 import urql, { fetchExchange } from '@urql/vue';
 import { createApp } from 'vue';
 import App from './App.vue';
-import { config } from './config';
+import { getConfig } from './config';
 import router from './router';
 import './style.css';
 
 const app = createApp(App);
 
 const auth0Plugin = createAuth0({
-  domain: config.AUTH0_DOMAIN,
-  clientId: config.AUTH0_CLIENT_ID,
+  domain: getConfig('auth0Domain'),
+  clientId: getConfig('auth0ClientID'),
   legacySameSiteCookie: false,
   useRefreshTokens: true,
   cacheLocation: 'localstorage',
@@ -19,7 +19,7 @@ const auth0Plugin = createAuth0({
     display: 'touch',
     prompt: 'consent',
     redirect_uri: window.location.origin,
-    audience: config.AUTH0_AUDIENCE,
+    audience: getConfig('auth0Audience'),
   },
 });
 
