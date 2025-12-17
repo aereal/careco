@@ -12,6 +12,7 @@ const app = createApp(App);
 const auth0Plugin = createAuth0({
   domain: getConfig('auth0Domain'),
   clientId: getConfig('auth0ClientID'),
+  issuer: getConfig('auth0Issuer'),
   legacySameSiteCookie: false,
   useRefreshTokens: true,
   cacheLocation: 'localstorage',
@@ -25,7 +26,7 @@ const auth0Plugin = createAuth0({
 
 app.use(router);
 app.use(urql, {
-  url: 'http://localhost:8080/graphql',
+  url: getConfig('backendEndpoint'),
   exchanges: [auth0Exchange(auth0Plugin), fetchExchange],
   preferGetMethod: false,
 });
