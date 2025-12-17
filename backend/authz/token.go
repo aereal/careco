@@ -2,9 +2,11 @@ package authz
 
 import (
 	"context"
+	"iter"
 	"time"
 
 	"github.com/auth0/go-jwt-middleware/v2/validator"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 type tokenCtxKey struct{}
@@ -70,4 +72,45 @@ func (t *auth0Token) NotBefore() (time.Time, bool) {
 func (t *auth0Token) Subject() (string, bool) {
 	sub := t.RegisteredClaims.Subject
 	return sub, sub != ""
+}
+
+func (token *auth0Token) Attrs() iter.Seq[attribute.KeyValue] {
+	return func(yield func(attribute.KeyValue) bool) {
+		if id, ok := token.JwtID(); ok {
+			if !yield(attribute.String("auth.credentials.id", id)) {
+				return
+			}
+		}
+		if issuer, ok := token.Issuer(); ok {
+			if !yield(attribute.String("auth.credentials.issuer", issuer)) {
+				return
+			}
+		}
+		if sub, ok := token.Subject(); ok {
+			if !yield(attribute.String("auth.credentials.subject", sub)) {
+				return
+			}
+		}
+		if aud, ok := token.Audience(); ok {
+			if !yield(attribute.StringSlice("auth.credentials.audience", aud)) {
+				return
+			}
+		}
+		if expiresAt, ok := token.Expiration(); ok {
+			if !yield(attribute.String("auth.credentials.expires_at.iso8601", expiresAt.Format(time.RFC3339))) {
+				return
+			}
+			if !yield(attribute.Float64("auth.credentials.expires_at.remaining_seconds", time.Until(expiresAt).Seconds())) {
+				return
+			}
+		}
+		if issuedAt, ok := token.IssuedAt(); ok {
+			if !yield(attribute.String("auth.credentials.issued_at.iso8601", issuedAt.Format(time.RFC3339))) {
+				return
+			}
+			if !yield(attribute.Float64("auth.credentials.issued_at.elapsed_seconds", time.Since(issuedAt).Seconds())) {
+				return
+			}
+		}
+	}
 }

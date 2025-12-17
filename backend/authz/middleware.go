@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
 	validatorpkg "github.com/auth0/go-jwt-middleware/v2/validator"
-	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -22,52 +23,88 @@ type Middleware func(next http.Handler) http.Handler
 
 func ProvideAuth0Middleware(issuer *Issuer, audience Audience, client *http.Client) (Middleware, error) {
 	keyProvider := jwks.NewCachingProvider((*url.URL)(issuer), time.Minute*30, jwks.WithCustomClient(client))
-	validator, err := validatorpkg.New(keyProvider.KeyFunc, validatorpkg.RS256, (*url.URL)(issuer).String(), audience)
+	validator, err := validatorpkg.New(keyFuncWithTracing(keyProvider.KeyFunc), validatorpkg.RS256, (*url.URL)(issuer).String(), audience, validatorpkg.WithAllowedClockSkew(time.Minute))
 	if err != nil {
 		return nil, fmt.Errorf("validator.New: %w", err)
 	}
-	mw := jwtmiddleware.New(validator.ValidateToken)
+	handleError := errorHandlerWithTracing(jwtmiddleware.DefaultErrorHandler)
+	mw := jwtmiddleware.New(
+		validateTokenWithTracing(validator.ValidateToken),
+		jwtmiddleware.WithErrorHandler(handleError),
+		jwtmiddleware.WithTokenExtractor(tokenExtractorWithTracing(jwtmiddleware.AuthHeaderTokenExtractor)),
+	)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			mw.CheckJWT(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx, span := getTracer(r.Context()).Start(r.Context(), "Authenticate", trace.WithSpanKind(trace.SpanKindServer))
+			nested := mw.CheckJWT(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				ctx := r.Context()
-				claims, ok := ctx.Value(jwtmiddleware.ContextKey{}).(*validatorpkg.ValidatedClaims)
+				rawToken := ctx.Value(jwtmiddleware.ContextKey{})
+				claims, ok := rawToken.(*validatorpkg.ValidatedClaims)
 				if !ok {
-					next.ServeHTTP(w, r)
+					handleError(w, r, unexpectedClaimsType(rawToken))
 					return
 				}
-
-				span := trace.SpanFromContext(ctx)
 				token := &auth0Token{claims}
-				if id, ok := token.JwtID(); ok {
-					span.SetAttributes(attribute.String("auth.credentials.id", id))
-				}
-				if issuer, ok := token.Issuer(); ok {
-					span.SetAttributes(attribute.String("auth.credentials.issuer", issuer))
-				}
-				if sub, ok := token.Subject(); ok {
-					span.SetAttributes(attribute.String("auth.credentials.subject", sub))
-				}
-				if aud, ok := token.Audience(); ok {
-					span.SetAttributes(attribute.StringSlice("auth.credentials.audience", aud))
-				}
-				if expiresAt, ok := token.Expiration(); ok {
-					span.SetAttributes(
-						attribute.String("auth.credentials.expires_at.iso8601", expiresAt.Format(time.RFC3339)),
-						attribute.Float64("auth.credentials.expires_at.remaining_seconds", time.Until(expiresAt).Seconds()),
-					)
-				}
-				if issuedAt, ok := token.IssuedAt(); ok {
-					span.SetAttributes(
-						attribute.String("auth.credentials.issued_at.iso8601", issuedAt.Format(time.RFC3339)),
-						attribute.Float64("auth.credentials.issued_at.elapsed_seconds", time.Since(issuedAt).Seconds()),
-					)
-				}
-
-				ctx = context.WithValue(ctx, jwtmiddleware.ContextKey{}, nil)
-				ctx = contextWithToken(ctx, token)
-				next.ServeHTTP(w, r.WithContext(ctx))
-			})).ServeHTTP(w, r)
+				trace.SpanFromContext(ctx).SetAttributes(slices.Collect(token.Attrs())...)
+				next.ServeHTTP(w, r.Clone(contextWithToken(ctx, token)))
+			}))
+			closeSpan(span, nil)
+			nested.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}, nil
+}
+
+func unexpectedClaimsType(token any) error {
+	return fmt.Errorf("unexpected token type: %T", token) //nolint:err113
+}
+
+func tokenExtractorWithTracing(f jwtmiddleware.TokenExtractor) jwtmiddleware.TokenExtractor {
+	return func(r *http.Request) (string, error) {
+		ctx, span := getTracer(r.Context()).Start(r.Context(), "TokenExtractor", trace.WithSpanKind(trace.SpanKindServer))
+		token, err := f(r.WithContext(ctx))
+		closeSpan(span, err)
+		return token, err
+	}
+}
+
+func errorHandlerWithTracing(h jwtmiddleware.ErrorHandler) jwtmiddleware.ErrorHandler {
+	return func(w http.ResponseWriter, r *http.Request, err error) {
+		span := trace.SpanFromContext(r.Context())
+		closeSpan(span, err)
+		h(w, r, err)
+	}
+}
+
+func validateTokenWithTracing(validate jwtmiddleware.ValidateToken) jwtmiddleware.ValidateToken {
+	return func(ctx context.Context, s string) (any, error) {
+		ctx, span := getTracer(ctx).Start(ctx, "ValidateToken", trace.WithSpanKind(trace.SpanKindServer))
+		validated, err := validate(ctx, s)
+		closeSpan(span, err)
+		return validated, err
+	}
+}
+
+func keyFuncWithTracing(keyFunc func(context.Context) (any, error)) func(context.Context) (any, error) {
+	return func(ctx context.Context) (any, error) {
+		childCtx, span := getTracer(ctx).Start(ctx, "KeyFunc", trace.WithSpanKind(trace.SpanKindServer))
+		key, err := keyFunc(childCtx)
+		closeSpan(span, err)
+		return key, err
+	}
+}
+
+func closeSpan(span trace.Span, err error) {
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+	span.End()
+}
+
+const tracerName = "careco/backend/authz.Middleware"
+
+func getTracer(ctx context.Context) trace.Tracer {
+	return trace.SpanFromContext(ctx).TracerProvider().Tracer(tracerName)
 }
