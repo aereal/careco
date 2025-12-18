@@ -6,6 +6,8 @@ import (
 	"careco/backend/authz"
 	"careco/backend/config"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
+	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
 	"careco/backend/web"
 )
@@ -61,6 +63,33 @@ func ProvideIssuer(e *config.Environment) (*authz.Issuer, error) {
 	retrieve := cast(config.EnvSource(e))
 	return config.Retrieve(
 		"AUTH0_ISSUER",
+		retrieve,
+	)
+}
+
+func ProvideFirestoreDatabaseID(e *config.Environment) (firestore.DatabaseID, error) {
+	cast := config.Cast(config.StringAs[firestore.DatabaseID])
+	retrieve := cast(config.EnvSource(e))
+	return config.Retrieve(
+		"FIRESTORE_DATABASE_ID",
+		retrieve,
+	)
+}
+
+func ProvideGoogleProjectID(e *config.Environment) (gcp.ProjectID, error) {
+	cast := config.Cast(config.StringAs[gcp.ProjectID])
+	retrieve := cast(config.EnvSource(e))
+	return config.Retrieve(
+		"GOOGLE_CLOUD_PROJECT",
+		retrieve,
+	)
+}
+
+func ProvideServiceVersion(e *config.Environment) (o11y.ServiceVersion, error) {
+	cast := config.Cast(config.StringAs[o11y.ServiceVersion])
+	retrieve := cast(config.EnvSource(e))
+	return config.Retrieve(
+		"OTEL_SERVICE_VERSION",
 		retrieve,
 	)
 }

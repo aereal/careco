@@ -9,6 +9,8 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/oauth"
 )
 
 type (
@@ -36,4 +38,15 @@ func ProvideTracerProvider(ctx context.Context, exporter *otlptrace.Exporter, re
 
 func ProvideSidecarCollectorExporter(ctx context.Context) (*otlptrace.Exporter, error) {
 	return otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
+}
+
+func ProvideGoogleTelemetryTraceExporter(ctx context.Context) (*otlptrace.Exporter, error) {
+	creds, err := oauth.NewApplicationDefault(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("oauth.NewApplicationDefault: %w", err)
+	}
+	return otlptracegrpc.New(ctx,
+		otlptracegrpc.WithEndpoint("telemetry.googleapis.com:443"),
+		otlptracegrpc.WithDialOption(grpc.WithPerRPCCredentials(creds)),
+	)
 }

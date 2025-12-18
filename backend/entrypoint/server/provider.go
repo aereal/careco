@@ -51,4 +51,11 @@ var (
 		wire.Value(gcp.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
 	)
+	ProductionProvider = wire.NewSet(
+		o11y.ProvideGoogleTelemetryTraceExporter,
+		Provider,
+		providers.ProvideGoogleProjectID,
+		providers.ProvideServiceVersion,
+		wire.Value(o11y.DeploymentEnvironmentName("production")),
+	)
 )
