@@ -14,6 +14,8 @@ jobs:
     environment:
       name: frontend-${{ inputs.environment }}
       url: ${{ steps.deploy.outputs.url }}
+    concurrency:
+      group: deploy-frontend-${{ inputs.environment }}
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
