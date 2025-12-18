@@ -13,6 +13,7 @@ jobs:
       contents: read
     environment:
       name: frontend-${{ inputs.environment }}
+      url: ${{ steps.deploy.outputs.url }}
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -41,7 +42,10 @@ jobs:
           VITE_AUTH0_AUDIENCE: ${{ secrets.VITE_AUTH0_AUDIENCE }}
           VITE_BACKEND_ENDPOINT: ${{ secrets.VITE_BACKEND_ENDPOINT }}
       - name: deploy
-        run: pnpm exec vercel deploy --yes --prebuilt --target "$_env" --token "$_vercel_token"
+        id: deploy
+        run: |
+          pnpm exec vercel deploy --yes --prebuilt --target "$_env" --token "$_vercel_token" 1>out.txt
+          echo "url=$(cat out.txt)" >> "$GITHUB_OUTPUT"
         env:
           _env: ${{ inputs.env }}
           _vercel_token: ${{ secrets.VERCEL_TOKEN }}
