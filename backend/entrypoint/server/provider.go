@@ -24,7 +24,6 @@ var (
 	Provider = wire.NewSet(
 		authz.ProvideAuth0Middleware,
 		config.ProvideEnvironment,
-		firestore.ProvideEmulatorClient,
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,
 		http.ProvideClient,
@@ -46,6 +45,7 @@ var (
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
 	)
 	DevProvider = wire.NewSet(
+		firestore.ProvideEmulatorClient,
 		o11y.ProvideSidecarCollectorExporter,
 		Provider,
 		providers.ProvideServiceVersionFromGitRevision,
@@ -54,6 +54,7 @@ var (
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
 	)
 	ProductionProvider = wire.NewSet(
+		firestore.ProvideClient,
 		o11y.ProvideGoogleTelemetryTraceExporter,
 		Provider,
 		providers.ProvideFirestoreDatabaseID,

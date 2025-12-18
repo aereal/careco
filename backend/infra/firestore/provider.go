@@ -23,6 +23,11 @@ type (
 	DatabaseID   string
 )
 
+func ProvideClient(ctx context.Context, dbID DatabaseID, projectID gcp.ProjectID, tp trace.TracerProvider) (*firestore.Client, error) {
+	opts := slices.Collect(asClientOptions(commonDialOptions(tp)))
+	return firestore.NewClientWithDatabase(ctx, string(projectID), string(dbID), opts...)
+}
+
 func ProvideEmulatorClient(ctx context.Context, dbID DatabaseID, projectID gcp.ProjectID, emulatorAddr EmulatorAddr, tp trace.TracerProvider) (*firestore.Client, error) {
 	opts := []grpc.DialOption{
 		grpc.WithPerRPCCredentials(emulatorCreds{}),
@@ -43,6 +48,16 @@ func commonDialOptions(tp trace.TracerProvider) iter.Seq[grpc.DialOption] {
 		}
 		if !yield(grpc.WithStatsHandler(firestoreAttrGetter{})) {
 			return
+		}
+	}
+}
+
+func asClientOptions(s iter.Seq[grpc.DialOption]) iter.Seq[option.ClientOption] {
+	return func(yield func(option.ClientOption) bool) {
+		for o := range s {
+			if !yield(option.WithGRPCDialOption(o)) {
+				return
+			}
 		}
 	}
 }
