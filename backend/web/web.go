@@ -51,10 +51,10 @@ func (s *Server) handler() http.Handler {
 		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string { return r.Method + " " + r.URL.Path }),
 		otelhttp.WithTracerProvider(s.tp),
 	)
-	return withOtel(withCors(s.authMW(mux)))
+	return withOtel(WithCors(s.authMW(mux)))
 }
 
-func withCors(next http.Handler) http.Handler {
+func WithCors(next http.Handler) http.Handler {
 	opts := cors.Options{
 		AllowOriginFunc: func(origin string) bool {
 			url, err := neturl.Parse(origin)
