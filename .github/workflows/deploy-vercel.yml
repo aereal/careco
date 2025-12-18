@@ -36,6 +36,10 @@ jobs:
         env:
           _env: ${{ inputs.env }}
           _vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
+          VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
+          VITE_AUTH0_AUDIENCE: ${{ secrets.VITE_AUTH0_AUDIENCE }}
+          VITE_BACKEND_ENDPOINT: ${{ secrets.VITE_BACKEND_ENDPOINT }}
       - name: deploy
         run: pnpm exec vercel deploy --yes --prebuilt --target "$_env" --token "$_vercel_token"
         env:
