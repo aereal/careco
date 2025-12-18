@@ -126,11 +126,21 @@ jobs:
       - run: node ./tools/check-diff.js
   frontend-deploy-preview:
     uses: ./.github/workflows/deploy-vercel.yml
+    needs:
+      - frontend-check-diff
+      - frontend-e2e-test
+      - frontend-lint
+      - frontend-test
     secrets: inherit
     with:
       environment: preview
   frontend-deploy-production:
     uses: ./.github/workflows/deploy-vercel.yml
+    needs:
+      - frontend-check-diff
+      - frontend-e2e-test
+      - frontend-lint
+      - frontend-test
     secrets: inherit
     with:
       environment: production
