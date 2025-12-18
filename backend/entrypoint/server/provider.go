@@ -30,7 +30,6 @@ var (
 		log.ProvideGlobalInstrumentation,
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,
-		o11y.ProvideResource,
 		o11y.ProvideTracerProvider,
 		ProvideEntrypoint,
 		providers.ProvideAudience,
@@ -46,6 +45,7 @@ var (
 	)
 	DevProvider = wire.NewSet(
 		firestore.ProvideEmulatorClient,
+		o11y.ProvideResource,
 		o11y.ProvideSidecarCollectorExporter,
 		Provider,
 		providers.ProvideServiceVersionFromGitRevision,
@@ -55,6 +55,7 @@ var (
 	)
 	ProductionProvider = wire.NewSet(
 		firestore.ProvideClient,
+		o11y.ProvideGoogleCloudRunResource,
 		o11y.ProvideGoogleTelemetryTraceExporter,
 		Provider,
 		providers.ProvideFirestoreDatabaseID,

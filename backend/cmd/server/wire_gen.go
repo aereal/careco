@@ -37,8 +37,12 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
+	projectID, err := providers.ProvideGoogleProjectID(environment)
+	if err != nil {
+		return nil, err
+	}
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
-	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
+	resource, err := o11y.ProvideGoogleCloudRunResource(contextContext, projectID, serviceVersion, deploymentEnvironmentName)
 	if err != nil {
 		return nil, err
 	}
@@ -48,10 +52,6 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	}
 	port := providers.ProvidePort(environment)
 	databaseID, err := providers.ProvideFirestoreDatabaseID(environment)
-	if err != nil {
-		return nil, err
-	}
-	projectID, err := providers.ProvideGoogleProjectID(environment)
 	if err != nil {
 		return nil, err
 	}
