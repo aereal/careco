@@ -2,12 +2,15 @@
  * @type {import('prettier').Config}
  */
 const config = {
-  arrowParens: "always",
+  arrowParens: 'always',
   bracketSpacing: true,
   jsxSingleQuote: true,
   semi: true,
   singleQuote: true,
-  trailingComma: "all",
+  trailingComma: 'all',
+  overrides: [
+    { files: ['frontend/**/*'], excludeFiles: ['typed-router.d.ts'] },
+  ],
 };
 
 export default config;

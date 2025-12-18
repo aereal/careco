@@ -1,0 +1,85 @@
+<script lang="ts">
+import DriveRecordChart from '@/components/DriveRecordChart.vue';
+import LoginButton from '@/components/LoginButton.vue';
+import LogoutButton from '@/components/LogoutButton.vue';
+import RecordDialog from '@/components/RecordDialog.vue';
+import SelectMonth from '@/components/SelectMonth.vue';
+import TotalDistance from '@/components/TotalDistance.vue';
+import { graphql } from '@/graphql';
+import { useAuth0 } from '@auth0/auth0-vue';
+import { useQuery } from '@urql/vue';
+import { computed } from 'vue';
+
+const queryGetRoot = graphql(`
+  query GetRoot($first: Int!) {
+    totalStatistics {
+      ...TotalDistance
+    }
+    recentDrivingRecords(first: $first) {
+      ...ChartDataSeries
+    }
+  }
+`);
+
+export default {
+  components: {
+    DriveRecordChart,
+    RecordDialog,
+    SelectMonth,
+    TotalDistance,
+    LoginButton,
+    LogoutButton,
+  },
+  setup() {
+    const auth0 = useAuth0();
+
+    const { fetching, data, error } = useQuery({
+      query: queryGetRoot,
+      variables: { first: 50 },
+      pause: computed(
+        () => auth0.isLoading.value || !auth0.isAuthenticated.value,
+      ),
+    });
+
+    return {
+      authOngoing: auth0.isLoading,
+      isAuthenticated: auth0.isAuthenticated,
+      queryFetching: fetching,
+      data,
+      error,
+    };
+  },
+};
+</script>
+
+<template>
+  <div class="max-w-2xl mx-auto">
+    <div class="p-4">
+      <div v-if="authOngoing">...</div>
+      <div v-else-if="!isAuthenticated">
+        <div v-if="!isAuthenticated">
+          <LoginButton />
+        </div>
+      </div>
+      <div v-else-if="queryFetching">Loading...</div>
+      <div v-else>
+        <div v-if="error">Error: {{ error.message }}</div>
+        <div v-else-if="data">
+          <TotalDistance :total-distance="data.totalStatistics" />
+          <div class="my-4">
+            <h2 class="font-bold text-md mb-2">月毎の記録を見る</h2>
+            <SelectMonth />
+          </div>
+          <div class="my-8">
+            <h1 class="font-bold text-lg -mb-4">最近の記録</h1>
+            <div class="my-8 h-[60vh]">
+              <DriveRecordChart :data="data.recentDrivingRecords" />
+            </div>
+          </div>
+          <RecordDialog />
+          <LogoutButton />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

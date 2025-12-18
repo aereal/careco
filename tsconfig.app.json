@@ -1,0 +1,14 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["env.d.ts", "frontend/src/**/*", "frontend/src/**/*.vue", "frontend/typed-router.d.ts"],
+  "exclude": ["frontend/src/**/__tests__/*"],
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "paths": {
+      "@/*": ["./frontend/src/*"]
+    },
+    "types": [
+      "unplugin-vue-router/client"
+    ]
+  }
+}

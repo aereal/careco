@@ -1,7 +1,9 @@
 node_modules
-.next
 /data/firestore
 !/data/firestore/.keep
 /playwright-report/
 /test-results/
 /playwright/.auth/
+/dist/
+.vercel
+.env*.local

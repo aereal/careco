@@ -1,22 +1,16 @@
-import {
-  defineConfig,
-  devices,
-  type Project,
-  type ReporterDescription,
-} from '@playwright/test';
+import { defineConfig, devices, ReporterDescription } from '@playwright/test';
+import process from 'node:process';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env['PORT'] || 5173;
 const baseURL = `http://localhost:${PORT}`;
 const inCI = (process.env['CI'] ?? '') !== '';
 
-const setupProject = {
-  name: 'setup',
-  testMatch: /.*\.setup\.ts/,
-} satisfies Project;
-
 export default defineConfig({
-  testDir: './e2e',
-  fullyParallel: true,
+  testDir: './frontend/e2e',
+  timeout: 30 * 1000,
+  expect: {
+    timeout: 5000,
+  },
   forbidOnly: inCI,
   retries: 0,
   workers: inCI ? 1 : undefined,
@@ -24,26 +18,23 @@ export default defineConfig({
     ['html'],
     ...(inCI ? ([['github']] satisfies ReporterDescription[]) : []),
   ],
-
   use: {
     baseURL,
     trace: 'on-first-retry',
+    headless: inCI,
   },
 
   projects: [
-    setupProject,
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
       },
-      dependencies: [setupProject.name],
     },
   ],
 
   webServer: {
-    command: 'pnpm build && pnpm start',
+    command: inCI ? `pnpm build && pnpm start --port ${PORT}` : 'pnpm run dev',
     url: baseURL,
     reuseExistingServer: !inCI,
     timeout: 120 * 1000,
