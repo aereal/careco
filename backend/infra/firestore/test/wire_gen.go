@@ -10,6 +10,7 @@ import (
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"testing"
 )
 
@@ -22,7 +23,7 @@ func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordReposit
 	projectID := _wireProjectIDValue
 	environment := config.ProvideEnvironment()
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
-	client, err := firestore.ProvideClient(context, databaseID, projectID, emulatorAddr, tracerProvider)
+	client, err := firestore.ProvideEmulatorClient(context, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}
@@ -31,5 +32,5 @@ func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordReposit
 }
 
 var (
-	_wireProjectIDValue = firestore.ProjectID("test")
+	_wireProjectIDValue = gcp.ProjectID("test")
 )

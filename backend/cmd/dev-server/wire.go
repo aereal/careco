@@ -11,6 +11,6 @@ import (
 )
 
 func build(_ context.Context) (*server.Entrypoint, error) {
-	wire.Build(server.ProductionProvider)
+	wire.Build(server.DevProvider)
 	return nil, nil
 }

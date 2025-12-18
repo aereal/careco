@@ -7,10 +7,11 @@
 package main
 
 import (
-	"careco/backend/cmd/import-data/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/entrypoint/importdata"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
@@ -20,7 +21,7 @@ import (
 
 // Injectors from wire.go:
 
-func build(contextContext context.Context) (*internal.Entrypoint, error) {
+func build(contextContext context.Context) (*importdata.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
@@ -30,19 +31,23 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	}
 	logger := log.ProvideJSONLogger(output, level, serviceVersion)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
+	exporter, err := o11y.ProvideSidecarCollectorExporter(contextContext)
+	if err != nil {
+		return nil, err
+	}
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
 	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
 	if err != nil {
 		return nil, err
 	}
-	tracerProvider, err := o11y.ProvideTracerProvider(contextContext, resource)
+	tracerProvider, err := o11y.ProvideTracerProvider(contextContext, exporter, resource)
 	if err != nil {
 		return nil, err
 	}
 	databaseID := _wireDatabaseIDValue
 	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
-	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
+	client, err := firestore.ProvideEmulatorClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}
@@ -52,12 +57,12 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 		return nil, err
 	}
 	importData := interactions.ProvideImportData(tracerProvider, drivingRecordRepository, exportFileName)
-	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, importData)
+	entrypoint := importdata.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, importData)
 	return entrypoint, nil
 }
 
 var (
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
 	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
-	_wireProjectIDValue                 = firestore.ProjectID("dummy")
+	_wireProjectIDValue                 = gcp.ProjectID("dummy")
 )

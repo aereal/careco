@@ -14,10 +14,12 @@ import (
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
 	"careco/backend/infra/firestore"
+	"careco/backend/infra/gcp"
 	"careco/backend/infra/http"
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
+	firestore2 "cloud.google.com/go/firestore"
 	"context"
 )
 
@@ -27,22 +29,18 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
-	serviceVersion, err := providers.ProvideServiceVersion(environment)
+	serviceVersion, err := providers.ProvideServiceVersionFromGitRevision(contextContext)
 	if err != nil {
 		return nil, err
 	}
 	logger := log.ProvideJSONLogger(output, level, serviceVersion)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
-	exporter, err := o11y.ProvideGoogleTelemetryTraceExporter(contextContext)
-	if err != nil {
-		return nil, err
-	}
-	projectID, err := providers.ProvideGoogleProjectID(environment)
+	exporter, err := o11y.ProvideSidecarCollectorExporter(contextContext)
 	if err != nil {
 		return nil, err
 	}
 	deploymentEnvironmentName := _wireDeploymentEnvironmentNameValue
-	resource, err := o11y.ProvideGoogleCloudRunResource(contextContext, projectID, serviceVersion, deploymentEnvironmentName)
+	resource, err := o11y.ProvideResource(contextContext, serviceVersion, deploymentEnvironmentName)
 	if err != nil {
 		return nil, err
 	}
@@ -51,11 +49,10 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 		return nil, err
 	}
 	port := providers.ProvidePort(environment)
-	databaseID, err := providers.ProvideFirestoreDatabaseID(environment)
-	if err != nil {
-		return nil, err
-	}
-	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, tracerProvider)
+	databaseID := _wireDatabaseIDValue
+	projectID := _wireProjectIDValue
+	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
+	client, err := firestore.ProvideEmulatorClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}
@@ -81,5 +78,7 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 }
 
 var (
-	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("production")
+	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
+	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
+	_wireProjectIDValue                 = gcp.ProjectID("dummy")
 )
