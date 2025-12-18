@@ -7,9 +7,9 @@
 package main
 
 import (
-	"careco/backend/cmd/import-data/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/entrypoint/importdata"
 	"careco/backend/infra/firestore"
 	"careco/backend/infra/gcp"
 	"careco/backend/log"
@@ -21,7 +21,7 @@ import (
 
 // Injectors from wire.go:
 
-func build(contextContext context.Context) (*internal.Entrypoint, error) {
+func build(contextContext context.Context) (*importdata.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
@@ -53,7 +53,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 		return nil, err
 	}
 	importData := interactions.ProvideImportData(tracerProvider, drivingRecordRepository, exportFileName)
-	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, importData)
+	entrypoint := importdata.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, importData)
 	return entrypoint, nil
 }
 

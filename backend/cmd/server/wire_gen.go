@@ -8,9 +8,9 @@ package main
 
 import (
 	"careco/backend/authz"
-	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/entrypoint/server"
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
 	"careco/backend/infra/firestore"
@@ -25,7 +25,7 @@ import (
 
 // Injectors from wire.go:
 
-func build(contextContext context.Context) (*internal.Entrypoint, error) {
+func build(contextContext context.Context) (*server.Entrypoint, error) {
 	output := log.ProvideStdoutOutput()
 	environment := config.ProvideEnvironment()
 	level := providers.ProvideLogLevel(environment)
@@ -54,7 +54,7 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	}
 	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
 	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository)
-	server := graph.ProvideServer(tracerProvider, resolverResolver)
+	handlerServer := graph.ProvideServer(tracerProvider, resolverResolver)
 	issuer, err := providers.ProvideIssuer(environment)
 	if err != nil {
 		return nil, err
@@ -68,8 +68,8 @@ func build(contextContext context.Context) (*internal.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	webServer := web.ProvideServer(port, tracerProvider, server, middleware)
-	entrypoint := internal.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
+	webServer := web.ProvideServer(port, tracerProvider, handlerServer, middleware)
+	entrypoint := server.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil
 }
 

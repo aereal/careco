@@ -5,9 +5,9 @@ package main
 import (
 	"context"
 
-	"careco/backend/cmd/import-data/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
+	"careco/backend/entrypoint/importdata"
 	"careco/backend/infra/firestore"
 	"careco/backend/infra/gcp"
 	"careco/backend/log"
@@ -21,13 +21,13 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func build(_ context.Context) (*internal.Entrypoint, error) {
+func build(_ context.Context) (*importdata.Entrypoint, error) {
 	wire.Build(
 		config.ProvideEnvironment,
 		firestore.ClientProvider,
 		firestore.ProvideDrivingRecordRepository,
+		importdata.ProvideEntrypoint,
 		interactions.ProvideImportData,
-		internal.ProvideEntrypoint,
 		log.ProvideGlobalInstrumentation,
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,

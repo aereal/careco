@@ -6,10 +6,10 @@ import (
 	"context"
 
 	"careco/backend/authz"
-	"careco/backend/cmd/server/internal"
 	"careco/backend/config"
 	"careco/backend/config/providers"
 	"careco/backend/domain"
+	"careco/backend/entrypoint/server"
 	"careco/backend/graph"
 	"careco/backend/graph/resolver"
 	"careco/backend/infra/firestore"
@@ -24,7 +24,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func build(_ context.Context) (*internal.Entrypoint, error) {
+func build(_ context.Context) (*server.Entrypoint, error) {
 	wire.Build(
 		authz.ProvideAuth0Middleware,
 		config.ProvideEnvironment,
@@ -32,7 +32,6 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,
 		http.ProvideClient,
-		internal.ProvideEntrypoint,
 		log.ProvideGlobalInstrumentation,
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,
@@ -45,6 +44,7 @@ func build(_ context.Context) (*internal.Entrypoint, error) {
 		providers.ProvidePort,
 		providers.ProvideServiceVersionFromGitRevision,
 		resolver.ProvideResolver,
+		server.ProvideEntrypoint,
 		web.ProvideServer,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(domain.DrivingRecordQuery), new(*firestore.DrivingRecordRepository)),
