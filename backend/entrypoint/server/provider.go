@@ -14,6 +14,7 @@ import (
 	"careco/backend/o11y"
 	"careco/backend/web"
 
+	firestoresdk "cloud.google.com/go/firestore"
 	"github.com/google/wire"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -23,7 +24,7 @@ var (
 	Provider = wire.NewSet(
 		authz.ProvideAuth0Middleware,
 		config.ProvideEnvironment,
-		firestore.ClientProvider,
+		firestore.ProvideClient,
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,
 		http.ProvideClient,
@@ -48,12 +49,14 @@ var (
 		o11y.ProvideSidecarCollectorExporter,
 		Provider,
 		providers.ProvideServiceVersionFromGitRevision,
+		wire.Value(firestore.DatabaseID(firestoresdk.DefaultDatabaseID)),
 		wire.Value(gcp.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
 	)
 	ProductionProvider = wire.NewSet(
 		o11y.ProvideGoogleTelemetryTraceExporter,
 		Provider,
+		providers.ProvideFirestoreDatabaseID,
 		providers.ProvideGoogleProjectID,
 		providers.ProvideServiceVersion,
 		wire.Value(o11y.DeploymentEnvironmentName("production")),

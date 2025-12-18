@@ -11,6 +11,7 @@ import (
 	"careco/backend/usecases/interactions"
 	"careco/backend/usecases/ports"
 
+	firestoresdk "cloud.google.com/go/firestore"
 	"github.com/google/wire"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -19,7 +20,7 @@ import (
 var (
 	Provider = wire.NewSet(
 		config.ProvideEnvironment,
-		firestore.ClientProvider,
+		firestore.ProvideClient,
 		firestore.ProvideDrivingRecordRepository,
 		interactions.ProvideImportData,
 		log.ProvideGlobalInstrumentation,
@@ -38,5 +39,6 @@ var (
 		wire.Bind(new(usecases.ImportData), new(*interactions.ImportData)),
 		wire.Value(gcp.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
+		wire.Value(firestore.DatabaseID(firestoresdk.DefaultDatabaseID)),
 	)
 )

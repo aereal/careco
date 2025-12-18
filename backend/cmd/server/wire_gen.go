@@ -18,7 +18,6 @@ import (
 	"careco/backend/log"
 	"careco/backend/o11y"
 	"careco/backend/web"
-	firestore2 "cloud.google.com/go/firestore"
 	"context"
 )
 
@@ -48,7 +47,10 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 		return nil, err
 	}
 	port := providers.ProvidePort(environment)
-	databaseID := _wireDatabaseIDValue
+	databaseID, err := providers.ProvideFirestoreDatabaseID(environment)
+	if err != nil {
+		return nil, err
+	}
 	projectID, err := providers.ProvideGoogleProjectID(environment)
 	if err != nil {
 		return nil, err
@@ -81,5 +83,4 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 
 var (
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("production")
-	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
 )

@@ -7,7 +7,6 @@ import (
 	"careco/backend/infra/gcp"
 
 	"cloud.google.com/go/firestore"
-	"github.com/google/wire"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
@@ -20,13 +19,6 @@ import (
 type (
 	EmulatorAddr string
 	DatabaseID   string
-)
-
-var (
-	ClientProvider = wire.NewSet(
-		ProvideClient,
-		wire.Value(DatabaseID(firestore.DefaultDatabaseID)),
-	)
 )
 
 func ProvideClient(ctx context.Context, dbID DatabaseID, projectID gcp.ProjectID, emulatorAddr EmulatorAddr, tp trace.TracerProvider) (*firestore.Client, error) {
