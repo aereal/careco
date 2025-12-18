@@ -24,11 +24,22 @@ func run(ctx context.Context) error {
 	return entrypoint.Usecase.ImportData(ctx)
 }
 
-func exitCodeOf(err error) int {
+func exitCodeOf(err error) (exitCode int) {
+	defer func() {
+		level := slog.LevelDebug
+		if exitCode > 0 {
+			level = slog.LevelError
+		}
+		attrs := make([]slog.Attr, 0, 2)
+		attrs = append(attrs, slog.Int("exit_code", exitCode))
+		if err != nil {
+			attrs = append(attrs, attribute.Error(err))
+		}
+		slog.LogAttrs(context.Background(), level, "application exited", attrs...)
+	}()
 	if err == nil {
 		return 0
 	}
-	slog.Error("failed", attribute.Error(err))
 	var hasExitCode interface{ ExitCode() int }
 	if errors.As(err, &hasExitCode) {
 		return hasExitCode.ExitCode()
