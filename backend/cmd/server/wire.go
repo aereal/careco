@@ -12,7 +12,7 @@ import (
 
 func build(_ context.Context) (*server.Entrypoint, error) {
 	wire.Build(
-		server.Provider,
+		server.DevProvider,
 	)
 	return nil, nil
 }

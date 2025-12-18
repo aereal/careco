@@ -38,12 +38,16 @@ var (
 		providers.ProvideIssuer,
 		providers.ProvideLogLevel,
 		providers.ProvidePort,
-		providers.ProvideServiceVersionFromGitRevision,
 		resolver.ProvideResolver,
 		web.ProvideServer,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(domain.DrivingRecordQuery), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
+	)
+	DevProvider = wire.NewSet(
+		o11y.ProvideSidecarCollectorExporter,
+		Provider,
+		providers.ProvideServiceVersionFromGitRevision,
 		wire.Value(gcp.ProjectID("dummy")),
 		wire.Value(o11y.DeploymentEnvironmentName("local")),
 	)

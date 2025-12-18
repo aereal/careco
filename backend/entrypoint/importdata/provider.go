@@ -26,6 +26,7 @@ var (
 		log.ProvideJSONLogger,
 		log.ProvideStdoutOutput,
 		o11y.ProvideResource,
+		o11y.ProvideSidecarCollectorExporter,
 		o11y.ProvideTracerProvider,
 		ProvideEntrypoint,
 		providers.ProvideExportFileName,
