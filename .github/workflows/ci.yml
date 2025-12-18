@@ -124,6 +124,16 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - run: pnpm codegen
       - run: node ./tools/check-diff.js
+  frontend-deploy-preview:
+    uses: ./.github/workflows/deploy-vercel.yml
+    secrets: inherit
+    with:
+      environment: preview
+  frontend-deploy-production:
+    uses: ./.github/workflows/deploy-vercel.yml
+    secrets: inherit
+    with:
+      environment: production
   backend-test:
     runs-on: ubuntu-24.04
     permissions:

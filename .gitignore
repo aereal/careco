@@ -5,3 +5,5 @@ node_modules
 /test-results/
 /playwright/.auth/
 /dist/
+.vercel
+.env*.local
