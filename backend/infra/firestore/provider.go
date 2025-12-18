@@ -3,6 +3,8 @@ package firestore
 import (
 	"context"
 	"fmt"
+	"iter"
+	"slices"
 
 	"careco/backend/infra/gcp"
 
@@ -21,17 +23,28 @@ type (
 	DatabaseID   string
 )
 
-func ProvideClient(ctx context.Context, dbID DatabaseID, projectID gcp.ProjectID, emulatorAddr EmulatorAddr, tp trace.TracerProvider) (*firestore.Client, error) {
-	conn, err := grpc.NewClient(string(emulatorAddr),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler(otelgrpc.WithPropagators(propagation.TraceContext{}), otelgrpc.WithTracerProvider(tp))),
-		grpc.WithStatsHandler(firestoreAttrGetter{}),
+func ProvideEmulatorClient(ctx context.Context, dbID DatabaseID, projectID gcp.ProjectID, emulatorAddr EmulatorAddr, tp trace.TracerProvider) (*firestore.Client, error) {
+	opts := []grpc.DialOption{
 		grpc.WithPerRPCCredentials(emulatorCreds{}),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+	conn, err := grpc.NewClient(string(emulatorAddr), slices.AppendSeq(opts, commonDialOptions(tp))...)
 	if err != nil {
 		return nil, fmt.Errorf("grpc.NewClient: %w", err)
 	}
 
 	return firestore.NewClientWithDatabase(ctx, string(projectID), string(dbID), option.WithGRPCConn(conn))
+}
+
+func commonDialOptions(tp trace.TracerProvider) iter.Seq[grpc.DialOption] {
+	return func(yield func(grpc.DialOption) bool) {
+		if !yield(grpc.WithStatsHandler(otelgrpc.NewClientHandler(otelgrpc.WithPropagators(propagation.TraceContext{}), otelgrpc.WithTracerProvider(tp)))) {
+			return
+		}
+		if !yield(grpc.WithStatsHandler(firestoreAttrGetter{})) {
+			return
+		}
+	}
 }
 
 // from cloud.google.com/go/firestore.emulatorCreds

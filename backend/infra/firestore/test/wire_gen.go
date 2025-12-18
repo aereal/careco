@@ -23,7 +23,7 @@ func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordReposit
 	projectID := _wireProjectIDValue
 	environment := config.ProvideEnvironment()
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
-	client, err := firestore.ProvideClient(context, databaseID, projectID, emulatorAddr, tracerProvider)
+	client, err := firestore.ProvideEmulatorClient(context, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}

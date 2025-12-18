@@ -47,7 +47,7 @@ func build(contextContext context.Context) (*importdata.Entrypoint, error) {
 	databaseID := _wireDatabaseIDValue
 	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
-	client, err := firestore.ProvideClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
+	client, err := firestore.ProvideEmulatorClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
 		return nil, err
 	}

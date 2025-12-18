@@ -24,7 +24,7 @@ var (
 	Provider = wire.NewSet(
 		authz.ProvideAuth0Middleware,
 		config.ProvideEnvironment,
-		firestore.ProvideClient,
+		firestore.ProvideEmulatorClient,
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,
 		http.ProvideClient,

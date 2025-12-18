@@ -20,7 +20,7 @@ import (
 var (
 	Provider = wire.NewSet(
 		config.ProvideEnvironment,
-		firestore.ProvideClient,
+		firestore.ProvideEmulatorClient,
 		firestore.ProvideDrivingRecordRepository,
 		interactions.ProvideImportData,
 		log.ProvideGlobalInstrumentation,

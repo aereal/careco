@@ -16,7 +16,7 @@ import (
 func BuildDrivingRecordRepository(_ *testing.T) (*firestore.DrivingRecordRepository, error) {
 	wire.Build(
 		config.ProvideEnvironment,
-		firestore.ProvideClient,
+		firestore.ProvideEmulatorClient,
 		firestore.ProvideDrivingRecordRepository,
 		provideContext,
 		provideDatabaseID,
