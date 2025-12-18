@@ -2,12 +2,15 @@ package web
 
 import (
 	"context"
+	"log/slog"
 	"net"
 	"net/http"
 	neturl "net/url"
+	"strings"
 	"time"
 
 	"careco/backend/authz"
+	"careco/backend/log/attribute"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/rs/cors"
@@ -56,12 +59,13 @@ func (s *Server) handler() http.Handler {
 
 func WithCors(next http.Handler) http.Handler {
 	opts := cors.Options{
-		AllowOriginFunc: func(origin string) bool {
+		AllowOriginVaryRequestFunc: func(r *http.Request, origin string) (bool, []string) {
 			url, err := neturl.Parse(origin)
 			if err != nil {
-				return false
+				slog.WarnContext(r.Context(), "failed to parse origin", slog.String("origin", origin), attribute.Error(err))
+				return false, nil
 			}
-			return url.Scheme == "http" && url.Hostname() == "localhost"
+			return isLocalhost(url) || isOwnVercelURL(url), []string{"origin"}
 		},
 		AllowedMethods: []string{
 			http.MethodPost, http.MethodGet, http.MethodHead,
@@ -69,4 +73,27 @@ func WithCors(next http.Handler) http.Handler {
 		AllowedHeaders: []string{"*"},
 	}
 	return cors.New(opts).Handler(next)
+}
+
+func isLocalhost(url *neturl.URL) bool {
+	return url.Scheme == "http" && url.Hostname() == "localhost"
+}
+
+func isOwnVercelURL(url *neturl.URL) bool {
+	return url.Scheme == "https" && (isProductionVercelHost(url.Hostname()) || isPreviewVercelHost(url.Hostname()))
+}
+
+func isProductionVercelHost(host string) bool {
+	return host == "careco-nine.vercel.app"
+}
+
+func isPreviewVercelHost(host string) bool {
+	parts := strings.SplitN(host, ".", 2)
+	if len(parts) < 2 {
+		return false
+	}
+	if parts[1] != "vercel.app" {
+		return false
+	}
+	return strings.HasPrefix(parts[0], "careco-") && strings.HasSuffix(parts[0], "-aereals-projects")
 }

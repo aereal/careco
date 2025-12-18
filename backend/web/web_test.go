@@ -35,6 +35,34 @@ func TestWithCORS(t *testing.T) {
 			headers:     []string{"origin"},
 			wantSuccess: false,
 		},
+		{
+			name:        "Vercel production",
+			method:      http.MethodPost,
+			origin:      "https://careco-nine.vercel.app",
+			headers:     []string{"origin"},
+			wantSuccess: true,
+		},
+		{
+			name:        "Vercel preview production",
+			method:      http.MethodPost,
+			origin:      "https://careco-0xdeadbeaf-aereals-projects.vercel.app",
+			headers:     []string{"origin"},
+			wantSuccess: true,
+		},
+		{
+			name:        "other Vercel app",
+			method:      http.MethodPost,
+			origin:      "https://hoge.vercel.app",
+			headers:     []string{"origin"},
+			wantSuccess: false,
+		},
+		{
+			name:        "same suffix but other project",
+			method:      http.MethodPost,
+			origin:      "https://other-0xdeadbeaf-aereals-projects.vercel.app",
+			headers:     []string{"origin"},
+			wantSuccess: false,
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
