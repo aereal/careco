@@ -1,6 +1,18 @@
 # yaml-language-server: $schema=./tests.schema.json
 ---
 cases:
+  'query totalStatistics/empty':
+    request:
+      query: |
+        {
+          totalStatistics {
+            odometerValue
+          }
+        }
+    response:
+      data:
+        totalStatistics:
+          odometerValue: 0
   'query totalStatistics/ok':
     request:
       query: |
@@ -219,7 +231,7 @@ cases:
                     day: 1
             - month: SEPTEMBER
               year: 2025
-              tripDistance: 0
+              tripDistance: 10004
               dailyReports:
                 nodes:
                   -
