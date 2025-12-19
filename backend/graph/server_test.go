@@ -231,6 +231,14 @@ var mockCalls = map[string]*mocks{
 				Times(1)
 		},
 	},
+	"query totalStatistics/empty": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			m.EXPECT().
+				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]())).
+				Return(nil, domain.ErrDrivingRecordNotFound).
+				Times(1)
+		},
+	},
 	"query yearlyReport/ok": {
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			octoberMonth := domain.Interval[time.Time]{

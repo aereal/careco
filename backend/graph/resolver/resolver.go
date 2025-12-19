@@ -3,6 +3,11 @@
 package resolver
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
 	"careco/backend/domain"
 )
 
@@ -20,4 +25,15 @@ func ProvideResolver(recordCommand domain.DrivingRecordCommand, recordQuery doma
 type Resolver struct {
 	drivingRecordCommand domain.DrivingRecordCommand
 	drivingRecordQuery   domain.DrivingRecordQuery
+}
+
+func (r *Resolver) getOdometerValue(ctx context.Context, period domain.Interval[time.Time]) (int64, error) {
+	record, err := r.drivingRecordQuery.FindLastRecordInPeriod(ctx, period)
+	if errors.Is(err, domain.ErrDrivingRecordNotFound) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("FindLastRecordInPeriod: %w", err)
+	}
+	return record.OdometerValue, nil
 }
