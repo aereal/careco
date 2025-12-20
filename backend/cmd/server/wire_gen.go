@@ -35,8 +35,10 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger := log.ProvideJSONLogger(output, level, serviceVersion, projectID)
+	handler := log.ProvideJSONHandler(output, level, serviceVersion, projectID)
+	logger := log.ProvideLogger(handler)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
+	globalLoggerInstrumentation := o11y.ProvideGlobalLoggerInstrumentation(handler)
 	exporter, err := o11y.ProvideGoogleTelemetryTraceExporter(contextContext)
 	if err != nil {
 		return nil, err
@@ -76,7 +78,7 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 		return nil, err
 	}
 	webServer := web.ProvideServer(port, tracerProvider, handlerServer, middleware)
-	entrypoint := server.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
+	entrypoint := server.ProvideEntrypoint(globalInstrumentationToken, globalLoggerInstrumentation, tracerProvider, webServer)
 	return entrypoint, nil
 }
 

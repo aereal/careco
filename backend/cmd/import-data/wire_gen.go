@@ -30,7 +30,8 @@ func build(contextContext context.Context) (*importdata.Entrypoint, error) {
 		return nil, err
 	}
 	projectID := _wireProjectIDValue
-	logger := log.ProvideJSONLogger(output, level, serviceVersion, projectID)
+	handler := log.ProvideJSONHandler(output, level, serviceVersion, projectID)
+	logger := log.ProvideLogger(handler)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
 	exporter, err := o11y.ProvideSidecarCollectorExporter(contextContext)
 	if err != nil {

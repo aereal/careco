@@ -13,13 +13,14 @@ type Output io.Writer
 
 func ProvideStdoutOutput() Output { return os.Stdout }
 
-func ProvideJSONLogger(out Output, level slog.Level, svcVersion o11y.ServiceVersion, projectID gcp.ProjectID) *slog.Logger {
-	handler := stack(
+func ProvideLogger(handler slog.Handler) *slog.Logger { return slog.New(handler) }
+
+func ProvideJSONHandler(out Output, level slog.Level, svcVersion o11y.ServiceVersion, projectID gcp.ProjectID) slog.Handler {
+	return stack(
 		slog.NewJSONHandler(out, &slog.HandlerOptions{Level: level}),
 		injectGCPTraceAttrs(string(projectID)),
 		injectServiceVersion(svcVersion),
 	)
-	return slog.New(handler)
 }
 
 type GlobalInstrumentationToken struct{}
