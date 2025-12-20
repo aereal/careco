@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"testing"
 
+	"careco/backend/infra/gcp"
 	"careco/backend/log"
 	"careco/backend/log/attribute"
 
@@ -23,6 +24,7 @@ var (
 	strTraceID = "30313233343536373839616263646566"
 	spanID     = trace.SpanID{'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'}
 	strSpanID  = "6768696a6b6c6d6e"
+	projectID  = gcp.ProjectID("test-project")
 )
 
 func TestLogger_handler(t *testing.T) {
@@ -79,10 +81,9 @@ func TestLogger_handler(t *testing.T) {
 					"svc": map[string]any{
 						"version": "latest",
 					},
-					"otel": map[string]any{
-						"trace_id": strTraceID,
-						"span_id":  strSpanID,
-					},
+					"logging.googleapis.com/trace":         "projects/" + string(projectID) + "/traces/" + strTraceID,
+					"logging.googleapis.com/spanId":        strSpanID,
+					"logging.googleapis.com/trace_sampled": false,
 				},
 			},
 		},
@@ -96,43 +97,10 @@ func TestLogger_handler(t *testing.T) {
 					"svc": map[string]any{
 						"version": "latest",
 					},
-					"debug": false,
-					"otel": map[string]any{
-						"trace_id": strTraceID,
-						"span_id":  strSpanID,
-					},
-				},
-			},
-		},
-		{
-			name: "log with existence otel group in the OpenTelemetry spans",
-			do:   doOtelWithAttrs(slog.GroupAttrs("otel", slog.Bool("traced", true))),
-			want: []logEntry{
-				{
-					slog.MessageKey: "msg",
-					slog.LevelKey:   "INFO",
-					"svc": map[string]any{
-						"version": "latest",
-					},
-					"otel": map[string]any{
-						"trace_id": strTraceID,
-						"span_id":  strSpanID,
-						"traced":   true,
-					},
-				},
-			},
-		},
-		{
-			name: "log with existence otel scalar attribute in the OpenTelemetry spans",
-			do:   doOtelWithAttrs(slog.Bool("otel", true)),
-			want: []logEntry{
-				{
-					slog.MessageKey: "msg",
-					slog.LevelKey:   "INFO",
-					"svc": map[string]any{
-						"version": "latest",
-					},
-					"otel": true,
+					"debug":                                false,
+					"logging.googleapis.com/trace":         "projects/" + string(projectID) + "/traces/" + strTraceID,
+					"logging.googleapis.com/spanId":        strSpanID,
+					"logging.googleapis.com/trace_sampled": false,
 				},
 			},
 		},
@@ -141,7 +109,7 @@ func TestLogger_handler(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			buf := new(bytes.Buffer)
-			logger := log.ProvideJSONLogger(buf, tc.level, "latest")
+			logger := log.ProvideJSONLogger(buf, tc.level, "latest", projectID)
 			tc.do(logger)
 			got := make([]logEntry, 0)
 			for line := range bytes.Lines(buf.Bytes()) {

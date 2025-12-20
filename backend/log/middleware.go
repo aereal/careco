@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"careco/backend/o11y"
@@ -9,17 +10,24 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func injectOtelAttrs(next handler) handler {
-	return handlerFunc(func(ctx context.Context, record slog.Record) error {
-		sc := trace.SpanContextFromContext(ctx)
-		if !sc.IsValid() {
+func injectGCPTraceAttrs(projectID string) middleware {
+	return func(next handler) handler {
+		return handlerFunc(func(ctx context.Context, record slog.Record) error {
+			sc := trace.SpanContextFromContext(ctx)
+			if !sc.IsValid() {
+				return next.Handle(ctx, record)
+			}
+			// Google Cloud Logging形式のトレースフィールド
+			// ref: https://cloud.google.com/trace/docs/trace-log-integration
+			traceValue := fmt.Sprintf("projects/%s/traces/%s", projectID, sc.TraceID().String())
+			record.AddAttrs(
+				slog.String("logging.googleapis.com/trace", traceValue),
+				slog.String("logging.googleapis.com/spanId", sc.SpanID().String()),
+				slog.Bool("logging.googleapis.com/trace_sampled", sc.TraceFlags().IsSampled()),
+			)
 			return next.Handle(ctx, record)
-		}
-		attrTraceID := slog.String("trace_id", sc.TraceID().String())
-		attrSpanID := slog.String("span_id", sc.SpanID().String())
-		newRecord := mergeRecordAttrs(record, mergeGroupAttrChildren("otel", attrTraceID, attrSpanID))
-		return next.Handle(ctx, newRecord)
-	})
+		})
+	}
 }
 
 func injectServiceVersion(svcVersion o11y.ServiceVersion) middleware {
