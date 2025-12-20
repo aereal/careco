@@ -3,10 +3,13 @@ package authz
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"slices"
 	"time"
+
+	"careco/backend/log/attribute"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
@@ -37,6 +40,7 @@ func ProvideAuth0Middleware(issuer *Issuer, audience Audience, client *http.Clie
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			nested := mw.CheckJWT(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				ctx := r.Context()
+				slog.InfoContext(ctx, "authorization success")
 				rawToken := ctx.Value(jwtmiddleware.ContextKey{})
 				claims, ok := rawToken.(*validatorpkg.ValidatedClaims)
 				if !ok {
@@ -67,6 +71,7 @@ func tokenExtractorWithTracing(f jwtmiddleware.TokenExtractor) jwtmiddleware.Tok
 
 func errorHandlerWithTracing(h jwtmiddleware.ErrorHandler) jwtmiddleware.ErrorHandler {
 	return func(w http.ResponseWriter, r *http.Request, err error) {
+		slog.WarnContext(r.Context(), "authorization failure", attribute.Error(err))
 		h(w, r, err)
 	}
 }
