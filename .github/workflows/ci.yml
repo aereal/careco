@@ -185,7 +185,7 @@ jobs:
       REGISTRY: asia-northeast1-docker.pkg.dev
     outputs:
       image: ${{ steps.build.outputs.image }}
-      revision: ${{ steps.build.outputs.version }}
+      revision: ${{ steps.build.outputs.revision }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d # v0.9
