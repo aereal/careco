@@ -48,7 +48,7 @@ func ProvideAuth0Middleware(issuer *Issuer, audience Audience, client *http.Clie
 				next.ServeHTTP(w, r.Clone(contextWithToken(ctx, token)))
 			}))
 			ctx, span := getTracer(r.Context()).Start(r.Context(), "Authenticate", trace.WithSpanKind(trace.SpanKindServer))
-			defer closeSpan(span, err)
+			defer closeSpan(span, nil)
 			nested.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}, nil
