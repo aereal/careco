@@ -78,8 +78,7 @@ func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client) M
 
 			parseOpts := []jwt.ParseOption{
 				jwt.WithIssuer((*url.URL)(issuer).String()),
-				jwt.WithKeyProvider(kp),
-				jwt.WithContext(ctx),
+				jwt.WithKeyProvider(wrapKeyProvider(ctx, kp)),
 			}
 			parseOpts = slices.AppendSeq(parseOpts, audience.jwtParseOptions())
 			tok, err := jwt.ParseString(rawToken, parseOpts...)

@@ -96,3 +96,23 @@ func iterateSignableKeys(keySet jwk.Set) iter.Seq2[jwa.SignatureAlgorithm, jwk.K
 		}
 	}
 }
+
+func wrapKeyProvider(ctx context.Context, kp jws.KeyProvider) jws.KeyProvider {
+	return &contextualKeyProvider{ctx: ctx, kp: kp}
+}
+
+// contextualKeyProvider wraps a KeyProvider and replaces the context with the stored one.
+// This is necessary because jwt.ParseString does not propagate the context to FetchKeys.
+//
+//nolint:containedctx // We need to store context to work around jwx library limitation
+type contextualKeyProvider struct {
+	kp  jws.KeyProvider
+	ctx context.Context
+}
+
+func (c *contextualKeyProvider) FetchKeys(_ context.Context, sink jws.KeySink, sig *jws.Signature, msg *jws.Message) error {
+	// Use the stored context instead of the one passed by jwx.
+	// This is intentional to work around jwt.ParseString not propagating context.
+	//nolint:contextcheck // We intentionally replace the context here
+	return c.kp.FetchKeys(c.ctx, sink, sig, msg)
+}

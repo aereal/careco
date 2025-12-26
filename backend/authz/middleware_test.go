@@ -220,6 +220,11 @@ var (
 	}{
 		ok: tracetest.SpanStubs{
 			{
+				Name:     "FetchKeys",
+				SpanKind: trace.SpanKindServer,
+				Status:   sdktrace.Status{Code: codes.Ok},
+			},
+			{
 				Name:     "default",
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
@@ -268,6 +273,11 @@ var (
 			},
 		},
 		tokenFromAnotherIssuer: tracetest.SpanStubs{
+			{
+				Name:     "FetchKeys",
+				SpanKind: trace.SpanKindServer,
+				Status:   sdktrace.Status{Code: codes.Ok},
+			},
 			{
 				Name:     "default",
 				SpanKind: trace.SpanKindServer,
