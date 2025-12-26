@@ -17,7 +17,6 @@ func ProvideJSONLogger(out Output, level slog.Level, svcVersion o11y.ServiceVers
 		slog.NewJSONHandler(out, &slog.HandlerOptions{Level: level}),
 		injectOtelAttrs,
 		injectServiceVersion(svcVersion),
-		transformError,
 	)
 	return slog.New(handler)
 }
