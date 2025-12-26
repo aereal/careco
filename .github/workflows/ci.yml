@@ -246,3 +246,10 @@ jobs:
             FIRESTORE_DATABASE_ID=driving-records
           flags: |
             --service-account cloud-run-runner@careco-477008.iam.gserviceaccount.com
+          labels: |-
+            github-head-ref=${{ github.head_ref }}
+            github-job=${{ github.job }}
+            github-run-id=${{ github.run_id }}
+            github-run-number=${{ github.run_number }}
+            github-run-attempt=${{ github.run_attempt }}
+            github-sha=${{ github.sha }}
