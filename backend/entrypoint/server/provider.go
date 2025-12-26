@@ -22,7 +22,7 @@ import (
 
 var (
 	Provider = wire.NewSet(
-		authz.ProvideAuth0Middleware,
+		authz.ProvideMiddleware,
 		config.ProvideEnvironment,
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,
