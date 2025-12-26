@@ -2,10 +2,8 @@ package log
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 
-	"careco/backend/log/attribute"
 	"careco/backend/o11y"
 
 	"go.opentelemetry.io/otel/trace"
@@ -31,27 +29,6 @@ func injectServiceVersion(svcVersion o11y.ServiceVersion) middleware {
 			return next.Handle(ctx, record)
 		})
 	}
-}
-
-func transformError(next handler) handler {
-	return handlerFunc(func(ctx context.Context, record slog.Record) error {
-		newRecord := slog.NewRecord(record.Time, record.Level, record.Message, record.PC)
-		for a := range record.Attrs {
-			if a.Key == attribute.KeyError {
-				if ev, ok := a.Value.Any().(*attribute.ErrorValue); ok {
-					ga := slog.GroupAttrs(
-						attribute.KeyError,
-						slog.String("type", fmt.Sprintf("%T", ev.Err)),
-						slog.String("msg", ev.Err.Error()),
-					)
-					newRecord.AddAttrs(ga)
-				}
-			} else {
-				newRecord.AddAttrs(a)
-			}
-		}
-		return next.Handle(ctx, newRecord)
-	})
 }
 
 type handler interface {
