@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -143,6 +144,49 @@ func TestMiddleware(t *testing.T) {
 	}
 }
 
+func TestMiddleware_cache(t *testing.T) {
+	t.Parallel()
+
+	signingPrivateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issuerHandler, err := newIssuerServer(signingPrivateKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issuerSrv := httptest.NewServer(issuerHandler)
+	t.Cleanup(issuerSrv.Close)
+	issuerURL, err := url.Parse(issuerSrv.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issuerHandler.origin = issuerURL.String()
+	mw := authz.ProvideMiddleware((*authz.Issuer)(issuerURL), expectedAudience, http.DefaultClient)
+	appSrv := httptest.NewServer(mw(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})))
+	t.Cleanup(appSrv.Close)
+
+	addAuthz := addAuthorizationHeaderFunc(func(issuerURL *url.URL, add func(value string)) error {
+		tok, err := createToken(signingPrivateKey, issuerURL.String())
+		if err != nil {
+			return err
+		}
+		add("Bearer " + tok)
+		return nil
+	})
+	for range 3 {
+		if err := sendRequest(t.Context(), appSrv.URL, issuerURL, http.StatusOK, addAuthz); err != nil {
+			t.Error(err)
+		}
+	}
+	if actual := issuerHandler.callCount.wellKnownOIDCConfig.Load(); actual != 1 {
+		t.Errorf("request to /.well-known/openid-configuration must be cached but not: count=%d", actual)
+	}
+	if actual := issuerHandler.callCount.jwks.Load(); actual != 1 {
+		t.Errorf("request to JWKs endpoint must be cached but not: count=%d", actual)
+	}
+}
+
 func sendRequest(ctx context.Context, appSrvURL string, issuerURL *url.URL, wantStatus int, addFunc addAuthorizationHeaderFunc) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, appSrvURL, nil)
 	if err != nil {
@@ -184,10 +228,12 @@ func newIssuerServer(privKey *rsa.PrivateKey) (*issuerServer, error) {
 
 	s := &issuerServer{mux: http.NewServeMux()}
 	s.mux.Handle("GET /.well-known/openid-configuration", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.callCount.wellKnownOIDCConfig.Add(1)
 		w.Header().Set("content-type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]string{"jwks_uri": s.origin + "/jwks.json"})
 	}))
 	s.mux.Handle("GET /jwks.json", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.callCount.jwks.Add(1)
 		w.Header().Set("content-type", "application/json")
 		_ = json.NewEncoder(w).Encode(set)
 	}))
@@ -195,8 +241,12 @@ func newIssuerServer(privKey *rsa.PrivateKey) (*issuerServer, error) {
 }
 
 type issuerServer struct {
-	origin string
-	mux    *http.ServeMux
+	origin    string
+	mux       *http.ServeMux
+	callCount struct {
+		wellKnownOIDCConfig atomic.Int32
+		jwks                atomic.Int32
+	}
 }
 
 func (s *issuerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -231,6 +281,9 @@ var (
 				Name:     "FetchKeys",
 				SpanKind: trace.SpanKindInternal,
 				Status:   sdktrace.Status{Code: codes.Ok},
+				Attributes: []attribute.KeyValue{
+					attribute.Bool("cache.hit", false),
+				},
 			},
 			{
 				Name:     "default",
@@ -285,6 +338,9 @@ var (
 				Name:     "FetchKeys",
 				SpanKind: trace.SpanKindInternal,
 				Status:   sdktrace.Status{Code: codes.Ok},
+				Attributes: []attribute.KeyValue{
+					attribute.Bool("cache.hit", false),
+				},
 			},
 			{
 				Name:     "default",

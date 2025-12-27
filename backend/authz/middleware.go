@@ -65,7 +65,7 @@ func (a Audience) jwtParseOptions() iter.Seq[jwt.ParseOption] {
 type Middleware func(next http.Handler) http.Handler
 
 func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client) Middleware {
-	kp := newOIDCKeyProvider(issuer, client)
+	kp := newOIDCKeyProvider(newOIDCKeySetFetcher(client, issuer))
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
