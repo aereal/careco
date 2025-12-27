@@ -29,7 +29,7 @@ var _ jws.KeyProvider = (*oidcKeyProvider)(nil)
 func (p *oidcKeyProvider) FetchKeys(ctx context.Context, sink jws.KeySink, sig *jws.Signature, _ *jws.Message) (err error) {
 	ctx, span := trace.SpanFromContext(ctx).TracerProvider().
 		Tracer("careco/backend/authz.oidcKeyProvider").
-		Start(ctx, "FetchKeys", trace.WithSpanKind(trace.SpanKindServer))
+		Start(ctx, "FetchKeys")
 	defer func() { traceutils.FinishSpan(span, err) }()
 	algInSignature, ok := sig.ProtectedHeaders().Algorithm()
 	if !ok {

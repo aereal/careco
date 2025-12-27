@@ -221,7 +221,7 @@ var (
 		ok: tracetest.SpanStubs{
 			{
 				Name:     "FetchKeys",
-				SpanKind: trace.SpanKindServer,
+				SpanKind: trace.SpanKindInternal,
 				Status:   sdktrace.Status{Code: codes.Ok},
 			},
 			{
@@ -275,7 +275,7 @@ var (
 		tokenFromAnotherIssuer: tracetest.SpanStubs{
 			{
 				Name:     "FetchKeys",
-				SpanKind: trace.SpanKindServer,
+				SpanKind: trace.SpanKindInternal,
 				Status:   sdktrace.Status{Code: codes.Ok},
 			},
 			{
