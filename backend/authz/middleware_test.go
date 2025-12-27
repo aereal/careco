@@ -2,6 +2,7 @@ package authz_test
 
 import (
 	stdcmp "cmp"
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/json"
@@ -34,6 +35,8 @@ var (
 	}
 )
 
+type addAuthorizationHeaderFunc func(issuerURL *url.URL, add func(value string)) error
+
 func TestMiddleware(t *testing.T) {
 	t.Parallel()
 
@@ -46,7 +49,7 @@ func TestMiddleware(t *testing.T) {
 		name           string
 		wantStatus     int
 		wantSpans      tracetest.SpanStubs
-		addAuthzHeader func(issuerURL *url.URL, add func(value string)) error
+		addAuthzHeader addAuthorizationHeaderFunc
 	}{
 		{
 			name:       "ok",
@@ -125,22 +128,8 @@ func TestMiddleware(t *testing.T) {
 			appSrv := httptest.NewServer(withOtel(mw(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))))
 			t.Cleanup(appSrv.Close)
 
-			req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, appSrv.URL, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := tc.addAuthzHeader(issuerURL, func(value string) { req.Header.Set("Authorization", value) }); err != nil {
+			if err := sendRequest(t.Context(), appSrv.URL, issuerURL, tc.wantStatus, tc.addAuthzHeader); err != nil {
 				t.Error(err)
-			}
-			resp, err := http.DefaultClient.Do(req)
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer resp.Body.Close()
-
-			if resp.StatusCode != tc.wantStatus {
-				body, _ := io.ReadAll(resp.Body)
-				t.Errorf("response.status=%d body=%s", resp.StatusCode, string(body))
 			}
 
 			if err := tp.ForceFlush(t.Context()); err != nil {
@@ -152,7 +141,26 @@ func TestMiddleware(t *testing.T) {
 			}
 		})
 	}
+}
 
+func sendRequest(ctx context.Context, appSrvURL string, issuerURL *url.URL, wantStatus int, addFunc addAuthorizationHeaderFunc) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, appSrvURL, nil)
+	if err != nil {
+		return err
+	}
+	if err := addFunc(issuerURL, func(value string) { req.Header.Set("Authorization", value) }); err != nil {
+		return err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != wantStatus {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("response.status=%d body=%s", resp.StatusCode, string(body)) //nolint:err113 // just a test
+	}
+	return nil
 }
 
 func newIssuerServer(privKey *rsa.PrivateKey) (*issuerServer, error) {
