@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -87,8 +86,6 @@ func WithCors(l *slog.Logger) func(http.Handler) http.Handler {
 			http.MethodPost, http.MethodGet, http.MethodHead,
 		},
 		AllowedHeaders: []string{"*"},
-		Debug:          true,
-		Logger:         &slogLogger{l},
 	}
 	return cors.New(opts).Handler
 }
@@ -114,12 +111,4 @@ func isPreviewVercelHost(host string) bool {
 		return false
 	}
 	return strings.HasPrefix(parts[0], "careco-") && strings.HasSuffix(parts[0], "-aereals-projects")
-}
-
-type slogLogger struct{ *slog.Logger }
-
-var _ cors.Logger = (*slogLogger)(nil)
-
-func (l *slogLogger) Printf(msg string, args ...any) {
-	l.Debug(fmt.Sprintf(msg, args...))
 }

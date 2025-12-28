@@ -14,6 +14,7 @@ require (
 	github.com/aereal/coll v0.6.0
 	github.com/aereal/optional v0.2.0
 	github.com/aereal/otelgqlgen v0.10.2
+	github.com/go-logr/logr v1.4.3
 	github.com/google/go-cmp v0.7.0
 	github.com/google/wire v0.7.0
 	github.com/lestrrat-go/jwx/v3 v3.0.12
@@ -46,7 +47,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
@@ -87,3 +87,5 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251103181224-f26f9409b101 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
+
+replace github.com/rs/cors => github.com/aereal/cors v1.11.2-0.20251228115336-11511a64e577
