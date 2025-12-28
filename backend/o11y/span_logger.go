@@ -31,6 +31,8 @@ func (*spanLogger) ExportSpans(ctx context.Context, spans []sdktrace.ReadOnlySpa
 				slog.Bool("is_root", isRoot),
 				slog.String("trace_id", span.SpanContext().TraceID().String()),
 				slog.String("span_id", span.SpanContext().SpanID().String()),
+				slog.String("parent.trace_id", span.Parent().TraceID().String()),
+				slog.String("parent.span_id", span.Parent().SpanID().String()),
 				slog.String("instrumentation.name", span.InstrumentationScope().Name),
 			)
 		default:
@@ -39,6 +41,8 @@ func (*spanLogger) ExportSpans(ctx context.Context, spans []sdktrace.ReadOnlySpa
 				slog.Bool("is_root", isRoot),
 				slog.String("trace_id", span.SpanContext().TraceID().String()),
 				slog.String("span_id", span.SpanContext().SpanID().String()),
+				slog.String("parent.trace_id", span.Parent().TraceID().String()),
+				slog.String("parent.span_id", span.Parent().SpanID().String()),
 				slog.String("instrumentation.name", span.InstrumentationScope().Name),
 			)
 		}
