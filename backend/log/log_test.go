@@ -79,10 +79,9 @@ func TestLogger_handler(t *testing.T) {
 					"svc": map[string]any{
 						"version": "latest",
 					},
-					"otel": map[string]any{
-						"trace_id": strTraceID,
-						"span_id":  strSpanID,
-					},
+					"logging.googleapis.com/trace":         "projects/dummy/traces/" + strTraceID,
+					"logging.googleapis.com/spanId":        strSpanID,
+					"logging.googleapis.com/trace_sampled": true,
 				},
 			},
 		},
@@ -96,11 +95,10 @@ func TestLogger_handler(t *testing.T) {
 					"svc": map[string]any{
 						"version": "latest",
 					},
-					"debug": false,
-					"otel": map[string]any{
-						"trace_id": strTraceID,
-						"span_id":  strSpanID,
-					},
+					"debug":                                false,
+					"logging.googleapis.com/trace":         "projects/dummy/traces/" + strTraceID,
+					"logging.googleapis.com/spanId":        strSpanID,
+					"logging.googleapis.com/trace_sampled": true,
 				},
 			},
 		},
@@ -115,10 +113,11 @@ func TestLogger_handler(t *testing.T) {
 						"version": "latest",
 					},
 					"otel": map[string]any{
-						"trace_id": strTraceID,
-						"span_id":  strSpanID,
-						"traced":   true,
+						"traced": true,
 					},
+					"logging.googleapis.com/trace":         "projects/dummy/traces/" + strTraceID,
+					"logging.googleapis.com/spanId":        strSpanID,
+					"logging.googleapis.com/trace_sampled": true,
 				},
 			},
 		},
@@ -132,7 +131,10 @@ func TestLogger_handler(t *testing.T) {
 					"svc": map[string]any{
 						"version": "latest",
 					},
-					"otel": true,
+					"otel":                                 true,
+					"logging.googleapis.com/trace":         "projects/dummy/traces/" + strTraceID,
+					"logging.googleapis.com/spanId":        strSpanID,
+					"logging.googleapis.com/trace_sampled": true,
 				},
 			},
 		},
@@ -141,7 +143,7 @@ func TestLogger_handler(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			buf := new(bytes.Buffer)
-			logger := log.ProvideJSONLogger(buf, tc.level, "latest")
+			logger := log.ProvideJSONLogger(buf, tc.level, "latest", "dummy")
 			tc.do(logger)
 			got := make([]logEntry, 0)
 			for line := range bytes.Lines(buf.Bytes()) {
@@ -170,8 +172,9 @@ func diffLogEntries(want, got []logEntry) string {
 func doOtelWithAttrs(attrs ...slog.Attr) func(*slog.Logger) {
 	return func(l *slog.Logger) {
 		sc := trace.NewSpanContext(trace.SpanContextConfig{
-			TraceID: traceID,
-			SpanID:  spanID,
+			TraceID:    traceID,
+			SpanID:     spanID,
+			TraceFlags: trace.FlagsSampled,
 		})
 		ctx := trace.ContextWithSpanContext(context.Background(), sc)
 		l.LogAttrs(ctx, slog.LevelInfo, "msg", attrs...)

@@ -23,6 +23,7 @@ import (
 var (
 	Provider = wire.NewSet(
 		authz.ProvideMiddleware,
+		BindGCPProject,
 		config.ProvideEnvironment,
 		firestore.ProvideDrivingRecordRepository,
 		graph.ProvideServer,

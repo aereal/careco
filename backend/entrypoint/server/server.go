@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"time"
 
+	"careco/backend/infra/gcp"
 	"careco/backend/log"
 	"careco/backend/web"
 
@@ -31,3 +32,5 @@ func (e *Entrypoint) Shutdown(ctx context.Context) {
 		slog.WarnContext(ctx, "failed to shutdown OTel tracer provider")
 	}
 }
+
+func BindGCPProject(v gcp.ProjectID) log.GoogleCloudProject { return log.GoogleCloudProject(v) }

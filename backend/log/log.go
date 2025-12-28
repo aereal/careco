@@ -12,10 +12,10 @@ type Output io.Writer
 
 func ProvideStdoutOutput() Output { return os.Stdout }
 
-func ProvideJSONLogger(out Output, level slog.Level, svcVersion o11y.ServiceVersion) *slog.Logger {
+func ProvideJSONLogger(out Output, level slog.Level, svcVersion o11y.ServiceVersion, gcpProject GoogleCloudProject) *slog.Logger {
 	handler := stack(
 		slog.NewJSONHandler(out, &slog.HandlerOptions{Level: level}),
-		injectOtelAttrs,
+		injectOtelAttrs(gcpProject),
 		injectServiceVersion(svcVersion),
 	)
 	return slog.New(handler)
