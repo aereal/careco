@@ -17,7 +17,7 @@ func (*spanLogger) ExportSpans(ctx context.Context, spans []sdktrace.ReadOnlySpa
 	sortedSpans := slices.SortedFunc(slices.Values(spans), func(a, b sdktrace.ReadOnlySpan) int { return a.StartTime().Compare(b.StartTime()) })
 	for _, span := range sortedSpans {
 		if !span.SpanContext().IsValid() {
-			slog.DebugContext(ctx, "invalid span",
+			slog.WarnContext(ctx, "invalid span",
 				slog.String("name", span.Name()),
 				slog.String("instrumentation.name", span.InstrumentationScope().Name),
 			)
