@@ -53,6 +53,7 @@ func (s *Server) handler() http.Handler {
 		otelhttp.WithPropagators(propagation.TraceContext{}),
 		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string { return r.Method + " " + r.URL.Path }),
 		otelhttp.WithTracerProvider(s.tp),
+		otelhttp.WithFilter(func(r *http.Request) bool { return r.Method != http.MethodOptions }),
 	)
 	return withOtel(WithCors(s.authMW(mux)))
 }
