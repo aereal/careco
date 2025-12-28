@@ -257,6 +257,7 @@ jobs:
             GOOGLE_CLOUD_PROJECT=${{ steps.auth.outputs.project_id }}
             OTEL_SERVICE_VERSION=${{ needs.backend-build.outputs.revision }}
             FIRESTORE_DATABASE_ID=driving-records
+            LOG_LEVEL=DEBUG
           flags: |
             --service-account cloud-run-runner@careco-477008.iam.gserviceaccount.com
           labels: |-
