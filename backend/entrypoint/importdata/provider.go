@@ -25,7 +25,7 @@ var (
 		firestore.ProvideDrivingRecordRepository,
 		interactions.ProvideImportData,
 		log.ProvideGlobalInstrumentation,
-		log.ProvideJSONLogger,
+		log.ProvideHandler,
 		log.ProvideStdoutOutput,
 		o11y.ProvideResource,
 		o11y.ProvideSidecarCollectorExporter,

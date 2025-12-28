@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"log/slog"
 	"slices"
 
 	infragcp "careco/backend/infra/gcp"
 
+	"github.com/go-logr/logr"
 	"go.opentelemetry.io/contrib/detectors/gcp"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -72,4 +75,12 @@ func ProvideGoogleTelemetryTraceExporter(ctx context.Context) (*otlptrace.Export
 		otlptracegrpc.WithEndpoint("telemetry.googleapis.com:443"),
 		otlptracegrpc.WithDialOption(grpc.WithPerRPCCredentials(creds)),
 	)
+}
+
+type GlobalLoggerInstrumentationToken struct{}
+
+func ProvideGlobalLoggerInstrumentation(handler slog.Handler) GlobalLoggerInstrumentationToken {
+	l := logr.FromSlogHandler(handler)
+	otel.SetLogger(l)
+	return GlobalLoggerInstrumentationToken{}
 }

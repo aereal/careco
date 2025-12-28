@@ -12,18 +12,17 @@ type Output io.Writer
 
 func ProvideStdoutOutput() Output { return os.Stdout }
 
-func ProvideJSONLogger(out Output, level slog.Level, svcVersion o11y.ServiceVersion, gcpProject GoogleCloudProject) *slog.Logger {
-	handler := stack(
+func ProvideHandler(out Output, level slog.Level, svcVersion o11y.ServiceVersion, gcpProject GoogleCloudProject) slog.Handler {
+	return stack(
 		slog.NewJSONHandler(out, &slog.HandlerOptions{Level: level}),
 		injectOtelAttrs(gcpProject),
 		injectServiceVersion(svcVersion),
 	)
-	return slog.New(handler)
 }
 
 type GlobalInstrumentationToken struct{}
 
-func ProvideGlobalInstrumentation(logger *slog.Logger) GlobalInstrumentationToken {
-	slog.SetDefault(logger)
+func ProvideGlobalInstrumentation(h slog.Handler) GlobalInstrumentationToken {
+	slog.SetDefault(slog.New(h))
 	return GlobalInstrumentationToken{}
 }

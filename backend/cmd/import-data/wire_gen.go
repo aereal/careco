@@ -31,8 +31,8 @@ func build(contextContext context.Context) (*importdata.Entrypoint, error) {
 	}
 	projectID := _wireProjectIDValue
 	googleCloudProject := importdata.BindGCPProject(projectID)
-	logger := log.ProvideJSONLogger(output, level, serviceVersion, googleCloudProject)
-	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
+	handler := log.ProvideHandler(output, level, serviceVersion, googleCloudProject)
+	globalInstrumentationToken := log.ProvideGlobalInstrumentation(handler)
 	exporter, err := o11y.ProvideSidecarCollectorExporter(contextContext)
 	if err != nil {
 		return nil, err

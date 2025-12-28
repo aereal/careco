@@ -36,8 +36,9 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 		return nil, err
 	}
 	googleCloudProject := server.BindGCPProject(projectID)
-	logger := log.ProvideJSONLogger(output, level, serviceVersion, googleCloudProject)
-	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
+	handler := log.ProvideHandler(output, level, serviceVersion, googleCloudProject)
+	globalInstrumentationToken := log.ProvideGlobalInstrumentation(handler)
+	globalLoggerInstrumentationToken := o11y.ProvideGlobalLoggerInstrumentation(handler)
 	exporter, err := o11y.ProvideGoogleTelemetryTraceExporter(contextContext)
 	if err != nil {
 		return nil, err
@@ -74,7 +75,7 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	httpClient := http.ProvideClient(tracerProvider)
 	middleware := authz.ProvideMiddleware(issuer, audience, httpClient)
 	webServer := web.ProvideServer(port, tracerProvider, handlerServer, middleware)
-	entrypoint := server.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
+	entrypoint := server.ProvideEntrypoint(globalInstrumentationToken, globalLoggerInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil
 }
 
