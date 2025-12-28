@@ -19,6 +19,7 @@ import (
 
 var (
 	Provider = wire.NewSet(
+		BindGCPProject,
 		config.ProvideEnvironment,
 		firestore.ProvideEmulatorClient,
 		firestore.ProvideDrivingRecordRepository,
@@ -42,3 +43,5 @@ var (
 		wire.Value(firestore.DatabaseID(firestoresdk.DefaultDatabaseID)),
 	)
 )
+
+func BindGCPProject(v gcp.ProjectID) log.GoogleCloudProject { return log.GoogleCloudProject(v) }

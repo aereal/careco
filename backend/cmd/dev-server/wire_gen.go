@@ -33,7 +33,9 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger := log.ProvideJSONLogger(output, level, serviceVersion)
+	projectID := _wireProjectIDValue
+	googleCloudProject := server.BindGCPProject(projectID)
+	logger := log.ProvideJSONLogger(output, level, serviceVersion, googleCloudProject)
 	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
 	exporter, err := o11y.ProvideSidecarCollectorExporter(contextContext)
 	if err != nil {
@@ -50,7 +52,6 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	}
 	port := providers.ProvidePort(environment)
 	databaseID := _wireDatabaseIDValue
-	projectID := _wireProjectIDValue
 	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
 	client, err := firestore.ProvideEmulatorClient(contextContext, databaseID, projectID, emulatorAddr, tracerProvider)
 	if err != nil {
@@ -75,7 +76,7 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 }
 
 var (
+	_wireProjectIDValue                 = gcp.ProjectID("dummy")
 	_wireDeploymentEnvironmentNameValue = o11y.DeploymentEnvironmentName("local")
 	_wireDatabaseIDValue                = firestore.DatabaseID(firestore2.DefaultDatabaseID)
-	_wireProjectIDValue                 = gcp.ProjectID("dummy")
 )

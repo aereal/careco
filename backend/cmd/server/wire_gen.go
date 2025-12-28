@@ -31,13 +31,14 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger := log.ProvideJSONLogger(output, level, serviceVersion)
-	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
-	exporter, err := o11y.ProvideGoogleTelemetryTraceExporter(contextContext)
+	projectID, err := providers.ProvideGoogleProjectID(environment)
 	if err != nil {
 		return nil, err
 	}
-	projectID, err := providers.ProvideGoogleProjectID(environment)
+	googleCloudProject := server.BindGCPProject(projectID)
+	logger := log.ProvideJSONLogger(output, level, serviceVersion, googleCloudProject)
+	globalInstrumentationToken := log.ProvideGlobalInstrumentation(logger)
+	exporter, err := o11y.ProvideGoogleTelemetryTraceExporter(contextContext)
 	if err != nil {
 		return nil, err
 	}
