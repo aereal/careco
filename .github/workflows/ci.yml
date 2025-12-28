@@ -183,6 +183,7 @@ jobs:
       id-token: write
     env:
       REGISTRY: asia-northeast1-docker.pkg.dev
+      KOCACHE: ${{ github.workspace }}/.ko-cache
     outputs:
       image: ${{ steps.build.outputs.image }}
       revision: ${{ steps.build.outputs.revision }}
@@ -202,6 +203,18 @@ jobs:
           version: '548.0.0'
       - name: configure docker authz
         run: gcloud auth configure-docker "$REGISTRY"
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        id: setup-go
+        with:
+          cache: true
+          go-version-file: go.mod
+      - run: go mod download
+      - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+        with:
+          path: ${{ env.KOCACHE }}
+          key: ${{ runner.os }}-ko-${{ hashFiles('go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-ko-
       - id: build
         name: build
         run: |
