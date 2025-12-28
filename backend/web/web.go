@@ -56,7 +56,7 @@ func (s *Server) handler() http.Handler {
 	)
 	mux := http.NewServeMux()
 	withCors := WithCors(slog.New(s.lh))
-	mux.Handle("POST /graphql", withOtel(withCors(s.authMW(s.gh))))
+	mux.Handle("/graphql", withOtel(withCors(s.authMW(s.gh))))
 	mux.Handle("GET /allow-cors", withOtel(withCors(s.authMW(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("content-type", "application/json")
 		_, _ = w.Write([]byte(`{"ok":true,"allow-cors":true,"auth":true}`))
