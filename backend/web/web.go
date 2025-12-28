@@ -47,14 +47,26 @@ func (s *Server) Start(ctx context.Context) error {
 }
 
 func (s *Server) handler() http.Handler {
-	mux := http.NewServeMux()
-	mux.Handle("POST /graphql", s.gh)
 	withOtel := otelhttp.NewMiddleware("",
 		otelhttp.WithPropagators(propagation.TraceContext{}),
 		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string { return r.Method + " " + r.URL.Path }),
 		otelhttp.WithTracerProvider(s.tp),
 	)
-	return withOtel(WithCors(s.authMW(mux)))
+	mux := http.NewServeMux()
+	mux.Handle("POST /graphql", withOtel(WithCors(s.authMW(s.gh))))
+	mux.Handle("GET /allow-cors", withOtel(WithCors(s.authMW(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "application/json")
+		_, _ = w.Write([]byte(`{"ok":true,"allow-cors":true,"auth":true}`))
+	})))))
+	mux.Handle("GET /no-cors", withOtel(s.authMW(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "application/json")
+		_, _ = w.Write([]byte(`{"ok":true,"allow-cors":false,"auth":true}`))
+	}))))
+	mux.Handle("GET /no-auth", withOtel(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "application/json")
+		_, _ = w.Write([]byte(`{"ok":true,"allow-cors":false,"auth":false}`))
+	})))
+	return mux
 }
 
 func WithCors(next http.Handler) http.Handler {
