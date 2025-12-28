@@ -59,6 +59,7 @@ func ProvideTracerProvider(ctx context.Context, exporter *otlptrace.Exporter, re
 	return sdktrace.NewTracerProvider(
 		sdktrace.WithResource(res),
 		sdktrace.WithBatcher(exporter),
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 	), nil
 }
 
