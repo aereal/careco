@@ -1,110 +1,126 @@
 package authz
 
 import (
-	"context"
-	"fmt"
+	"errors"
+	"iter"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"path"
 	"slices"
-	"time"
+	"strings"
 
-	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
-	"github.com/auth0/go-jwt-middleware/v2/jwks"
-	validatorpkg "github.com/auth0/go-jwt-middleware/v2/validator"
+	"careco/backend/log/attribute"
+
+	"github.com/lestrrat-go/jwx/v3/jwt"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
 type Issuer url.URL
 
+func (i *Issuer) cloneURL() *url.URL {
+	ret := &url.URL{
+		Scheme:      i.Scheme,
+		Opaque:      i.Opaque,
+		Host:        i.Host,
+		Path:        i.Path,
+		RawPath:     i.RawPath,
+		OmitHost:    i.OmitHost,
+		ForceQuery:  i.ForceQuery,
+		RawQuery:    i.RawQuery,
+		Fragment:    i.Fragment,
+		RawFragment: i.RawFragment,
+	}
+	if passwd, ok := i.User.Password(); ok {
+		ret.User = url.UserPassword(i.User.Username(), passwd)
+	} else {
+		ret.User = url.User(i.User.Username())
+	}
+	return ret
+}
+
+func (i *Issuer) appendingPath(trail string) *url.URL {
+	ret := i.cloneURL()
+	ret.Path = path.Join(ret.Path, trail)
+	return ret
+}
+
+func (i *Issuer) oidcConfiguration() *url.URL {
+	return i.appendingPath(".well-known/openid-configuration")
+}
+
 type Audience []string
+
+func (a Audience) jwtParseOptions() iter.Seq[jwt.ParseOption] {
+	return func(yield func(jwt.ParseOption) bool) {
+		for _, aud := range a {
+			if !yield(jwt.WithAudience(aud)) {
+				return
+			}
+		}
+	}
+}
 
 type Middleware func(next http.Handler) http.Handler
 
-func ProvideAuth0Middleware(issuer *Issuer, audience Audience, client *http.Client) (Middleware, error) {
-	keyProvider := jwks.NewCachingProvider((*url.URL)(issuer), time.Minute*30, jwks.WithCustomClient(client))
-	validator, err := validatorpkg.New(keyFuncWithTracing(keyProvider.KeyFunc), validatorpkg.RS256, (*url.URL)(issuer).String(), audience, validatorpkg.WithAllowedClockSkew(time.Minute))
-	if err != nil {
-		return nil, fmt.Errorf("validator.New: %w", err)
-	}
-	handleError := errorHandlerWithTracing(jwtmiddleware.DefaultErrorHandler)
-	mw := jwtmiddleware.New(
-		validateTokenWithTracing(validator.ValidateToken),
-		jwtmiddleware.WithErrorHandler(handleError),
-		jwtmiddleware.WithTokenExtractor(tokenExtractorWithTracing(jwtmiddleware.AuthHeaderTokenExtractor)),
-	)
+func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client) Middleware {
+	kp := newOIDCKeyProvider(newOIDCKeySetFetcher(client, issuer))
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx, span := getTracer(r.Context()).Start(r.Context(), "Authenticate", trace.WithSpanKind(trace.SpanKindServer))
-			nested := mw.CheckJWT(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx := r.Context()
-				rawToken := ctx.Value(jwtmiddleware.ContextKey{})
-				claims, ok := rawToken.(*validatorpkg.ValidatedClaims)
-				if !ok {
-					handleError(w, r, unexpectedClaimsType(rawToken))
-					return
-				}
-				token := &auth0Token{claims}
-				trace.SpanFromContext(ctx).SetAttributes(slices.Collect(token.Attrs())...)
-				next.ServeHTTP(w, r.Clone(contextWithToken(ctx, token)))
-			}))
-			closeSpan(span, nil)
-			nested.ServeHTTP(w, r.WithContext(ctx))
+			ctx := r.Context()
+
+			rawToken, err := getAuthzHeader(r.Header)
+			if err != nil {
+				handleError(w, r, err)
+				return
+			}
+
+			parseOpts := []jwt.ParseOption{
+				jwt.WithIssuer((*url.URL)(issuer).String()),
+				jwt.WithKeyProvider(wrapKeyProvider(ctx, kp)),
+			}
+			parseOpts = slices.AppendSeq(parseOpts, audience.jwtParseOptions())
+			tok, err := jwt.ParseString(rawToken, parseOpts...)
+			if err != nil {
+				handleError(w, r, err)
+				return
+			}
+			next.ServeHTTP(w, r.WithContext(contextWithToken(ctx, tok)))
 		})
-	}, nil
-}
-
-func unexpectedClaimsType(token any) error {
-	return fmt.Errorf("unexpected token type: %T", token) //nolint:err113
-}
-
-func tokenExtractorWithTracing(f jwtmiddleware.TokenExtractor) jwtmiddleware.TokenExtractor {
-	return func(r *http.Request) (string, error) {
-		ctx, span := getTracer(r.Context()).Start(r.Context(), "TokenExtractor", trace.WithSpanKind(trace.SpanKindServer))
-		token, err := f(r.WithContext(ctx))
-		closeSpan(span, err)
-		return token, err
 	}
 }
 
-func errorHandlerWithTracing(h jwtmiddleware.ErrorHandler) jwtmiddleware.ErrorHandler {
-	return func(w http.ResponseWriter, r *http.Request, err error) {
-		span := trace.SpanFromContext(r.Context())
-		closeSpan(span, err)
-		h(w, r, err)
-	}
-}
-
-func validateTokenWithTracing(validate jwtmiddleware.ValidateToken) jwtmiddleware.ValidateToken {
-	return func(ctx context.Context, s string) (any, error) {
-		ctx, span := getTracer(ctx).Start(ctx, "ValidateToken", trace.WithSpanKind(trace.SpanKindServer))
-		validated, err := validate(ctx, s)
-		closeSpan(span, err)
-		return validated, err
-	}
-}
-
-func keyFuncWithTracing(keyFunc func(context.Context) (any, error)) func(context.Context) (any, error) {
-	return func(ctx context.Context) (any, error) {
-		childCtx, span := getTracer(ctx).Start(ctx, "KeyFunc", trace.WithSpanKind(trace.SpanKindServer))
-		key, err := keyFunc(childCtx)
-		closeSpan(span, err)
-		return key, err
-	}
-}
-
-func closeSpan(span trace.Span, err error) {
-	if err != nil {
+func handleError(w http.ResponseWriter, r *http.Request, err error) {
+	if span := trace.SpanFromContext(r.Context()); span.SpanContext().IsValid() {
 		span.RecordError(err)
 		span.SetStatus(codes.Error, err.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
 	}
-	span.End()
+
+	w.Header().Set("content-type", "application/json")
+
+	switch {
+	case errors.Is(err, ErrMissingToken):
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte(`{"error":"no credentials provided"}`))
+	case errors.Is(err, jwt.ParseError()) || isaUnexpectedAuthScheme(err):
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(`{"error":"invalid credentials"}`))
+	default:
+		slog.WarnContext(r.Context(), "other kind of error caught", attribute.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(`{"error":"unexpected error happen"}`))
+	}
 }
 
-const tracerName = "careco/backend/authz.Middleware"
-
-func getTracer(ctx context.Context) trace.Tracer {
-	return trace.SpanFromContext(ctx).TracerProvider().Tracer(tracerName)
+func getAuthzHeader(header http.Header) (string, error) {
+	val := header.Get("Authorization")
+	if val == "" {
+		return "", ErrMissingToken
+	}
+	scheme, creds, ok := strings.Cut(val, " ")
+	if !ok || strings.ToLower(scheme) != "bearer" {
+		return "", &UnexpectedAuthSchemeError{AuthScheme: scheme}
+	}
+	return creds, nil
 }
