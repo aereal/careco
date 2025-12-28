@@ -35,7 +35,6 @@ func ProvideAuth0Middleware(issuer *Issuer, audience Audience, client *http.Clie
 	)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx, span := getTracer(r.Context()).Start(r.Context(), "Authenticate", trace.WithSpanKind(trace.SpanKindServer))
 			nested := mw.CheckJWT(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				ctx := r.Context()
 				rawToken := ctx.Value(jwtmiddleware.ContextKey{})
@@ -48,8 +47,7 @@ func ProvideAuth0Middleware(issuer *Issuer, audience Audience, client *http.Clie
 				trace.SpanFromContext(ctx).SetAttributes(slices.Collect(token.Attrs())...)
 				next.ServeHTTP(w, r.Clone(contextWithToken(ctx, token)))
 			}))
-			closeSpan(span, nil)
-			nested.ServeHTTP(w, r.WithContext(ctx))
+			nested.ServeHTTP(w, r)
 		})
 	}, nil
 }
@@ -69,8 +67,6 @@ func tokenExtractorWithTracing(f jwtmiddleware.TokenExtractor) jwtmiddleware.Tok
 
 func errorHandlerWithTracing(h jwtmiddleware.ErrorHandler) jwtmiddleware.ErrorHandler {
 	return func(w http.ResponseWriter, r *http.Request, err error) {
-		span := trace.SpanFromContext(r.Context())
-		closeSpan(span, err)
 		h(w, r, err)
 	}
 }
