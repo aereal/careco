@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -21,12 +22,13 @@ import (
 
 type Port string
 
-func ProvideServer(port Port, tp trace.TracerProvider, gh *handler.Server, authMiddleware authz.Middleware) *Server {
+func ProvideServer(port Port, tp trace.TracerProvider, gh *handler.Server, authMiddleware authz.Middleware, lh slog.Handler) *Server {
 	return &Server{
 		port:   port,
 		tp:     tp,
 		gh:     gh,
 		authMW: authMiddleware,
+		lh:     lh,
 	}
 }
 
@@ -35,6 +37,7 @@ type Server struct {
 	tp     trace.TracerProvider
 	gh     *handler.Server
 	authMW authz.Middleware
+	lh     slog.Handler
 }
 
 func (s *Server) Start(ctx context.Context) error {
@@ -53,8 +56,9 @@ func (s *Server) handler() http.Handler {
 		otelhttp.WithTracerProvider(s.tp),
 	)
 	mux := http.NewServeMux()
-	mux.Handle("POST /graphql", withOtel(WithCors(s.authMW(s.gh))))
-	mux.Handle("GET /allow-cors", withOtel(WithCors(s.authMW(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	withCors := WithCors(slog.New(s.lh))
+	mux.Handle("POST /graphql", withOtel(withCors(s.authMW(s.gh))))
+	mux.Handle("GET /allow-cors", withOtel(withCors(s.authMW(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("content-type", "application/json")
 		_, _ = w.Write([]byte(`{"ok":true,"allow-cors":true,"auth":true}`))
 	})))))
@@ -69,7 +73,7 @@ func (s *Server) handler() http.Handler {
 	return mux
 }
 
-func WithCors(next http.Handler) http.Handler {
+func WithCors(l *slog.Logger) func(http.Handler) http.Handler {
 	opts := cors.Options{
 		AllowOriginVaryRequestFunc: func(r *http.Request, origin string) (bool, []string) {
 			url, err := neturl.Parse(origin)
@@ -83,8 +87,10 @@ func WithCors(next http.Handler) http.Handler {
 			http.MethodPost, http.MethodGet, http.MethodHead,
 		},
 		AllowedHeaders: []string{"*"},
+		Debug:          true,
+		Logger:         &slogLogger{l},
 	}
-	return cors.New(opts).Handler(next)
+	return cors.New(opts).Handler
 }
 
 func isLocalhost(url *neturl.URL) bool {
@@ -108,4 +114,12 @@ func isPreviewVercelHost(host string) bool {
 		return false
 	}
 	return strings.HasPrefix(parts[0], "careco-") && strings.HasSuffix(parts[0], "-aereals-projects")
+}
+
+type slogLogger struct{ *slog.Logger }
+
+var _ cors.Logger = (*slogLogger)(nil)
+
+func (l *slogLogger) Printf(msg string, args ...any) {
+	l.Debug(fmt.Sprintf(msg, args...))
 }

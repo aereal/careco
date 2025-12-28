@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -69,7 +70,7 @@ func TestWithCORS(t *testing.T) {
 			t.Parallel()
 			srv :=
 				httptest.NewServer(
-					web.WithCors(
+					web.WithCors(slog.New(slog.DiscardHandler))(
 						http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) }),
 					))
 			t.Cleanup(srv.Close)
