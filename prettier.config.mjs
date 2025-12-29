@@ -8,9 +8,6 @@ const config = {
   semi: true,
   singleQuote: true,
   trailingComma: 'all',
-  overrides: [
-    { files: ['frontend/**/*'], excludeFiles: ['typed-router.d.ts'] },
-  ],
 };
 
 export default config;
