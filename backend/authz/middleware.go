@@ -86,6 +86,7 @@ func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client) M
 				handleError(w, r, err)
 				return
 			}
+			trace.SpanFromContext(ctx).SetAttributes(slices.Collect(iterateAttrs(tok))...)
 			next.ServeHTTP(w, r.WithContext(contextWithToken(ctx, tok)))
 		})
 	}

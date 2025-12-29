@@ -290,6 +290,13 @@ var (
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
 					attribute.Int64("http.response.status_code", 200),
+					attribute.StringSlice("creds.audience", []string{"http://valid.rs.example"}),
+					attribute.Float64("creds.expires_at.remaining", valueReplacedFloat),
+					attribute.String("creds.expires_at.timestamp", valueReplacedStr),
+					attribute.Float64("creds.issued_at.elapsed", valueReplacedFloat),
+					attribute.String("creds.issued_at.timestamp", valueReplacedStr),
+					attribute.String("creds.issuer", valueReplacedStr),
+					attribute.String("creds.subject", "1234567890"),
 				),
 			},
 		},
@@ -420,10 +427,10 @@ const (
 func transformKeyValue(kv attribute.KeyValue) map[attribute.Key]any {
 	switch kv.Key {
 	case "server.port", "network.peer.port",
-		"auth.credentials.issuer",
-		"auth.credentials.issued_at.iso8601", "auth.credentials.expires_at.iso8601":
+		"creds.issuer",
+		"creds.issued_at.timestamp", "creds.expires_at.timestamp":
 		return map[attribute.Key]any{kv.Key: valueReplacedStr}
-	case "auth.credentials.issued_at.elapsed_seconds", "auth.credentials.expires_at.remaining_seconds":
+	case "creds.issued_at.elapsed", "creds.expires_at.remaining":
 		return map[attribute.Key]any{kv.Key: valueReplacedFloat}
 	}
 	return map[attribute.Key]any{kv.Key: kv.Value.AsInterface()}
