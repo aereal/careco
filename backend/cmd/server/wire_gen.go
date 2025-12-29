@@ -72,7 +72,8 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 		return nil, err
 	}
 	httpClient := http.ProvideClient(tracerProvider)
-	middleware := authz.ProvideMiddleware(issuer, audience, httpClient)
+	set := providers.ProvideAllowedSubjects(environment)
+	middleware := authz.ProvideMiddleware(issuer, audience, httpClient, set)
 	webServer := web.ProvideServer(port, tracerProvider, handlerServer, middleware)
 	entrypoint := server.ProvideEntrypoint(globalInstrumentationToken, tracerProvider, webServer)
 	return entrypoint, nil

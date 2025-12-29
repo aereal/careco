@@ -1,6 +1,7 @@
 package authz
 
 import (
+	"context"
 	"errors"
 	"iter"
 	"log/slog"
@@ -12,6 +13,7 @@ import (
 
 	"careco/backend/log/attribute"
 
+	"github.com/aereal/coll"
 	"github.com/lestrrat-go/jwx/v3/jwt"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -62,9 +64,11 @@ func (a Audience) jwtParseOptions() iter.Seq[jwt.ParseOption] {
 	}
 }
 
+type AllowedSubject string
+
 type Middleware func(next http.Handler) http.Handler
 
-func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client) Middleware {
+func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client, allowedSubjects *coll.Set[AllowedSubject]) Middleware {
 	kp := newOIDCKeyProvider(newOIDCKeySetFetcher(client, issuer))
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +85,9 @@ func ProvideMiddleware(issuer *Issuer, audience Audience, client *http.Client) M
 				jwt.WithKeyProvider(wrapKeyProvider(ctx, kp)),
 			}
 			parseOpts = slices.AppendSeq(parseOpts, audience.jwtParseOptions())
+			if allowedSubjects.Len() > 0 {
+				parseOpts = append(parseOpts, jwt.WithValidator(&validateAllowedSubject{allowed: allowedSubjects}))
+			}
 			tok, err := jwt.ParseString(rawToken, parseOpts...)
 			if err != nil {
 				handleError(w, r, err)
@@ -124,4 +131,21 @@ func getAuthzHeader(header http.Header) (string, error) {
 		return "", &UnexpectedAuthSchemeError{AuthScheme: scheme}
 	}
 	return creds, nil
+}
+
+type validateAllowedSubject struct {
+	allowed *coll.Set[AllowedSubject]
+}
+
+var _ jwt.Validator = (*validateAllowedSubject)(nil)
+
+func (v *validateAllowedSubject) Validate(ctx context.Context, tok jwt.Token) error {
+	got, ok := tok.Subject()
+	if !ok {
+		return &InvalidSubjectError{Subject: ""}
+	}
+	if !v.allowed.Contains(AllowedSubject(got)) {
+		return &InvalidSubjectError{Subject: got}
+	}
+	return nil
 }

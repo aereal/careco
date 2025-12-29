@@ -17,6 +17,7 @@ import (
 
 	"careco/backend/authz"
 
+	"github.com/aereal/coll"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/lestrrat-go/jwx/v3/jwa"
@@ -122,7 +123,7 @@ func TestMiddleware(t *testing.T) {
 				t.Fatal(err)
 			}
 			issuerHandler.origin = issuerURL.String()
-			mw := authz.ProvideMiddleware((*authz.Issuer)(issuerURL), expectedAudience, http.DefaultClient)
+			mw := authz.ProvideMiddleware((*authz.Issuer)(issuerURL), expectedAudience, http.DefaultClient, coll.NewSet[authz.AllowedSubject]())
 			exporter := tracetest.NewInMemoryExporter()
 			tp := sdktrace.NewTracerProvider(sdktrace.WithSyncer(exporter))
 			withOtel := otelhttp.NewMiddleware("default", otelhttp.WithTracerProvider(tp))
@@ -162,7 +163,7 @@ func TestMiddleware_cache(t *testing.T) {
 		t.Fatal(err)
 	}
 	issuerHandler.origin = issuerURL.String()
-	mw := authz.ProvideMiddleware((*authz.Issuer)(issuerURL), expectedAudience, http.DefaultClient)
+	mw := authz.ProvideMiddleware((*authz.Issuer)(issuerURL), expectedAudience, http.DefaultClient, coll.NewSet[authz.AllowedSubject]())
 	appSrv := httptest.NewServer(mw(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})))
 	t.Cleanup(appSrv.Close)
 
@@ -184,6 +185,60 @@ func TestMiddleware_cache(t *testing.T) {
 	}
 	if actual := issuerHandler.callCount.jwks.Load(); actual != 1 {
 		t.Errorf("request to JWKs endpoint must be cached but not: count=%d", actual)
+	}
+}
+
+func TestMiddleware_specify_subject(t *testing.T) {
+	t.Parallel()
+
+	signingPrivateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issuerHandler, err := newIssuerServer(signingPrivateKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issuerSrv := httptest.NewServer(issuerHandler)
+	t.Cleanup(issuerSrv.Close)
+	issuerURL, err := url.Parse(issuerSrv.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	issuerHandler.origin = issuerURL.String()
+	mw := authz.ProvideMiddleware(
+		(*authz.Issuer)(issuerURL),
+		expectedAudience,
+		http.DefaultClient,
+		coll.NewSet[authz.AllowedSubject]("sub1", "sub2"),
+	)
+	appSrv := httptest.NewServer(mw(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})))
+	t.Cleanup(appSrv.Close)
+
+	testCases := []struct {
+		sub        string
+		wantStatus int
+	}{
+		{sub: "sub1", wantStatus: http.StatusOK},
+		{sub: "sub2", wantStatus: http.StatusOK},
+		{sub: "other_sub", wantStatus: http.StatusUnauthorized},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.sub, func(t *testing.T) {
+			t.Parallel()
+
+			addAuthz := addAuthorizationHeaderFunc(func(issuerURL *url.URL, add func(value string)) error {
+				tok, err := createToken(signingPrivateKey, issuerURL.String(), withSubject(tc.sub))
+				if err != nil {
+					return err
+				}
+				add("Bearer " + tok)
+				return nil
+			})
+			if err := sendRequest(t.Context(), appSrv.URL, issuerURL, tc.wantStatus, addAuthz); err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
 
@@ -253,15 +308,24 @@ func (s *issuerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mux.ServeHTTP(w, r)
 }
 
-func createToken(signingPrivateKey *rsa.PrivateKey, issuerURL string) (string, error) {
+type createTokenOption func(b *jwt.Builder) *jwt.Builder
+
+func withSubject(sub string) createTokenOption {
+	return func(b *jwt.Builder) *jwt.Builder { return b.Subject(sub) }
+}
+
+func createToken(signingPrivateKey *rsa.PrivateKey, issuerURL string, opts ...createTokenOption) (string, error) {
 	issuedAt := time.Now()
-	tok, err := jwt.NewBuilder().
+	b := jwt.NewBuilder().
 		Issuer(issuerURL).
 		Subject("1234567890").
 		Audience(expectedAudience).
 		IssuedAt(issuedAt).
-		Expiration(issuedAt.Add(time.Hour * 24)).
-		Build()
+		Expiration(issuedAt.Add(time.Hour * 24))
+	for _, o := range opts {
+		b = o(b)
+	}
+	tok, err := b.Build()
 	if err != nil {
 		return "", fmt.Errorf("jwt.Builder.Build: %w", err)
 	}
