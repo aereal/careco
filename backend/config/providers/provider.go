@@ -10,6 +10,8 @@ import (
 	"careco/backend/o11y"
 	"careco/backend/usecases/interactions"
 	"careco/backend/web"
+
+	"github.com/aereal/coll"
 )
 
 func ProvidePort(e *config.Environment) web.Port {
@@ -64,6 +66,15 @@ func ProvideIssuer(e *config.Environment) (*authz.Issuer, error) {
 	return config.Retrieve(
 		"AUTH0_ISSUER",
 		retrieve,
+	)
+}
+
+func ProvideAllowedSubjects(e *config.Environment) *coll.Set[authz.AllowedSubject] {
+	cast := config.Cast(parseAllowedSubjects)
+	retrieve := cast(config.EnvSource(e))
+	return config.Yield(
+		"ALLOWED_SUBJECTS",
+		config.WithDefaultValue(coll.NewSet[authz.AllowedSubject]())(retrieve),
 	)
 }
 

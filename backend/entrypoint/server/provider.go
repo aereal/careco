@@ -33,6 +33,7 @@ var (
 		log.ProvideStdoutOutput,
 		o11y.ProvideTracerProvider,
 		ProvideEntrypoint,
+		providers.ProvideAllowedSubjects,
 		providers.ProvideAudience,
 		providers.ProvideFirestoreEmulatorAddr,
 		providers.ProvideIssuer,

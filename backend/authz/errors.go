@@ -65,3 +65,20 @@ func (e *HTTPResponseError) Is(other error) bool {
 	}
 	return e.Status == httpErr.Status
 }
+
+type InvalidSubjectError struct{ Subject string }
+
+var _ error = (*InvalidSubjectError)(nil)
+
+func (e *InvalidSubjectError) Error() string { return fmt.Sprintf("invalid subject: %q", e.Subject) }
+
+func (e *InvalidSubjectError) Is(other error) bool {
+	if other == nil {
+		return false
+	}
+	subErr, ok := other.(*InvalidSubjectError)
+	if !ok {
+		return false
+	}
+	return e.Subject == subErr.Subject
+}
