@@ -14,6 +14,6 @@ func ProvideServer(tp trace.TracerProvider, r *resolver.Resolver) *handler.Serve
 	es := exec.NewExecutableSchema(exec.Config{Resolvers: r})
 	s := handler.New(es)
 	s.AddTransport(transport.POST{})
-	s.Use(otelgqlgen.New(otelgqlgen.WithTracerProvider(tp)))
+	s.Use(otelgqlgen.New(otelgqlgen.WithTracerProvider(tp), otelgqlgen.ShouldTraceCaptureTimings(false)))
 	return s
 }
