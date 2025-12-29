@@ -1067,7 +1067,11 @@ func (ec *executionContext) _DistanceReport(ctx context.Context, sel ast.Selecti
 		}
 		return ec._DailyReport(ctx, sel, obj)
 	default:
-		panic(fmt.Errorf("unexpected type %T", obj))
+		if obj, ok := obj.(graphql.Marshaler); ok {
+			return obj
+		} else {
+			panic(fmt.Errorf("unexpected type %T; non-generated variants of DistanceReport must implement graphql.Marshaler", obj))
+		}
 	}
 }
 
@@ -1090,7 +1094,11 @@ func (ec *executionContext) _DrivingRecordsConnection(ctx context.Context, sel a
 		}
 		return ec._DailyReportsConnection(ctx, sel, obj)
 	default:
-		panic(fmt.Errorf("unexpected type %T", obj))
+		if obj, ok := obj.(graphql.Marshaler); ok {
+			return obj
+		} else {
+			panic(fmt.Errorf("unexpected type %T; non-generated variants of DrivingRecordsConnection must implement graphql.Marshaler", obj))
+		}
 	}
 }
 
