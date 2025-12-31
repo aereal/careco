@@ -24,6 +24,8 @@ const date = ref(new Date());
 const memo = ref('');
 const active = ref(true);
 
+const emit = defineEmits<{ success: [] }>();
+
 const handleOpenClick = (e: MouseEvent): void => {
   e.preventDefault();
   modalOpen.value = !modalOpen.value;
@@ -71,6 +73,7 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
     distance.value = 0;
     date.value = new Date();
     memo.value = '';
+    emit('success');
   }
   if (Result.isFailure(result)) {
     error.value = result.error.message;
