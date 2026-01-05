@@ -14,6 +14,7 @@ const queryGetRoot = graphql(`
   query GetRoot($first: Int!) {
     totalStatistics {
       ...TotalDistance
+      ...LastOdometerValue
     }
     recentDrivingRecords(first: $first) {
       ...ChartDataSeries
@@ -79,7 +80,10 @@ export default {
               <DriveRecordChart :data="data.recentDrivingRecords" />
             </div>
           </div>
-          <RecordDialog @success="handleRecordSuccess" />
+          <RecordDialog
+            :last-odometer-value="data.totalStatistics"
+            @success="handleRecordSuccess"
+          />
           <LogoutButton />
         </div>
       </div>

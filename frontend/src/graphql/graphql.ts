@@ -162,6 +162,10 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
+export type LastOdometerValueFragment = { readonly odometerValue: number } & {
+  ' $fragmentName'?: 'LastOdometerValueFragment';
+};
+
 type TotalDistance_DailyReport_Fragment = { readonly odometerValue: number } & {
   ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment';
 };
@@ -192,6 +196,7 @@ export type GetRootQuery = {
   readonly totalStatistics: {
     ' $fragmentRefs'?: {
       TotalDistance_TotalStatistics_Fragment: TotalDistance_TotalStatistics_Fragment;
+      LastOdometerValueFragment: LastOdometerValueFragment;
     };
   };
   readonly recentDrivingRecords: {
@@ -358,6 +363,25 @@ export const MonthlySummaryFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<MonthlySummaryFragment, unknown>;
+export const LastOdometerValueFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'LastOdometerValue' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'TotalStatistics' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LastOdometerValueFragment, unknown>;
 export const RecordDriveDocument = {
   kind: 'Document',
   definitions: [
@@ -465,6 +489,10 @@ export const GetRootDocument = {
                   kind: 'FragmentSpread',
                   name: { kind: 'Name', value: 'TotalDistance' },
                 },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'LastOdometerValue' },
+                },
               ],
             },
           },
@@ -500,6 +528,20 @@ export const GetRootDocument = {
       typeCondition: {
         kind: 'NamedType',
         name: { kind: 'Name', value: 'DistanceReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'LastOdometerValue' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'TotalStatistics' },
       },
       selectionSet: {
         kind: 'SelectionSet',
