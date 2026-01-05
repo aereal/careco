@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { graphql } from '@/graphql';
+import { getFragmentData, graphql, type FragmentType } from '@/graphql';
 import { getEventDateValue } from '@/utils/get-event-date-value';
 import { getEventNumberValue } from '@/utils/get-event-number-value';
 import { runMutation } from '@/utils/run-operation';
@@ -15,11 +15,26 @@ const mutationRecordDrive = graphql(`
   }
 `);
 
+const fragmentLastOdometerValue = graphql(`
+  fragment LastOdometerValue on TotalStatistics {
+    odometerValue
+  }
+`);
+
 const { executeMutation: recordDrive } = useMutation(mutationRecordDrive);
+
+const props = defineProps<{
+  lastOdometerValue: FragmentType<typeof fragmentLastOdometerValue>;
+}>();
+
+const { odometerValue: lastOdometerValue } = getFragmentData(
+  fragmentLastOdometerValue,
+  props.lastOdometerValue,
+);
 
 const error = ref<string | undefined>();
 const modalOpen = ref(false);
-const distance = ref(0);
+const distance = ref(lastOdometerValue);
 const date = ref(new Date());
 const memo = ref('');
 const active = ref(true);
@@ -70,7 +85,6 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
       : false;
   if (isSuccess) {
     modalOpen.value = false;
-    distance.value = 0;
     date.value = new Date();
     memo.value = '';
     emit('success');
