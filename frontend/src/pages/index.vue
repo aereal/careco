@@ -33,7 +33,7 @@ export default {
   setup() {
     const auth0 = useAuth0();
 
-    const { fetching, data, error } = useQuery({
+    const { fetching, data, error, executeQuery } = useQuery({
       query: queryGetRoot,
       variables: { first: 50 },
       pause: computed(
@@ -47,6 +47,9 @@ export default {
       queryFetching: fetching,
       data,
       error,
+      handleRecordSuccess(): void {
+        executeQuery({ requestPolicy: 'network-only' });
+      },
     };
   },
 };
@@ -76,7 +79,7 @@ export default {
               <DriveRecordChart :data="data.recentDrivingRecords" />
             </div>
           </div>
-          <RecordDialog />
+          <RecordDialog @success="handleRecordSuccess" />
           <LogoutButton />
         </div>
       </div>
