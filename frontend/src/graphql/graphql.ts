@@ -85,9 +85,9 @@ export type MutationRecordDrivingRecordArgs = {
 };
 
 export type Query = {
+  readonly lastReport?: Maybe<DailyReport>;
   readonly monthlyReport: MonthlyReport;
   readonly recentDrivingRecords: RecentDrivingRecordsConnection;
-  readonly totalStatistics: TotalStatistics;
   readonly yearlyReport: YearlyReport;
 };
 
@@ -106,10 +106,6 @@ export type QueryYearlyReportArgs = {
 
 export type RecentDrivingRecordsConnection = DrivingRecordsConnection & {
   readonly nodes: ReadonlyArray<DailyReport>;
-};
-
-export type TotalStatistics = DistanceReport & {
-  readonly odometerValue: Scalars['Int']['output'];
 };
 
 export type YearlyReport = DistanceReport & {
@@ -162,9 +158,22 @@ export type RecordDriveMutationVariables = Exact<{
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
 
-export type LastOdometerValueFragment = { readonly odometerValue: number } & {
-  ' $fragmentName'?: 'LastOdometerValueFragment';
-};
+type LastOdometerValue_DailyReport_Fragment = {
+  readonly odometerValue: number;
+} & { ' $fragmentName'?: 'LastOdometerValue_DailyReport_Fragment' };
+
+type LastOdometerValue_MonthlyReport_Fragment = {
+  readonly odometerValue: number;
+} & { ' $fragmentName'?: 'LastOdometerValue_MonthlyReport_Fragment' };
+
+type LastOdometerValue_YearlyReport_Fragment = {
+  readonly odometerValue: number;
+} & { ' $fragmentName'?: 'LastOdometerValue_YearlyReport_Fragment' };
+
+export type LastOdometerValueFragment =
+  | LastOdometerValue_DailyReport_Fragment
+  | LastOdometerValue_MonthlyReport_Fragment
+  | LastOdometerValue_YearlyReport_Fragment;
 
 type TotalDistance_DailyReport_Fragment = { readonly odometerValue: number } & {
   ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment';
@@ -174,10 +183,6 @@ type TotalDistance_MonthlyReport_Fragment = {
   readonly odometerValue: number;
 } & { ' $fragmentName'?: 'TotalDistance_MonthlyReport_Fragment' };
 
-type TotalDistance_TotalStatistics_Fragment = {
-  readonly odometerValue: number;
-} & { ' $fragmentName'?: 'TotalDistance_TotalStatistics_Fragment' };
-
 type TotalDistance_YearlyReport_Fragment = {
   readonly odometerValue: number;
 } & { ' $fragmentName'?: 'TotalDistance_YearlyReport_Fragment' };
@@ -185,7 +190,6 @@ type TotalDistance_YearlyReport_Fragment = {
 export type TotalDistanceFragment =
   | TotalDistance_DailyReport_Fragment
   | TotalDistance_MonthlyReport_Fragment
-  | TotalDistance_TotalStatistics_Fragment
   | TotalDistance_YearlyReport_Fragment;
 
 export type GetRootQueryVariables = Exact<{
@@ -193,12 +197,12 @@ export type GetRootQueryVariables = Exact<{
 }>;
 
 export type GetRootQuery = {
-  readonly totalStatistics: {
+  readonly lastReport?: {
     ' $fragmentRefs'?: {
-      TotalDistance_TotalStatistics_Fragment: TotalDistance_TotalStatistics_Fragment;
-      LastOdometerValueFragment: LastOdometerValueFragment;
+      TotalDistance_DailyReport_Fragment: TotalDistance_DailyReport_Fragment;
+      LastOdometerValue_DailyReport_Fragment: LastOdometerValue_DailyReport_Fragment;
     };
-  };
+  } | null;
   readonly recentDrivingRecords: {
     ' $fragmentRefs'?: {
       ChartDataSeries_RecentDrivingRecordsConnection_Fragment: ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
@@ -371,7 +375,7 @@ export const LastOdometerValueFragmentDoc = {
       name: { kind: 'Name', value: 'LastOdometerValue' },
       typeCondition: {
         kind: 'NamedType',
-        name: { kind: 'Name', value: 'TotalStatistics' },
+        name: { kind: 'Name', value: 'DistanceReport' },
       },
       selectionSet: {
         kind: 'SelectionSet',
@@ -481,7 +485,7 @@ export const GetRootDocument = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'totalStatistics' },
+            name: { kind: 'Name', value: 'lastReport' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
@@ -541,7 +545,7 @@ export const GetRootDocument = {
       name: { kind: 'Name', value: 'LastOdometerValue' },
       typeCondition: {
         kind: 'NamedType',
-        name: { kind: 'Name', value: 'TotalStatistics' },
+        name: { kind: 'Name', value: 'DistanceReport' },
       },
       selectionSet: {
         kind: 'SelectionSet',

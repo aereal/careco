@@ -112,16 +112,6 @@ func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Ti
 	return true, nil
 }
 
-func (r *queryResolver) TotalStatistics(ctx context.Context) (*dtos.TotalStatistics, error) {
-	odometerValue, err := r.getOdometerValue(ctx, domain.EmptyInterval[time.Time]())
-	if err != nil {
-		return nil, err
-	}
-	return &dtos.TotalStatistics{
-		OdometerValue: int(odometerValue),
-	}, nil
-}
-
 func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*dtos.RecentDrivingRecordsConnection, error) {
 	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(first))
 	if err != nil {
@@ -151,6 +141,22 @@ func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.
 		Month: month,
 	}
 	return ret, nil
+}
+
+func (r *queryResolver) LastReport(ctx context.Context) (*dtos.DailyReport, error) {
+	records, err := r.drivingRecordQuery.FindRecordsInPeriod(ctx, domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(1))
+	if err != nil {
+		return nil, fmt.Errorf("DrivingRecordQuery.FindRecordsInPeriod: %w", err)
+	}
+	if len(records) == 0 {
+		return nil, nil //nolint:nilnil // no record is usual
+	}
+	record := records[0]
+	return &dtos.DailyReport{
+		OdometerValue: int(record.OdometerValue),
+		RecordedAt:    record.Date,
+		Memo:          record.Memo.Ptr(),
+	}, nil
 }
 
 func (r *yearlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.YearlyReport) (int, error) {

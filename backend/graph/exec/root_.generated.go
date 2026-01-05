@@ -71,18 +71,14 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		LastReport           func(childComplexity int) int
 		MonthlyReport        func(childComplexity int, year int, month time.Month) int
 		RecentDrivingRecords func(childComplexity int, first int) int
-		TotalStatistics      func(childComplexity int) int
 		YearlyReport         func(childComplexity int, year int) int
 	}
 
 	RecentDrivingRecordsConnection struct {
 		Nodes func(childComplexity int) int
-	}
-
-	TotalStatistics struct {
-		OdometerValue func(childComplexity int) int
 	}
 
 	YearlyReport struct {
@@ -214,6 +210,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string)), true
 
+	case "Query.lastReport":
+		if e.complexity.Query.LastReport == nil {
+			break
+		}
+
+		return e.complexity.Query.LastReport(childComplexity), true
+
 	case "Query.monthlyReport":
 		if e.complexity.Query.MonthlyReport == nil {
 			break
@@ -238,13 +241,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.RecentDrivingRecords(childComplexity, args["first"].(int)), true
 
-	case "Query.totalStatistics":
-		if e.complexity.Query.TotalStatistics == nil {
-			break
-		}
-
-		return e.complexity.Query.TotalStatistics(childComplexity), true
-
 	case "Query.yearlyReport":
 		if e.complexity.Query.YearlyReport == nil {
 			break
@@ -263,13 +259,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.RecentDrivingRecordsConnection.Nodes(childComplexity), true
-
-	case "TotalStatistics.odometerValue":
-		if e.complexity.TotalStatistics.OdometerValue == nil {
-			break
-		}
-
-		return e.complexity.TotalStatistics.OdometerValue(childComplexity), true
 
 	case "YearlyReport.monthlyReports":
 		if e.complexity.YearlyReport.MonthlyReports == nil {
@@ -421,10 +410,6 @@ interface DistanceReport {
   odometerValue: Int!
 }
 
-type TotalStatistics implements DistanceReport {
-  odometerValue: Int!
-}
-
 type YearlyReport implements DistanceReport {
   year: Int!
   odometerValue: Int!
@@ -458,10 +443,10 @@ type DailyReportsConnection implements DrivingRecordsConnection {
 }
 
 type Query {
-  totalStatistics: TotalStatistics!
   recentDrivingRecords(first: Int!): RecentDrivingRecordsConnection!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
+  lastReport: DailyReport
 }
 
 type Mutation {

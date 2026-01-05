@@ -12,7 +12,7 @@ import { computed } from 'vue';
 
 const queryGetRoot = graphql(`
   query GetRoot($first: Int!) {
-    totalStatistics {
+    lastReport {
       ...TotalDistance
       ...LastOdometerValue
     }
@@ -69,7 +69,10 @@ export default {
       <div v-else>
         <div v-if="error">Error: {{ error.message }}</div>
         <div v-else-if="data">
-          <TotalDistance :total-distance="data.totalStatistics" />
+          <TotalDistance
+            :total-distance="data.lastReport"
+            v-if="data.lastReport"
+          />
           <div class="my-4">
             <h2 class="font-bold text-md mb-2">月毎の記録を見る</h2>
             <SelectMonth />
@@ -81,7 +84,7 @@ export default {
             </div>
           </div>
           <RecordDialog
-            :last-odometer-value="data.totalStatistics"
+            :last-odometer-value="data.lastReport"
             @success="handleRecordSuccess"
           />
           <LogoutButton />

@@ -1,29 +1,28 @@
 # yaml-language-server: $schema=./tests.schema.json
 ---
 cases:
-  'query totalStatistics/empty':
+  'query lastReport/empty':
     request:
       query: |
         {
-          totalStatistics {
+          lastReport {
             odometerValue
           }
         }
     response:
       data:
-        totalStatistics:
-          odometerValue: 0
-  'query totalStatistics/ok':
+        lastReport: null
+  'query lastReport/ok':
     request:
       query: |
         {
-          totalStatistics {
+          lastReport {
             odometerValue
           }
         }
     response:
       data:
-        totalStatistics:
+        lastReport:
           odometerValue: 45678
   'query recentDrivingRecords/ok':
     request:

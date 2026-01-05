@@ -62,12 +62,6 @@ func (this RecentDrivingRecordsConnection) GetNodes() []*DailyReport {
 	return interfaceSlice
 }
 
-type TotalStatistics struct {
-	OdometerValue int `json:"odometerValue"`
-}
-
-func (TotalStatistics) IsDistanceReport() {}
-
 type YearlyReport struct {
 	Year int `json:"year"`
 }
