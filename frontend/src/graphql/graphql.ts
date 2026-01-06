@@ -36,6 +36,7 @@ export type DailyReport = DistanceReport & {
   readonly month: Month;
   readonly odometerValue: Scalars['Int']['output'];
   readonly recordedAt: Scalars['DateTime']['output'];
+  readonly reportDate: Scalars['DateTime']['output'];
   readonly tripDistance: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
@@ -46,6 +47,7 @@ export type DailyReportsConnection = DrivingRecordsConnection & {
 
 export type DistanceReport = {
   readonly odometerValue: Scalars['Int']['output'];
+  readonly reportDate: Scalars['DateTime']['output'];
 };
 
 export type DrivingRecordsConnection = {
@@ -70,6 +72,7 @@ export type MonthlyReport = DistanceReport & {
   readonly dailyReports: DailyReportsConnection;
   readonly month: Month;
   readonly odometerValue: Scalars['Int']['output'];
+  readonly reportDate: Scalars['DateTime']['output'];
   readonly tripDistance: Scalars['Int']['output'];
   readonly year: Scalars['Int']['output'];
 };
@@ -111,6 +114,7 @@ export type RecentDrivingRecordsConnection = DrivingRecordsConnection & {
 export type YearlyReport = DistanceReport & {
   readonly monthlyReports: ReadonlyArray<MonthlyReport>;
   readonly odometerValue: Scalars['Int']['output'];
+  readonly reportDate: Scalars['DateTime']['output'];
   readonly year: Scalars['Int']['output'];
 };
 
@@ -175,16 +179,19 @@ export type LastOdometerValueFragment =
   | LastOdometerValue_MonthlyReport_Fragment
   | LastOdometerValue_YearlyReport_Fragment;
 
-type TotalDistance_DailyReport_Fragment = { readonly odometerValue: number } & {
-  ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment';
-};
+type TotalDistance_DailyReport_Fragment = {
+  readonly odometerValue: number;
+  readonly reportDate: Date;
+} & { ' $fragmentName'?: 'TotalDistance_DailyReport_Fragment' };
 
 type TotalDistance_MonthlyReport_Fragment = {
   readonly odometerValue: number;
+  readonly reportDate: Date;
 } & { ' $fragmentName'?: 'TotalDistance_MonthlyReport_Fragment' };
 
 type TotalDistance_YearlyReport_Fragment = {
   readonly odometerValue: number;
+  readonly reportDate: Date;
 } & { ' $fragmentName'?: 'TotalDistance_YearlyReport_Fragment' };
 
 export type TotalDistanceFragment =
@@ -244,6 +251,7 @@ export const TotalDistanceFragmentDoc = {
         kind: 'SelectionSet',
         selections: [
           { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'reportDate' } },
         ],
       },
     },
@@ -331,6 +339,7 @@ export const MonthlySummaryFragmentDoc = {
         kind: 'SelectionSet',
         selections: [
           { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'reportDate' } },
         ],
       },
     },
@@ -537,6 +546,7 @@ export const GetRootDocument = {
         kind: 'SelectionSet',
         selections: [
           { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'reportDate' } },
         ],
       },
     },
@@ -680,6 +690,7 @@ export const MonthReportDocument = {
         kind: 'SelectionSet',
         selections: [
           { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'reportDate' } },
         ],
       },
     },

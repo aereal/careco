@@ -21,12 +21,14 @@ interface DrivingRecordsConnection {
 
 interface DistanceReport {
   odometerValue: Int!
+  reportDate: DateTime!
 }
 
 type YearlyReport implements DistanceReport {
   year: Int!
   odometerValue: Int!
   monthlyReports: [MonthlyReport!]!
+  reportDate: DateTime!
 }
 
 type MonthlyReport implements DistanceReport {
@@ -35,6 +37,7 @@ type MonthlyReport implements DistanceReport {
   odometerValue: Int!
   tripDistance: Int!
   dailyReports: DailyReportsConnection!
+  reportDate: DateTime!
 }
 
 type DailyReport implements DistanceReport {
@@ -45,6 +48,7 @@ type DailyReport implements DistanceReport {
   tripDistance: Int!
   recordedAt: DateTime!
   memo: String
+  reportDate: DateTime!
 }
 
 type RecentDrivingRecordsConnection implements DrivingRecordsConnection {

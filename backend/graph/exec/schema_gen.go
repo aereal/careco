@@ -330,6 +330,35 @@ func (ec *executionContext) fieldContext_DailyReport_memo(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _DailyReport_reportDate(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_DailyReport_reportDate,
+		func(ctx context.Context) (any, error) {
+			return obj.ReportDate, nil
+		},
+		nil,
+		ec.marshalNDateTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_DailyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DailyReport",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DailyReportsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReportsConnection) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -368,6 +397,8 @@ func (ec *executionContext) fieldContext_DailyReportsConnection_nodes(_ context.
 				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
 			case "memo":
 				return ec.fieldContext_DailyReport_memo(ctx, field)
+			case "reportDate":
+				return ec.fieldContext_DailyReport_reportDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
 		},
@@ -524,6 +555,35 @@ func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _MonthlyReport_reportDate(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_MonthlyReport_reportDate,
+		func(ctx context.Context) (any, error) {
+			return obj.ReportDate, nil
+		},
+		nil,
+		ec.marshalNDateTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_MonthlyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MonthlyReport",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -641,6 +701,8 @@ func (ec *executionContext) fieldContext_Query_yearlyReport(ctx context.Context,
 				return ec.fieldContext_YearlyReport_odometerValue(ctx, field)
 			case "monthlyReports":
 				return ec.fieldContext_YearlyReport_monthlyReports(ctx, field)
+			case "reportDate":
+				return ec.fieldContext_YearlyReport_reportDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type YearlyReport", field.Name)
 		},
@@ -694,6 +756,8 @@ func (ec *executionContext) fieldContext_Query_monthlyReport(ctx context.Context
 				return ec.fieldContext_MonthlyReport_tripDistance(ctx, field)
 			case "dailyReports":
 				return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
+			case "reportDate":
+				return ec.fieldContext_MonthlyReport_reportDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
 		},
@@ -750,6 +814,8 @@ func (ec *executionContext) fieldContext_Query_lastReport(_ context.Context, fie
 				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
 			case "memo":
 				return ec.fieldContext_DailyReport_memo(ctx, field)
+			case "reportDate":
+				return ec.fieldContext_DailyReport_reportDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
 		},
@@ -903,6 +969,8 @@ func (ec *executionContext) fieldContext_RecentDrivingRecordsConnection_nodes(_ 
 				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
 			case "memo":
 				return ec.fieldContext_DailyReport_memo(ctx, field)
+			case "reportDate":
+				return ec.fieldContext_DailyReport_reportDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
 		},
@@ -1002,8 +1070,39 @@ func (ec *executionContext) fieldContext_YearlyReport_monthlyReports(_ context.C
 				return ec.fieldContext_MonthlyReport_tripDistance(ctx, field)
 			case "dailyReports":
 				return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
+			case "reportDate":
+				return ec.fieldContext_MonthlyReport_reportDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _YearlyReport_reportDate(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_YearlyReport_reportDate,
+		func(ctx context.Context) (any, error) {
+			return obj.ReportDate, nil
+		},
+		nil,
+		ec.marshalNDateTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_YearlyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "YearlyReport",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1249,6 +1348,11 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			}
 		case "memo":
 			out.Values[i] = ec._DailyReport_memo(ctx, field, obj)
+		case "reportDate":
+			out.Values[i] = ec._DailyReport_reportDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1440,6 +1544,11 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "reportDate":
+			out.Values[i] = ec._MonthlyReport_reportDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1774,6 +1883,11 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "reportDate":
+			out.Values[i] = ec._YearlyReport_reportDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

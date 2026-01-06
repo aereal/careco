@@ -94,6 +94,7 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 		conn.Nodes[i] = &dtos.DailyReport{
 			OdometerValue: int(record.OdometerValue),
 			RecordedAt:    record.Date,
+			ReportDate:    record.Date,
 			Memo:          record.Memo.Ptr(),
 		}
 	}
@@ -124,6 +125,7 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 		conn.Nodes[i] = &dtos.DailyReport{
 			OdometerValue: int(record.OdometerValue),
 			RecordedAt:    record.Date,
+			ReportDate:    record.Date,
 			Memo:          record.Memo.Ptr(),
 		}
 	}
@@ -131,14 +133,18 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 }
 
 func (r *queryResolver) YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error) {
-	yearlyReport := &dtos.YearlyReport{Year: year}
+	yearlyReport := &dtos.YearlyReport{
+		Year:       year,
+		ReportDate: time.Date(year, time.January, 1, 0, 0, 0, 0, time.Local),
+	}
 	return yearlyReport, nil
 }
 
 func (r *queryResolver) MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error) {
 	ret := &dtos.MonthlyReport{
-		Year:  year,
-		Month: month,
+		Year:       year,
+		Month:      month,
+		ReportDate: time.Date(year, month, 1, 0, 0, 0, 0, time.Local),
 	}
 	return ret, nil
 }
@@ -155,6 +161,7 @@ func (r *queryResolver) LastReport(ctx context.Context) (*dtos.DailyReport, erro
 	return &dtos.DailyReport{
 		OdometerValue: int(record.OdometerValue),
 		RecordedAt:    record.Date,
+		ReportDate:    record.Date,
 		Memo:          record.Memo.Ptr(),
 	}, nil
 }

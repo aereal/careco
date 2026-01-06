@@ -71,6 +71,7 @@ export default {
         <div v-else-if="data">
           <TotalDistance
             :total-distance="data.lastReport"
+            granularity="day"
             v-if="data.lastReport"
           />
           <div class="my-4">
