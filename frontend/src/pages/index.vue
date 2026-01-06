@@ -1,5 +1,6 @@
 <script lang="ts">
 import DriveRecordChart from '@/components/DriveRecordChart.vue';
+import ErrorAlert from '@/components/ErrorAlert.vue';
 import LoginButton from '@/components/LoginButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
 import RecordDialog from '@/components/RecordDialog.vue';
@@ -30,6 +31,7 @@ export default {
     TotalDistance,
     LoginButton,
     LogoutButton,
+    ErrorAlert,
   },
   setup() {
     const auth0 = useAuth0();
@@ -68,7 +70,7 @@ export default {
         </div>
       </div>
       <div v-else>
-        <div v-if="error">Error: {{ error.message }}</div>
+        <ErrorAlert :error="error" v-if="error" />
         <div v-else-if="data">
           <TotalDistance
             :total-distance="data.lastReport"

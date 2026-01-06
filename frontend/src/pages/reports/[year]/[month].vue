@@ -1,4 +1,5 @@
 <script lang="ts">
+import ErrorAlert from '@/components/ErrorAlert.vue';
 import MonthlyReport from '@/components/MonthlyReport.vue';
 import { graphql } from '@/graphql';
 import { getFirstParam } from '@/utils/get-first-param';
@@ -24,7 +25,7 @@ const queryMonthReport = graphql(`
 `);
 
 export default {
-  components: { MonthlyReport },
+  components: { MonthlyReport, ErrorAlert },
   setup() {
     const auth0 = useAuth0();
     const { params } = useRoute('/reports/[year]/[month]');
@@ -85,7 +86,7 @@ export default {
           <LoginButton />
         </div>
       </div>
-      <div v-else-if="error">Error: {{ error.message }}</div>
+      <ErrorAlert :error="error" v-else-if="error" />
       <div v-else-if="data">
         <MonthlyReport :summary="data.monthlyReport" />
       </div>
