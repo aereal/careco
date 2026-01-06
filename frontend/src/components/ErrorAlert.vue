@@ -9,6 +9,7 @@ const { error } = defineProps<{ error: Error }>();
       class="h-6 w-6 shrink-0 stroke-current"
       fill="none"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path
         stroke-linecap="round"
