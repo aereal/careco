@@ -223,19 +223,23 @@ var mockCalls = map[string]*mocks{
 				Times(1)
 		},
 	},
-	"query totalStatistics/ok": {
+	"query lastReport/ok": {
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			m.EXPECT().
-				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]())).
-				Return(&domain.DrivingRecord{OdometerValue: 45678}, nil).
+				FindRecordsInPeriod(gomock.Any(), domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(1)).
+				Return([]*domain.DrivingRecord{
+					{
+						OdometerValue: 45678,
+					},
+				}, nil).
 				Times(1)
 		},
 	},
-	"query totalStatistics/empty": {
+	"query lastReport/empty": {
 		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
 			m.EXPECT().
-				FindLastRecordInPeriod(gomock.Any(), eqTimeInterval(domain.EmptyInterval[time.Time]())).
-				Return(nil, domain.ErrDrivingRecordNotFound).
+				FindRecordsInPeriod(gomock.Any(), domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(1)).
+				Return([]*domain.DrivingRecord{}, nil).
 				Times(1)
 		},
 	},

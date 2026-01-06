@@ -8,6 +8,7 @@ import (
 
 type DistanceReport interface {
 	IsDistanceReport()
+	GetReportDate() time.Time
 }
 
 type DrivingRecordsConnection interface {
@@ -19,9 +20,11 @@ type DailyReport struct {
 	OdometerValue int       `json:"odometerValue"`
 	RecordedAt    time.Time `json:"recordedAt"`
 	Memo          *string   `json:"memo,omitempty"`
+	ReportDate    time.Time `json:"reportDate"`
 }
 
-func (DailyReport) IsDistanceReport() {}
+func (DailyReport) IsDistanceReport()             {}
+func (this DailyReport) GetReportDate() time.Time { return this.ReportDate }
 
 type DailyReportsConnection struct {
 	Nodes []*DailyReport `json:"nodes"`
@@ -40,11 +43,13 @@ func (this DailyReportsConnection) GetNodes() []*DailyReport {
 }
 
 type MonthlyReport struct {
-	Year  int        `json:"year"`
-	Month time.Month `json:"month"`
+	Year       int        `json:"year"`
+	Month      time.Month `json:"month"`
+	ReportDate time.Time  `json:"reportDate"`
 }
 
-func (MonthlyReport) IsDistanceReport() {}
+func (MonthlyReport) IsDistanceReport()             {}
+func (this MonthlyReport) GetReportDate() time.Time { return this.ReportDate }
 
 type RecentDrivingRecordsConnection struct {
 	Nodes []*DailyReport `json:"nodes"`
@@ -62,14 +67,10 @@ func (this RecentDrivingRecordsConnection) GetNodes() []*DailyReport {
 	return interfaceSlice
 }
 
-type TotalStatistics struct {
-	OdometerValue int `json:"odometerValue"`
-}
-
-func (TotalStatistics) IsDistanceReport() {}
-
 type YearlyReport struct {
-	Year int `json:"year"`
+	Year       int       `json:"year"`
+	ReportDate time.Time `json:"reportDate"`
 }
 
-func (YearlyReport) IsDistanceReport() {}
+func (YearlyReport) IsDistanceReport()             {}
+func (this YearlyReport) GetReportDate() time.Time { return this.ReportDate }

@@ -16,7 +16,7 @@ const mutationRecordDrive = graphql(`
 `);
 
 const fragmentLastOdometerValue = graphql(`
-  fragment LastOdometerValue on TotalStatistics {
+  fragment LastOdometerValue on DistanceReport {
     odometerValue
   }
 `);
@@ -24,13 +24,15 @@ const fragmentLastOdometerValue = graphql(`
 const { executeMutation: recordDrive } = useMutation(mutationRecordDrive);
 
 const props = defineProps<{
-  lastOdometerValue: FragmentType<typeof fragmentLastOdometerValue>;
+  lastOdometerValue:
+    | FragmentType<typeof fragmentLastOdometerValue>
+    | undefined
+    | null;
 }>();
 
-const { odometerValue: lastOdometerValue } = getFragmentData(
-  fragmentLastOdometerValue,
-  props.lastOdometerValue,
-);
+const { odometerValue: lastOdometerValue } = props.lastOdometerValue
+  ? getFragmentData(fragmentLastOdometerValue, props.lastOdometerValue)
+  : { odometerValue: 0 };
 
 const error = ref<string | undefined>();
 const modalOpen = ref(false);

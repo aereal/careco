@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 		Month         func(childComplexity int) int
 		OdometerValue func(childComplexity int) int
 		RecordedAt    func(childComplexity int) int
+		ReportDate    func(childComplexity int) int
 		TripDistance  func(childComplexity int) int
 		Year          func(childComplexity int) int
 	}
@@ -62,6 +63,7 @@ type ComplexityRoot struct {
 		DailyReports  func(childComplexity int) int
 		Month         func(childComplexity int) int
 		OdometerValue func(childComplexity int) int
+		ReportDate    func(childComplexity int) int
 		TripDistance  func(childComplexity int) int
 		Year          func(childComplexity int) int
 	}
@@ -71,9 +73,9 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		LastReport           func(childComplexity int) int
 		MonthlyReport        func(childComplexity int, year int, month time.Month) int
 		RecentDrivingRecords func(childComplexity int, first int) int
-		TotalStatistics      func(childComplexity int) int
 		YearlyReport         func(childComplexity int, year int) int
 	}
 
@@ -81,13 +83,10 @@ type ComplexityRoot struct {
 		Nodes func(childComplexity int) int
 	}
 
-	TotalStatistics struct {
-		OdometerValue func(childComplexity int) int
-	}
-
 	YearlyReport struct {
 		MonthlyReports func(childComplexity int) int
 		OdometerValue  func(childComplexity int) int
+		ReportDate     func(childComplexity int) int
 		Year           func(childComplexity int) int
 	}
 }
@@ -146,6 +145,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DailyReport.RecordedAt(childComplexity), true
 
+	case "DailyReport.reportDate":
+		if e.complexity.DailyReport.ReportDate == nil {
+			break
+		}
+
+		return e.complexity.DailyReport.ReportDate(childComplexity), true
+
 	case "DailyReport.tripDistance":
 		if e.complexity.DailyReport.TripDistance == nil {
 			break
@@ -188,6 +194,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.MonthlyReport.OdometerValue(childComplexity), true
 
+	case "MonthlyReport.reportDate":
+		if e.complexity.MonthlyReport.ReportDate == nil {
+			break
+		}
+
+		return e.complexity.MonthlyReport.ReportDate(childComplexity), true
+
 	case "MonthlyReport.tripDistance":
 		if e.complexity.MonthlyReport.TripDistance == nil {
 			break
@@ -214,6 +227,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string)), true
 
+	case "Query.lastReport":
+		if e.complexity.Query.LastReport == nil {
+			break
+		}
+
+		return e.complexity.Query.LastReport(childComplexity), true
+
 	case "Query.monthlyReport":
 		if e.complexity.Query.MonthlyReport == nil {
 			break
@@ -238,13 +258,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.RecentDrivingRecords(childComplexity, args["first"].(int)), true
 
-	case "Query.totalStatistics":
-		if e.complexity.Query.TotalStatistics == nil {
-			break
-		}
-
-		return e.complexity.Query.TotalStatistics(childComplexity), true
-
 	case "Query.yearlyReport":
 		if e.complexity.Query.YearlyReport == nil {
 			break
@@ -264,13 +277,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.RecentDrivingRecordsConnection.Nodes(childComplexity), true
 
-	case "TotalStatistics.odometerValue":
-		if e.complexity.TotalStatistics.OdometerValue == nil {
-			break
-		}
-
-		return e.complexity.TotalStatistics.OdometerValue(childComplexity), true
-
 	case "YearlyReport.monthlyReports":
 		if e.complexity.YearlyReport.MonthlyReports == nil {
 			break
@@ -284,6 +290,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.YearlyReport.OdometerValue(childComplexity), true
+
+	case "YearlyReport.reportDate":
+		if e.complexity.YearlyReport.ReportDate == nil {
+			break
+		}
+
+		return e.complexity.YearlyReport.ReportDate(childComplexity), true
 
 	case "YearlyReport.year":
 		if e.complexity.YearlyReport.Year == nil {
@@ -419,16 +432,14 @@ interface DrivingRecordsConnection {
 
 interface DistanceReport {
   odometerValue: Int!
-}
-
-type TotalStatistics implements DistanceReport {
-  odometerValue: Int!
+  reportDate: DateTime!
 }
 
 type YearlyReport implements DistanceReport {
   year: Int!
   odometerValue: Int!
   monthlyReports: [MonthlyReport!]!
+  reportDate: DateTime!
 }
 
 type MonthlyReport implements DistanceReport {
@@ -437,6 +448,7 @@ type MonthlyReport implements DistanceReport {
   odometerValue: Int!
   tripDistance: Int!
   dailyReports: DailyReportsConnection!
+  reportDate: DateTime!
 }
 
 type DailyReport implements DistanceReport {
@@ -447,6 +459,7 @@ type DailyReport implements DistanceReport {
   tripDistance: Int!
   recordedAt: DateTime!
   memo: String
+  reportDate: DateTime!
 }
 
 type RecentDrivingRecordsConnection implements DrivingRecordsConnection {
@@ -458,10 +471,10 @@ type DailyReportsConnection implements DrivingRecordsConnection {
 }
 
 type Query {
-  totalStatistics: TotalStatistics!
   recentDrivingRecords(first: Int!): RecentDrivingRecordsConnection!
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
+  lastReport: DailyReport
 }
 
 type Mutation {
