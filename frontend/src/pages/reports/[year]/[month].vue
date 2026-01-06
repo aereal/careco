@@ -77,13 +77,14 @@ export default {
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="p-4">
-      <div v-if="authOngoing">...</div>
+      <div class="w-full" v-if="authOngoing || queryFetching">
+        <div class="w-full loading loading-spinner loading-xl" />
+      </div>
       <div v-else-if="!isAuthenticated">
         <div v-if="!isAuthenticated">
           <LoginButton />
         </div>
       </div>
-      <div v-else-if="queryFetching">Loading...</div>
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div v-else-if="data">
         <MonthlyReport :summary="data.monthlyReport" />
