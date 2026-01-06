@@ -1,5 +1,6 @@
 <script lang="ts">
 import DriveRecordChart from '@/components/DriveRecordChart.vue';
+import ErrorAlert from '@/components/ErrorAlert.vue';
 import LoginButton from '@/components/LoginButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
 import RecordDialog from '@/components/RecordDialog.vue';
@@ -30,6 +31,7 @@ export default {
     TotalDistance,
     LoginButton,
     LogoutButton,
+    ErrorAlert,
   },
   setup() {
     const auth0 = useAuth0();
@@ -59,15 +61,16 @@ export default {
 <template>
   <div class="max-w-2xl mx-auto">
     <div class="p-4">
-      <div v-if="authOngoing">...</div>
+      <div class="w-full" v-if="authOngoing || queryFetching">
+        <div class="w-full loading loading-spinner loading-xl" />
+      </div>
       <div v-else-if="!isAuthenticated">
         <div v-if="!isAuthenticated">
           <LoginButton />
         </div>
       </div>
-      <div v-else-if="queryFetching">Loading...</div>
       <div v-else>
-        <div v-if="error">Error: {{ error.message }}</div>
+        <ErrorAlert :error="error" v-if="error" />
         <div v-else-if="data">
           <TotalDistance
             :total-distance="data.lastReport"
