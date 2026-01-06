@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const { error } = defineProps<{ error: Error }>();
+interface ErrorLike {
+  message: string;
+}
+
+const { error } = defineProps<{ error: ErrorLike }>();
 </script>
 
 <template>
