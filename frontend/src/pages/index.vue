@@ -25,7 +25,6 @@ const queryGetRoot = graphql(`
 
 export default {
   components: {
-    DriveRecordChart,
     RecordDialog,
     SelectMonth,
     TotalDistance,

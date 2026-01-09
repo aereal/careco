@@ -1,4 +1,4 @@
-import Chart from './Chart.vue';
+import TabContainer from './TabContainer.vue';
 
 export { fragmentChartDataSeries } from './fragment.chart-data-series';
-export { Chart as DriveRecordSeries };
+export { TabContainer as DriveRecordSeries };
