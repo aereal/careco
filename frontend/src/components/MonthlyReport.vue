@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DriveRecordChart from '@/components/DriveRecordChart.vue';
+import { DriveRecordSeries } from '@/components/DriveRecordSeries';
 import TotalDistance from '@/components/TotalDistance.vue';
 import { getFragmentData, graphql, type FragmentType } from '@/graphql';
 import { numberOf } from '@/utils/month';
@@ -28,7 +28,7 @@ const summary = getFragmentData(fragmentMonthlySummary, props.summary);
     </h1>
     <TotalDistance :total-distance="summary" granularity="month" />
     <div class="my-8 h-[70vh]">
-      <DriveRecordChart :data="summary.dailyReports" />
+      <DriveRecordSeries :data="summary.dailyReports" />
     </div>
   </div>
 </template>

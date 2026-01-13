@@ -1,5 +1,5 @@
 <script lang="ts">
-import DriveRecordChart from '@/components/DriveRecordChart.vue';
+import { DriveRecordSeries } from '@/components/DriveRecordSeries';
 import ErrorAlert from '@/components/ErrorAlert.vue';
 import LoginButton from '@/components/LoginButton.vue';
 import LogoutButton from '@/components/LogoutButton.vue';
@@ -25,13 +25,13 @@ const queryGetRoot = graphql(`
 
 export default {
   components: {
-    DriveRecordChart,
     RecordDialog,
     SelectMonth,
     TotalDistance,
     LoginButton,
     LogoutButton,
     ErrorAlert,
+    DriveRecordSeries,
   },
   setup() {
     const auth0 = useAuth0();
@@ -84,7 +84,7 @@ export default {
           <div class="my-8">
             <h1 class="font-bold text-lg -mb-4">最近の記録</h1>
             <div class="my-8 h-[60vh]">
-              <DriveRecordChart :data="data.recentDrivingRecords" />
+              <DriveRecordSeries :data="data.recentDrivingRecords" />
             </div>
           </div>
           <RecordDialog

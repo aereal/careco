@@ -1,17 +1,3 @@
-<script lang="ts">
-import { graphql } from '@/graphql';
-
-export const fragmentChartDataSeries = graphql(`
-  fragment ChartDataSeries on DrivingRecordsConnection {
-    nodes {
-      odometerValue
-      recordedAt
-      tripDistance
-    }
-  }
-`);
-</script>
-
 <script setup lang="ts">
 import { getFragmentData, type FragmentType } from '@/graphql';
 import { format } from 'date-fns/format';
@@ -25,6 +11,7 @@ import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
 import { computed } from 'vue';
 import VChart from 'vue-echarts';
+import { fragmentChartDataSeries } from './fragment.chart-data-series';
 
 use([
   SVGRenderer,
