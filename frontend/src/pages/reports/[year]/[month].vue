@@ -9,6 +9,8 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import type { ResultOf } from '@graphql-typed-document-node/core';
 import { Result } from '@praha/byethrow';
 import { CombinedError, useQuery } from '@urql/vue';
+import { useTitle } from '@vueuse/core';
+import { format } from 'date-fns/format';
 import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -35,6 +37,9 @@ export default {
         month: getFirstParam('month', params.month),
       }),
       Result.andThen(parseDateParams),
+      Result.inspect((date) => {
+        useTitle(`${format(date, 'yyyy/MM')}の走行記録`);
+      }),
       Result.andThen((date) =>
         Result.sequence({
           year: Result.succeed(date.getFullYear()),
