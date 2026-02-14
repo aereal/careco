@@ -9,6 +9,7 @@ import TotalDistance from '@/components/TotalDistance.vue';
 import { graphql } from '@/graphql';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useQuery } from '@urql/vue';
+import { useTitle } from '@vueuse/core';
 import { computed } from 'vue';
 
 const queryGetRoot = graphql(`
@@ -34,6 +35,7 @@ export default {
     DriveRecordSeries,
   },
   setup() {
+    useTitle('Careco');
     const auth0 = useAuth0();
 
     const { fetching, data, error, executeQuery } = useQuery({
