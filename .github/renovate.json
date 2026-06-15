@@ -3,5 +3,37 @@
   "extends": [
     "github>aereal/renovate-config",
     "github>aquaproj/aqua-renovate-config#2.9.0"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "matchStrings": [
+        "uses: 'google-github-actions/setup-gcloud[^']*'[^\\n]*\\n\\s+with:\\n\\s+version: '(?<currentValue>[^']+)'"
+      ],
+      "depNameTemplate": "google/cloud-sdk",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "matchStrings": [
+        "uses: ko-build/setup-ko[^\\n]*\\n\\s+with:\\n\\s+version: (?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "ko-build/ko",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "matchStrings": [
+        "uses: k1LoW/octocov-action[^\\n]*\\n\\s+with:\\n\\s+version: (?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "k1LoW/octocov",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    }
   ]
 }
