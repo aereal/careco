@@ -2,12 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>aereal/renovate-config",
-    "github>aquaproj/aqua-renovate-config#2.9.0"
+    "github>aquaproj/aqua-renovate-config#2.13.0"
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "managerFilePatterns": ["/^\\.github/workflows/.*\\.ya?ml$/"],
       "matchStrings": [
         "uses: 'google-github-actions/setup-gcloud[^']*'[^\\n]*\\n\\s+with:\\n\\s+version: '(?<currentValue>[^']+)'"
       ],
@@ -17,7 +17,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "managerFilePatterns": ["/^\\.github/workflows/.*\\.ya?ml$/"],
       "matchStrings": [
         "uses: ko-build/setup-ko[^\\n]*\\n\\s+with:\\n\\s+version: (?<currentValue>\\S+)"
       ],
@@ -27,7 +27,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "managerFilePatterns": ["/^\\.github/workflows/.*\\.ya?ml$/"],
       "matchStrings": [
         "uses: k1LoW/octocov-action[^\\n]*\\n\\s+with:\\n\\s+version: (?<currentValue>\\S+)"
       ],
