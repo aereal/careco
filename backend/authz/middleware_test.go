@@ -350,7 +350,7 @@ var (
 				},
 			},
 			{
-				Name:     "default",
+				Name:     "GET",
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
 					attribute.Int64("http.response.status_code", 200),
@@ -366,7 +366,7 @@ var (
 		},
 		malformedToken: tracetest.SpanStubs{
 			{
-				Name:     "default",
+				Name:     "GET",
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
 					attribute.Int64("http.response.body.size", 31),
@@ -386,7 +386,7 @@ var (
 		},
 		unexpectedAuthScheme: tracetest.SpanStubs{
 			{
-				Name:     "default",
+				Name:     "GET",
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
 					attribute.Int64("http.response.body.size", 31),
@@ -414,7 +414,7 @@ var (
 				},
 			},
 			{
-				Name:     "default",
+				Name:     "GET",
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
 					attribute.Int64("http.response.body.size", 31),
@@ -434,7 +434,7 @@ var (
 		},
 		noHeader: tracetest.SpanStubs{
 			{
-				Name:     "default",
+				Name:     "GET",
 				SpanKind: trace.SpanKindServer,
 				Attributes: append(commonRequestSpanAttrs,
 					attribute.Int64("http.response.body.size", 35),
