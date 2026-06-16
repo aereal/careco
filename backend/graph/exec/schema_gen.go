@@ -7,14 +7,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
-	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/vektah/gqlparser/v2/ast"
-	"golang.org/x/sync/semaphore"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -52,17 +52,26 @@ type YearlyReportResolver interface {
 func (ec *executionContext) field_Mutation_recordDrivingRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "date", ec.unmarshalNDateTime2timeᚐTime)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "date",
+		func(ctx context.Context, v any) (time.Time, error) {
+			return ec.unmarshalNDateTime2timeᚐTime(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["date"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "odometerValue", ec.unmarshalNInt2int)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "odometerValue",
+		func(ctx context.Context, v any) (int, error) {
+			return ec.unmarshalNInt2int(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["odometerValue"] = arg1
-	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "memo", ec.unmarshalOString2ᚖstring)
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "memo",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +82,10 @@ func (ec *executionContext) field_Mutation_recordDrivingRecord_args(ctx context.
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "name", ec.unmarshalNString2string)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "name",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNString2string(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -84,12 +96,18 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_monthlyReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "year", ec.unmarshalNInt2int)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "year",
+		func(ctx context.Context, v any) (int, error) {
+			return ec.unmarshalNInt2int(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["year"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "month", ec.unmarshalNMonth2timeᚐMonth)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "month",
+		func(ctx context.Context, v any) (time.Month, error) {
+			return ec.unmarshalNMonth2timeᚐMonth(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +118,10 @@ func (ec *executionContext) field_Query_monthlyReport_args(ctx context.Context, 
 func (ec *executionContext) field_Query_recentDrivingRecords_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "first", ec.unmarshalNInt2int)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "first",
+		func(ctx context.Context, v any) (int, error) {
+			return ec.unmarshalNInt2int(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +132,10 @@ func (ec *executionContext) field_Query_recentDrivingRecords_args(ctx context.Co
 func (ec *executionContext) field_Query_yearlyReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "year", ec.unmarshalNInt2int)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "year",
+		func(ctx context.Context, v any) (int, error) {
+			return ec.unmarshalNInt2int(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -121,10 +145,6 @@ func (ec *executionContext) field_Query_yearlyReport_args(ctx context.Context, r
 
 // endregion ***************************** args.gotpl *****************************
 
-// region    ************************** directives.gotpl **************************
-
-// endregion ************************** directives.gotpl **************************
-
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _DailyReport_year(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -132,28 +152,22 @@ func (ec *executionContext) _DailyReport_year(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_year,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_year(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.DailyReport().Year(ctx, obj)
+			return ec.Resolvers.DailyReport().Year(ctx, obj)
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_month(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -161,28 +175,22 @@ func (ec *executionContext) _DailyReport_month(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_month,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_month(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.DailyReport().Month(ctx, obj)
+			return ec.Resolvers.DailyReport().Month(ctx, obj)
 		},
 		nil,
-		ec.marshalNMonth2timeᚐMonth,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Month) graphql.Marshaler {
+			return ec.marshalNMonth2timeᚐMonth(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_month(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Month does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Month does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_day(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -190,28 +198,22 @@ func (ec *executionContext) _DailyReport_day(ctx context.Context, field graphql.
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_day,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_day(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.DailyReport().Day(ctx, obj)
+			return ec.Resolvers.DailyReport().Day(ctx, obj)
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_odometerValue(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -219,28 +221,22 @@ func (ec *executionContext) _DailyReport_odometerValue(ctx context.Context, fiel
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_odometerValue,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_odometerValue(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.OdometerValue, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_odometerValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_tripDistance(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -248,28 +244,22 @@ func (ec *executionContext) _DailyReport_tripDistance(ctx context.Context, field
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_tripDistance,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_tripDistance(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.DailyReport().TripDistance(ctx, obj)
+			return ec.Resolvers.DailyReport().TripDistance(ctx, obj)
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_tripDistance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_recordedAt(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -277,28 +267,22 @@ func (ec *executionContext) _DailyReport_recordedAt(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_recordedAt,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_recordedAt(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.RecordedAt, nil
 		},
 		nil,
-		ec.marshalNDateTime2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_recordedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_memo(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -306,28 +290,22 @@ func (ec *executionContext) _DailyReport_memo(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_memo,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_memo(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Memo, nil
 		},
 		nil,
-		ec.marshalOString2ᚖstring,
+		func(ctx context.Context, selections ast.SelectionSet, v *string) graphql.Marshaler {
+			return ec.marshalOString2ᚖstring(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_memo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type String does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReport_reportDate(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -335,28 +313,22 @@ func (ec *executionContext) _DailyReport_reportDate(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReport_reportDate,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_reportDate(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ReportDate, nil
 		},
 		nil,
-		ec.marshalNDateTime2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "DailyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
 }
 
 func (ec *executionContext) _DailyReportsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReportsConnection) (ret graphql.Marshaler) {
@@ -364,17 +336,20 @@ func (ec *executionContext) _DailyReportsConnection_nodes(ctx context.Context, f
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_DailyReportsConnection_nodes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReportsConnection_nodes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Nodes, nil
 		},
 		nil,
-		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*dtos.DailyReport) graphql.Marshaler {
+			return ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_DailyReportsConnection_nodes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DailyReportsConnection",
@@ -382,25 +357,7 @@ func (ec *executionContext) fieldContext_DailyReportsConnection_nodes(_ context.
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_DailyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_DailyReport_month(ctx, field)
-			case "day":
-				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "odometerValue":
-				return ec.fieldContext_DailyReport_odometerValue(ctx, field)
-			case "tripDistance":
-				return ec.fieldContext_DailyReport_tripDistance(ctx, field)
-			case "recordedAt":
-				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
-			case "memo":
-				return ec.fieldContext_DailyReport_memo(ctx, field)
-			case "reportDate":
-				return ec.fieldContext_DailyReport_reportDate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+			return ec.childFields_DailyReport(ctx, field)
 		},
 	}
 	return fc, nil
@@ -411,28 +368,22 @@ func (ec *executionContext) _MonthlyReport_year(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_year,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MonthlyReport_year(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Year, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_MonthlyReport_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MonthlyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _MonthlyReport_month(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -440,28 +391,22 @@ func (ec *executionContext) _MonthlyReport_month(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_month,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MonthlyReport_month(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Month, nil
 		},
 		nil,
-		ec.marshalNMonth2timeᚐMonth,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Month) graphql.Marshaler {
+			return ec.marshalNMonth2timeᚐMonth(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_MonthlyReport_month(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MonthlyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Month does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, errors.New("field of type Month does not have child fields"))
 }
 
 func (ec *executionContext) _MonthlyReport_odometerValue(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -469,28 +414,22 @@ func (ec *executionContext) _MonthlyReport_odometerValue(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_odometerValue,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MonthlyReport_odometerValue(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.MonthlyReport().OdometerValue(ctx, obj)
+			return ec.Resolvers.MonthlyReport().OdometerValue(ctx, obj)
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_MonthlyReport_odometerValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MonthlyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("MonthlyReport", field, true, true, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _MonthlyReport_tripDistance(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -498,28 +437,22 @@ func (ec *executionContext) _MonthlyReport_tripDistance(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_tripDistance,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MonthlyReport_tripDistance(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.MonthlyReport().TripDistance(ctx, obj)
+			return ec.Resolvers.MonthlyReport().TripDistance(ctx, obj)
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_MonthlyReport_tripDistance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MonthlyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("MonthlyReport", field, true, true, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -527,17 +460,20 @@ func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_dailyReports,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.MonthlyReport().DailyReports(ctx, obj)
+			return ec.Resolvers.MonthlyReport().DailyReports(ctx, obj)
 		},
 		nil,
-		ec.marshalNDailyReportsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.DailyReportsConnection) graphql.Marshaler {
+			return ec.marshalNDailyReportsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MonthlyReport",
@@ -545,11 +481,7 @@ func (ec *executionContext) fieldContext_MonthlyReport_dailyReports(_ context.Co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "nodes":
-				return ec.fieldContext_DailyReportsConnection_nodes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReportsConnection", field.Name)
+			return ec.childFields_DailyReportsConnection(ctx, field)
 		},
 	}
 	return fc, nil
@@ -560,28 +492,22 @@ func (ec *executionContext) _MonthlyReport_reportDate(ctx context.Context, field
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MonthlyReport_reportDate,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_MonthlyReport_reportDate(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ReportDate, nil
 		},
 		nil,
-		ec.marshalNDateTime2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_MonthlyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "MonthlyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
 }
 
 func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -589,18 +515,21 @@ func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, f
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_recordDrivingRecord,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_recordDrivingRecord(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(time.Time), fc.Args["odometerValue"].(int), fc.Args["memo"].(*string))
+			return ec.Resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(time.Time), fc.Args["odometerValue"].(int), fc.Args["memo"].(*string))
 		},
 		nil,
-		ec.marshalNBoolean2bool,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_recordDrivingRecord(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -630,18 +559,21 @@ func (ec *executionContext) _Query_recentDrivingRecords(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query_recentDrivingRecords,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_recentDrivingRecords(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().RecentDrivingRecords(ctx, fc.Args["first"].(int))
+			return ec.Resolvers.Query().RecentDrivingRecords(ctx, fc.Args["first"].(int))
 		},
 		nil,
-		ec.marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
+			return ec.marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Query_recentDrivingRecords(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
@@ -649,11 +581,7 @@ func (ec *executionContext) fieldContext_Query_recentDrivingRecords(ctx context.
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "nodes":
-				return ec.fieldContext_RecentDrivingRecordsConnection_nodes(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type RecentDrivingRecordsConnection", field.Name)
+			return ec.childFields_RecentDrivingRecordsConnection(ctx, field)
 		},
 	}
 	defer func() {
@@ -675,18 +603,21 @@ func (ec *executionContext) _Query_yearlyReport(ctx context.Context, field graph
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query_yearlyReport,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_yearlyReport(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().YearlyReport(ctx, fc.Args["year"].(int))
+			return ec.Resolvers.Query().YearlyReport(ctx, fc.Args["year"].(int))
 		},
 		nil,
-		ec.marshalNYearlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐYearlyReport,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.YearlyReport) graphql.Marshaler {
+			return ec.marshalNYearlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐYearlyReport(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Query_yearlyReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
@@ -694,17 +625,7 @@ func (ec *executionContext) fieldContext_Query_yearlyReport(ctx context.Context,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_YearlyReport_year(ctx, field)
-			case "odometerValue":
-				return ec.fieldContext_YearlyReport_odometerValue(ctx, field)
-			case "monthlyReports":
-				return ec.fieldContext_YearlyReport_monthlyReports(ctx, field)
-			case "reportDate":
-				return ec.fieldContext_YearlyReport_reportDate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type YearlyReport", field.Name)
+			return ec.childFields_YearlyReport(ctx, field)
 		},
 	}
 	defer func() {
@@ -726,18 +647,21 @@ func (ec *executionContext) _Query_monthlyReport(ctx context.Context, field grap
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query_monthlyReport,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_monthlyReport(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().MonthlyReport(ctx, fc.Args["year"].(int), fc.Args["month"].(time.Month))
+			return ec.Resolvers.Query().MonthlyReport(ctx, fc.Args["year"].(int), fc.Args["month"].(time.Month))
 		},
 		nil,
-		ec.marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.MonthlyReport) graphql.Marshaler {
+			return ec.marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_Query_monthlyReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
@@ -745,21 +669,7 @@ func (ec *executionContext) fieldContext_Query_monthlyReport(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_MonthlyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_MonthlyReport_month(ctx, field)
-			case "odometerValue":
-				return ec.fieldContext_MonthlyReport_odometerValue(ctx, field)
-			case "tripDistance":
-				return ec.fieldContext_MonthlyReport_tripDistance(ctx, field)
-			case "dailyReports":
-				return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
-			case "reportDate":
-				return ec.fieldContext_MonthlyReport_reportDate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
+			return ec.childFields_MonthlyReport(ctx, field)
 		},
 	}
 	defer func() {
@@ -781,17 +691,20 @@ func (ec *executionContext) _Query_lastReport(ctx context.Context, field graphql
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query_lastReport,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_lastReport(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Query().LastReport(ctx)
+			return ec.Resolvers.Query().LastReport(ctx)
 		},
 		nil,
-		ec.marshalODailyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReport,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.DailyReport) graphql.Marshaler {
+			return ec.marshalODailyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReport(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Query_lastReport(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
@@ -799,25 +712,7 @@ func (ec *executionContext) fieldContext_Query_lastReport(_ context.Context, fie
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_DailyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_DailyReport_month(ctx, field)
-			case "day":
-				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "odometerValue":
-				return ec.fieldContext_DailyReport_odometerValue(ctx, field)
-			case "tripDistance":
-				return ec.fieldContext_DailyReport_tripDistance(ctx, field)
-			case "recordedAt":
-				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
-			case "memo":
-				return ec.fieldContext_DailyReport_memo(ctx, field)
-			case "reportDate":
-				return ec.fieldContext_DailyReport_reportDate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+			return ec.childFields_DailyReport(ctx, field)
 		},
 	}
 	return fc, nil
@@ -828,18 +723,21 @@ func (ec *executionContext) _Query___type(ctx context.Context, field graphql.Col
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query___type,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query___type(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.introspectType(fc.Args["name"].(string))
+			return ec.IntrospectType(fc.Args["name"].(string))
 		},
 		nil,
-		ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType,
+		func(ctx context.Context, selections ast.SelectionSet, v *introspection.Type) graphql.Marshaler {
+			return ec.marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
@@ -847,31 +745,7 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 		IsMethod:   true,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "kind":
-				return ec.fieldContext___Type_kind(ctx, field)
-			case "name":
-				return ec.fieldContext___Type_name(ctx, field)
-			case "description":
-				return ec.fieldContext___Type_description(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
-			case "fields":
-				return ec.fieldContext___Type_fields(ctx, field)
-			case "interfaces":
-				return ec.fieldContext___Type_interfaces(ctx, field)
-			case "possibleTypes":
-				return ec.fieldContext___Type_possibleTypes(ctx, field)
-			case "enumValues":
-				return ec.fieldContext___Type_enumValues(ctx, field)
-			case "inputFields":
-				return ec.fieldContext___Type_inputFields(ctx, field)
-			case "ofType":
-				return ec.fieldContext___Type_ofType(ctx, field)
-			case "isOneOf":
-				return ec.fieldContext___Type_isOneOf(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
+			return ec.childFields___Type(ctx, field)
 		},
 	}
 	defer func() {
@@ -893,17 +767,20 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Query___schema,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query___schema(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.introspectSchema()
+			return ec.IntrospectSchema()
 		},
 		nil,
-		ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema,
+		func(ctx context.Context, selections ast.SelectionSet, v *introspection.Schema) graphql.Marshaler {
+			return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
@@ -911,21 +788,7 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 		IsMethod:   true,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "description":
-				return ec.fieldContext___Schema_description(ctx, field)
-			case "types":
-				return ec.fieldContext___Schema_types(ctx, field)
-			case "queryType":
-				return ec.fieldContext___Schema_queryType(ctx, field)
-			case "mutationType":
-				return ec.fieldContext___Schema_mutationType(ctx, field)
-			case "subscriptionType":
-				return ec.fieldContext___Schema_subscriptionType(ctx, field)
-			case "directives":
-				return ec.fieldContext___Schema_directives(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+			return ec.childFields___Schema(ctx, field)
 		},
 	}
 	return fc, nil
@@ -936,17 +799,20 @@ func (ec *executionContext) _RecentDrivingRecordsConnection_nodes(ctx context.Co
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_RecentDrivingRecordsConnection_nodes,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_RecentDrivingRecordsConnection_nodes(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Nodes, nil
 		},
 		nil,
-		ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*dtos.DailyReport) graphql.Marshaler {
+			return ec.marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_RecentDrivingRecordsConnection_nodes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RecentDrivingRecordsConnection",
@@ -954,25 +820,7 @@ func (ec *executionContext) fieldContext_RecentDrivingRecordsConnection_nodes(_ 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_DailyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_DailyReport_month(ctx, field)
-			case "day":
-				return ec.fieldContext_DailyReport_day(ctx, field)
-			case "odometerValue":
-				return ec.fieldContext_DailyReport_odometerValue(ctx, field)
-			case "tripDistance":
-				return ec.fieldContext_DailyReport_tripDistance(ctx, field)
-			case "recordedAt":
-				return ec.fieldContext_DailyReport_recordedAt(ctx, field)
-			case "memo":
-				return ec.fieldContext_DailyReport_memo(ctx, field)
-			case "reportDate":
-				return ec.fieldContext_DailyReport_reportDate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+			return ec.childFields_DailyReport(ctx, field)
 		},
 	}
 	return fc, nil
@@ -983,28 +831,22 @@ func (ec *executionContext) _YearlyReport_year(ctx context.Context, field graphq
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_YearlyReport_year,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_YearlyReport_year(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.Year, nil
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_YearlyReport_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "YearlyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("YearlyReport", field, false, false, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _YearlyReport_odometerValue(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
@@ -1012,28 +854,22 @@ func (ec *executionContext) _YearlyReport_odometerValue(ctx context.Context, fie
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_YearlyReport_odometerValue,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_YearlyReport_odometerValue(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.YearlyReport().OdometerValue(ctx, obj)
+			return ec.Resolvers.YearlyReport().OdometerValue(ctx, obj)
 		},
 		nil,
-		ec.marshalNInt2int,
+		func(ctx context.Context, selections ast.SelectionSet, v int) graphql.Marshaler {
+			return ec.marshalNInt2int(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_YearlyReport_odometerValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "YearlyReport",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("YearlyReport", field, true, true, errors.New("field of type Int does not have child fields"))
 }
 
 func (ec *executionContext) _YearlyReport_monthlyReports(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
@@ -1041,17 +877,20 @@ func (ec *executionContext) _YearlyReport_monthlyReports(ctx context.Context, fi
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_YearlyReport_monthlyReports,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_YearlyReport_monthlyReports(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
-			return ec.resolvers.YearlyReport().MonthlyReports(ctx, obj)
+			return ec.Resolvers.YearlyReport().MonthlyReports(ctx, obj)
 		},
 		nil,
-		ec.marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReportᚄ,
+		func(ctx context.Context, selections ast.SelectionSet, v []*dtos.MonthlyReport) graphql.Marshaler {
+			return ec.marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReportᚄ(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_YearlyReport_monthlyReports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "YearlyReport",
@@ -1059,21 +898,7 @@ func (ec *executionContext) fieldContext_YearlyReport_monthlyReports(_ context.C
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "year":
-				return ec.fieldContext_MonthlyReport_year(ctx, field)
-			case "month":
-				return ec.fieldContext_MonthlyReport_month(ctx, field)
-			case "odometerValue":
-				return ec.fieldContext_MonthlyReport_odometerValue(ctx, field)
-			case "tripDistance":
-				return ec.fieldContext_MonthlyReport_tripDistance(ctx, field)
-			case "dailyReports":
-				return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
-			case "reportDate":
-				return ec.fieldContext_MonthlyReport_reportDate(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
+			return ec.childFields_MonthlyReport(ctx, field)
 		},
 	}
 	return fc, nil
@@ -1084,28 +909,22 @@ func (ec *executionContext) _YearlyReport_reportDate(ctx context.Context, field 
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_YearlyReport_reportDate,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_YearlyReport_reportDate(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			return obj.ReportDate, nil
 		},
 		nil,
-		ec.marshalNDateTime2timeᚐTime,
+		func(ctx context.Context, selections ast.SelectionSet, v time.Time) graphql.Marshaler {
+			return ec.marshalNDateTime2timeᚐTime(ctx, selections, v)
+		},
 		true,
 		true,
 	)
 }
-
 func (ec *executionContext) fieldContext_YearlyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "YearlyReport",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
+	return graphql.NewScalarFieldContext("YearlyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
 }
 
 // endregion **************************** field.gotpl *****************************
@@ -1142,8 +961,8 @@ func (ec *executionContext) _DistanceReport(ctx context.Context, sel ast.Selecti
 		}
 		return ec._DailyReport(ctx, sel, obj)
 	default:
-		if obj, ok := obj.(graphql.Marshaler); ok {
-			return obj
+		if typedObj, ok := obj.(graphql.Marshaler); ok {
+			return typedObj
 		} else {
 			panic(fmt.Errorf("unexpected type %T; non-generated variants of DistanceReport must implement graphql.Marshaler", obj))
 		}
@@ -1169,8 +988,8 @@ func (ec *executionContext) _DrivingRecordsConnection(ctx context.Context, sel a
 		}
 		return ec._DailyReportsConnection(ctx, sel, obj)
 	default:
-		if obj, ok := obj.(graphql.Marshaler); ok {
-			return obj
+		if typedObj, ok := obj.(graphql.Marshaler); ok {
+			return typedObj
 		} else {
 			panic(fmt.Errorf("unexpected type %T; non-generated variants of DrivingRecordsConnection must implement graphql.Marshaler", obj))
 		}
@@ -1348,6 +1167,9 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			}
 		case "memo":
 			out.Values[i] = ec._DailyReport_memo(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "reportDate":
 			out.Values[i] = ec._DailyReport_reportDate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1362,10 +1184,10 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1401,10 +1223,10 @@ func (ec *executionContext) _DailyReportsConnection(ctx context.Context, sel ast
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1558,10 +1380,10 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1607,10 +1429,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1709,13 +1531,16 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "lastReport":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Query_lastReport(ctx, field)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -1729,10 +1554,16 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "__schema":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1742,10 +1573,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1781,10 +1612,10 @@ func (ec *executionContext) _RecentDrivingRecordsConnection(ctx context.Context,
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1897,10 +1728,10 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferred), math.MaxInt32)))
 
 	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
+		ec.ProcessDeferredGroup(graphql.DeferredGroup{
 			Label:    label,
 			Path:     graphql.GetPath(ctx),
 			FieldSet: dfs,
@@ -1916,47 +1747,11 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 // region    ***************************** type.gotpl *****************************
 
 func (ec *executionContext) marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportᚄ(ctx context.Context, sel ast.SelectionSet, v []*dtos.DailyReport) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	sm := semaphore.NewWeighted(1000)
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer func() {
-					sm.Release(1)
-					wg.Done()
-				}()
-			}
-			ret[i] = ec.marshalNDailyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReport(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			if err := sm.Acquire(ctx, 1); err != nil {
-				ec.Error(ctx, ctx.Err())
-			} else {
-				go f(i)
-			}
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 1000, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNDailyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReport(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
@@ -2028,47 +1823,11 @@ func (ec *executionContext) marshalNMonthlyReport2carecoᚋbackendᚋgraphᚋdto
 }
 
 func (ec *executionContext) marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReportᚄ(ctx context.Context, sel ast.SelectionSet, v []*dtos.MonthlyReport) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	sm := semaphore.NewWeighted(1000)
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer func() {
-					sm.Release(1)
-					wg.Done()
-				}()
-			}
-			ret[i] = ec.marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			if err := sm.Acquire(ctx, 1); err != nil {
-				ec.Error(ctx, ctx.Err())
-			} else {
-				go f(i)
-			}
-		}
-
-	}
-	wg.Wait()
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 1000, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport(ctx, sel, v[i])
+	})
 
 	for _, e := range ret {
 		if e == graphql.Null {
