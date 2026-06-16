@@ -5,32 +5,21 @@ package exec
 import (
 	"bytes"
 	"context"
-	"errors"
+	"fmt"
 	"sync/atomic"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
 // NewExecutableSchema creates an ExecutableSchema from the ResolverRoot interface.
 func NewExecutableSchema(cfg Config) graphql.ExecutableSchema {
-	return &executableSchema{
-		schema:     cfg.Schema,
-		resolvers:  cfg.Resolvers,
-		directives: cfg.Directives,
-		complexity: cfg.Complexity,
-	}
+	return &executableSchema{SchemaData: cfg.Schema, Resolvers: cfg.Resolvers, Directives: cfg.Directives, ComplexityRoot: cfg.Complexity}
 }
 
-type Config struct {
-	Schema     *ast.Schema
-	Resolvers  ResolverRoot
-	Directives DirectiveRoot
-	Complexity ComplexityRoot
-}
+type Config = graphql.Config[ResolverRoot, DirectiveRoot, ComplexityRoot]
 
 type ResolverRoot interface {
 	DailyReport() DailyReportResolver
@@ -91,132 +80,115 @@ type ComplexityRoot struct {
 	}
 }
 
-type executableSchema struct {
-	schema     *ast.Schema
-	resolvers  ResolverRoot
-	directives DirectiveRoot
-	complexity ComplexityRoot
-}
+type executableSchema graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot]
 
 func (e *executableSchema) Schema() *ast.Schema {
-	if e.schema != nil {
-		return e.schema
+	if e.SchemaData != nil {
+		return e.SchemaData
 	}
 	return parsedSchema
 }
 
 func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
-	ec := executionContext{nil, e, 0, 0, nil}
+	ec := newExecutionContext(nil, e, nil)
 	_ = ec
 	switch typeName + "." + field {
 
 	case "DailyReport.day":
-		if e.complexity.DailyReport.Day == nil {
+		if e.ComplexityRoot.DailyReport.Day == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.Day(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.Day(childComplexity), true
 	case "DailyReport.memo":
-		if e.complexity.DailyReport.Memo == nil {
+		if e.ComplexityRoot.DailyReport.Memo == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.Memo(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.Memo(childComplexity), true
 	case "DailyReport.month":
-		if e.complexity.DailyReport.Month == nil {
+		if e.ComplexityRoot.DailyReport.Month == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.Month(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.Month(childComplexity), true
 	case "DailyReport.odometerValue":
-		if e.complexity.DailyReport.OdometerValue == nil {
+		if e.ComplexityRoot.DailyReport.OdometerValue == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.OdometerValue(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.OdometerValue(childComplexity), true
 	case "DailyReport.recordedAt":
-		if e.complexity.DailyReport.RecordedAt == nil {
+		if e.ComplexityRoot.DailyReport.RecordedAt == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.RecordedAt(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.RecordedAt(childComplexity), true
 	case "DailyReport.reportDate":
-		if e.complexity.DailyReport.ReportDate == nil {
+		if e.ComplexityRoot.DailyReport.ReportDate == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.ReportDate(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.ReportDate(childComplexity), true
 	case "DailyReport.tripDistance":
-		if e.complexity.DailyReport.TripDistance == nil {
+		if e.ComplexityRoot.DailyReport.TripDistance == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.TripDistance(childComplexity), true
-
+		return e.ComplexityRoot.DailyReport.TripDistance(childComplexity), true
 	case "DailyReport.year":
-		if e.complexity.DailyReport.Year == nil {
+		if e.ComplexityRoot.DailyReport.Year == nil {
 			break
 		}
 
-		return e.complexity.DailyReport.Year(childComplexity), true
+		return e.ComplexityRoot.DailyReport.Year(childComplexity), true
 
 	case "DailyReportsConnection.nodes":
-		if e.complexity.DailyReportsConnection.Nodes == nil {
+		if e.ComplexityRoot.DailyReportsConnection.Nodes == nil {
 			break
 		}
 
-		return e.complexity.DailyReportsConnection.Nodes(childComplexity), true
+		return e.ComplexityRoot.DailyReportsConnection.Nodes(childComplexity), true
 
 	case "MonthlyReport.dailyReports":
-		if e.complexity.MonthlyReport.DailyReports == nil {
+		if e.ComplexityRoot.MonthlyReport.DailyReports == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.DailyReports(childComplexity), true
-
+		return e.ComplexityRoot.MonthlyReport.DailyReports(childComplexity), true
 	case "MonthlyReport.month":
-		if e.complexity.MonthlyReport.Month == nil {
+		if e.ComplexityRoot.MonthlyReport.Month == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.Month(childComplexity), true
-
+		return e.ComplexityRoot.MonthlyReport.Month(childComplexity), true
 	case "MonthlyReport.odometerValue":
-		if e.complexity.MonthlyReport.OdometerValue == nil {
+		if e.ComplexityRoot.MonthlyReport.OdometerValue == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.OdometerValue(childComplexity), true
-
+		return e.ComplexityRoot.MonthlyReport.OdometerValue(childComplexity), true
 	case "MonthlyReport.reportDate":
-		if e.complexity.MonthlyReport.ReportDate == nil {
+		if e.ComplexityRoot.MonthlyReport.ReportDate == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.ReportDate(childComplexity), true
-
+		return e.ComplexityRoot.MonthlyReport.ReportDate(childComplexity), true
 	case "MonthlyReport.tripDistance":
-		if e.complexity.MonthlyReport.TripDistance == nil {
+		if e.ComplexityRoot.MonthlyReport.TripDistance == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.TripDistance(childComplexity), true
-
+		return e.ComplexityRoot.MonthlyReport.TripDistance(childComplexity), true
 	case "MonthlyReport.year":
-		if e.complexity.MonthlyReport.Year == nil {
+		if e.ComplexityRoot.MonthlyReport.Year == nil {
 			break
 		}
 
-		return e.complexity.MonthlyReport.Year(childComplexity), true
+		return e.ComplexityRoot.MonthlyReport.Year(childComplexity), true
 
 	case "Mutation.recordDrivingRecord":
-		if e.complexity.Mutation.RecordDrivingRecord == nil {
+		if e.ComplexityRoot.Mutation.RecordDrivingRecord == nil {
 			break
 		}
 
@@ -225,17 +197,16 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string)), true
+		return e.ComplexityRoot.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string)), true
 
 	case "Query.lastReport":
-		if e.complexity.Query.LastReport == nil {
+		if e.ComplexityRoot.Query.LastReport == nil {
 			break
 		}
 
-		return e.complexity.Query.LastReport(childComplexity), true
-
+		return e.ComplexityRoot.Query.LastReport(childComplexity), true
 	case "Query.monthlyReport":
-		if e.complexity.Query.MonthlyReport == nil {
+		if e.ComplexityRoot.Query.MonthlyReport == nil {
 			break
 		}
 
@@ -244,10 +215,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.MonthlyReport(childComplexity, args["year"].(int), args["month"].(time.Month)), true
-
+		return e.ComplexityRoot.Query.MonthlyReport(childComplexity, args["year"].(int), args["month"].(time.Month)), true
 	case "Query.recentDrivingRecords":
-		if e.complexity.Query.RecentDrivingRecords == nil {
+		if e.ComplexityRoot.Query.RecentDrivingRecords == nil {
 			break
 		}
 
@@ -256,10 +226,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.RecentDrivingRecords(childComplexity, args["first"].(int)), true
-
+		return e.ComplexityRoot.Query.RecentDrivingRecords(childComplexity, args["first"].(int)), true
 	case "Query.yearlyReport":
-		if e.complexity.Query.YearlyReport == nil {
+		if e.ComplexityRoot.Query.YearlyReport == nil {
 			break
 		}
 
@@ -268,42 +237,39 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.YearlyReport(childComplexity, args["year"].(int)), true
+		return e.ComplexityRoot.Query.YearlyReport(childComplexity, args["year"].(int)), true
 
 	case "RecentDrivingRecordsConnection.nodes":
-		if e.complexity.RecentDrivingRecordsConnection.Nodes == nil {
+		if e.ComplexityRoot.RecentDrivingRecordsConnection.Nodes == nil {
 			break
 		}
 
-		return e.complexity.RecentDrivingRecordsConnection.Nodes(childComplexity), true
+		return e.ComplexityRoot.RecentDrivingRecordsConnection.Nodes(childComplexity), true
 
 	case "YearlyReport.monthlyReports":
-		if e.complexity.YearlyReport.MonthlyReports == nil {
+		if e.ComplexityRoot.YearlyReport.MonthlyReports == nil {
 			break
 		}
 
-		return e.complexity.YearlyReport.MonthlyReports(childComplexity), true
-
+		return e.ComplexityRoot.YearlyReport.MonthlyReports(childComplexity), true
 	case "YearlyReport.odometerValue":
-		if e.complexity.YearlyReport.OdometerValue == nil {
+		if e.ComplexityRoot.YearlyReport.OdometerValue == nil {
 			break
 		}
 
-		return e.complexity.YearlyReport.OdometerValue(childComplexity), true
-
+		return e.ComplexityRoot.YearlyReport.OdometerValue(childComplexity), true
 	case "YearlyReport.reportDate":
-		if e.complexity.YearlyReport.ReportDate == nil {
+		if e.ComplexityRoot.YearlyReport.ReportDate == nil {
 			break
 		}
 
-		return e.complexity.YearlyReport.ReportDate(childComplexity), true
-
+		return e.ComplexityRoot.YearlyReport.ReportDate(childComplexity), true
 	case "YearlyReport.year":
-		if e.complexity.YearlyReport.Year == nil {
+		if e.ComplexityRoot.YearlyReport.Year == nil {
 			break
 		}
 
-		return e.complexity.YearlyReport.Year(childComplexity), true
+		return e.ComplexityRoot.YearlyReport.Year(childComplexity), true
 
 	}
 	return 0, false
@@ -311,7 +277,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
-	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
+	ec := newExecutionContext(opCtx, e, make(chan graphql.DeferredResult))
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
 	first := true
 
@@ -325,9 +291,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 				ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
 				data = ec._Query(ctx, opCtx.Operation.SelectionSet)
 			} else {
-				if atomic.LoadInt32(&ec.pendingDeferred) > 0 {
-					result := <-ec.deferredResults
-					atomic.AddInt32(&ec.pendingDeferred, -1)
+				if atomic.LoadInt32(&ec.PendingDeferred) > 0 {
+					result := <-ec.DeferredResults
+					atomic.AddInt32(&ec.PendingDeferred, -1)
 					data = result.Result
 					response.Path = result.Path
 					response.Label = result.Label
@@ -339,8 +305,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 			response.Data = buf.Bytes()
-			if atomic.LoadInt32(&ec.deferred) > 0 {
-				hasNext := atomic.LoadInt32(&ec.pendingDeferred) > 0
+			if atomic.LoadInt32(&ec.Deferred) > 0 {
+				hasNext := atomic.LoadInt32(&ec.PendingDeferred) > 0
 				response.HasNext = &hasNext
 			}
 
@@ -368,44 +334,22 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 }
 
 type executionContext struct {
-	*graphql.OperationContext
-	*executableSchema
-	deferred        int32
-	pendingDeferred int32
-	deferredResults chan graphql.DeferredResult
+	*graphql.ExecutionContextState[ResolverRoot, DirectiveRoot, ComplexityRoot]
 }
 
-func (ec *executionContext) processDeferredGroup(dg graphql.DeferredGroup) {
-	atomic.AddInt32(&ec.pendingDeferred, 1)
-	go func() {
-		ctx := graphql.WithFreshResponseContext(dg.Context)
-		dg.FieldSet.Dispatch(ctx)
-		ds := graphql.DeferredResult{
-			Path:   dg.Path,
-			Label:  dg.Label,
-			Result: dg.FieldSet,
-			Errors: graphql.GetErrors(ctx),
-		}
-		// null fields should bubble up
-		if dg.FieldSet.Invalids > 0 {
-			ds.Result = graphql.Null
-		}
-		ec.deferredResults <- ds
-	}()
-}
-
-func (ec *executionContext) introspectSchema() (*introspection.Schema, error) {
-	if ec.DisableIntrospection {
-		return nil, errors.New("introspection disabled")
+func newExecutionContext(
+	opCtx *graphql.OperationContext,
+	execSchema *executableSchema,
+	deferredResults chan graphql.DeferredResult,
+) *executionContext {
+	return &executionContext{
+		ExecutionContextState: graphql.NewExecutionContextState[ResolverRoot, DirectiveRoot, ComplexityRoot](
+			opCtx,
+			(*graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot])(execSchema),
+			parsedSchema,
+			deferredResults,
+		),
 	}
-	return introspection.WrapSchema(ec.Schema()), nil
-}
-
-func (ec *executionContext) introspectType(name string) (*introspection.Type, error) {
-	if ec.DisableIntrospection {
-		return nil, errors.New("introspection disabled")
-	}
-	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
 var sources = []*ast.Source{
@@ -487,3 +431,189 @@ type Mutation {
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
+
+// childFields_* functions provide shared child field context lookups.
+// Each function is generated once per unique object type, deduplicating the
+// switch statements that were previously inlined in every fieldContext_* function.
+
+func (ec *executionContext) childFields_DailyReport(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "year":
+		return ec.fieldContext_DailyReport_year(ctx, field)
+	case "month":
+		return ec.fieldContext_DailyReport_month(ctx, field)
+	case "day":
+		return ec.fieldContext_DailyReport_day(ctx, field)
+	case "odometerValue":
+		return ec.fieldContext_DailyReport_odometerValue(ctx, field)
+	case "tripDistance":
+		return ec.fieldContext_DailyReport_tripDistance(ctx, field)
+	case "recordedAt":
+		return ec.fieldContext_DailyReport_recordedAt(ctx, field)
+	case "memo":
+		return ec.fieldContext_DailyReport_memo(ctx, field)
+	case "reportDate":
+		return ec.fieldContext_DailyReport_reportDate(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
+}
+
+func (ec *executionContext) childFields_DailyReportsConnection(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "nodes":
+		return ec.fieldContext_DailyReportsConnection_nodes(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type DailyReportsConnection", field.Name)
+}
+
+func (ec *executionContext) childFields_MonthlyReport(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "year":
+		return ec.fieldContext_MonthlyReport_year(ctx, field)
+	case "month":
+		return ec.fieldContext_MonthlyReport_month(ctx, field)
+	case "odometerValue":
+		return ec.fieldContext_MonthlyReport_odometerValue(ctx, field)
+	case "tripDistance":
+		return ec.fieldContext_MonthlyReport_tripDistance(ctx, field)
+	case "dailyReports":
+		return ec.fieldContext_MonthlyReport_dailyReports(ctx, field)
+	case "reportDate":
+		return ec.fieldContext_MonthlyReport_reportDate(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type MonthlyReport", field.Name)
+}
+
+func (ec *executionContext) childFields_RecentDrivingRecordsConnection(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "nodes":
+		return ec.fieldContext_RecentDrivingRecordsConnection_nodes(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type RecentDrivingRecordsConnection", field.Name)
+}
+
+func (ec *executionContext) childFields_YearlyReport(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "year":
+		return ec.fieldContext_YearlyReport_year(ctx, field)
+	case "odometerValue":
+		return ec.fieldContext_YearlyReport_odometerValue(ctx, field)
+	case "monthlyReports":
+		return ec.fieldContext_YearlyReport_monthlyReports(ctx, field)
+	case "reportDate":
+		return ec.fieldContext_YearlyReport_reportDate(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type YearlyReport", field.Name)
+}
+
+func (ec *executionContext) childFields___Directive(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___Directive_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Directive_description(ctx, field)
+	case "isRepeatable":
+		return ec.fieldContext___Directive_isRepeatable(ctx, field)
+	case "locations":
+		return ec.fieldContext___Directive_locations(ctx, field)
+	case "args":
+		return ec.fieldContext___Directive_args(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
+}
+
+func (ec *executionContext) childFields___EnumValue(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___EnumValue_name(ctx, field)
+	case "description":
+		return ec.fieldContext___EnumValue_description(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___EnumValue_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___EnumValue_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __EnumValue", field.Name)
+}
+
+func (ec *executionContext) childFields___Field(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___Field_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Field_description(ctx, field)
+	case "args":
+		return ec.fieldContext___Field_args(ctx, field)
+	case "type":
+		return ec.fieldContext___Field_type(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___Field_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___Field_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Field", field.Name)
+}
+
+func (ec *executionContext) childFields___InputValue(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___InputValue_name(ctx, field)
+	case "description":
+		return ec.fieldContext___InputValue_description(ctx, field)
+	case "type":
+		return ec.fieldContext___InputValue_type(ctx, field)
+	case "defaultValue":
+		return ec.fieldContext___InputValue_defaultValue(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___InputValue_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
+}
+
+func (ec *executionContext) childFields___Schema(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "description":
+		return ec.fieldContext___Schema_description(ctx, field)
+	case "types":
+		return ec.fieldContext___Schema_types(ctx, field)
+	case "queryType":
+		return ec.fieldContext___Schema_queryType(ctx, field)
+	case "mutationType":
+		return ec.fieldContext___Schema_mutationType(ctx, field)
+	case "subscriptionType":
+		return ec.fieldContext___Schema_subscriptionType(ctx, field)
+	case "directives":
+		return ec.fieldContext___Schema_directives(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+}
+
+func (ec *executionContext) childFields___Type(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "kind":
+		return ec.fieldContext___Type_kind(ctx, field)
+	case "name":
+		return ec.fieldContext___Type_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Type_description(ctx, field)
+	case "specifiedByURL":
+		return ec.fieldContext___Type_specifiedByURL(ctx, field)
+	case "fields":
+		return ec.fieldContext___Type_fields(ctx, field)
+	case "interfaces":
+		return ec.fieldContext___Type_interfaces(ctx, field)
+	case "possibleTypes":
+		return ec.fieldContext___Type_possibleTypes(ctx, field)
+	case "enumValues":
+		return ec.fieldContext___Type_enumValues(ctx, field)
+	case "inputFields":
+		return ec.fieldContext___Type_inputFields(ctx, field)
+	case "ofType":
+		return ec.fieldContext___Type_ofType(ctx, field)
+	case "isOneOf":
+		return ec.fieldContext___Type_isOneOf(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
+}
