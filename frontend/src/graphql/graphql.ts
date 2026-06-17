@@ -1,59 +1,13 @@
 /* eslint-disable */
-import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null | undefined;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
-export type MakeEmpty<
-  T extends { [key: string]: unknown },
-  K extends keyof T,
-> = { [_ in K]?: never };
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> =
   | T
   | {
       [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
     };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  DateTime: { input: string; output: Date };
-};
-
-export type DailyReport = DistanceReport & {
-  readonly day: Scalars['Int']['output'];
-  readonly memo?: Maybe<Scalars['String']['output']>;
-  readonly month: Month;
-  readonly odometerValue: Scalars['Int']['output'];
-  readonly recordedAt: Scalars['DateTime']['output'];
-  readonly reportDate: Scalars['DateTime']['output'];
-  readonly tripDistance: Scalars['Int']['output'];
-  readonly year: Scalars['Int']['output'];
-};
-
-export type DailyReportsConnection = DrivingRecordsConnection & {
-  readonly nodes: ReadonlyArray<DailyReport>;
-};
-
-export type DistanceReport = {
-  readonly odometerValue: Scalars['Int']['output'];
-  readonly reportDate: Scalars['DateTime']['output'];
-};
-
-export type DrivingRecordsConnection = {
-  readonly nodes: ReadonlyArray<DailyReport>;
-};
-
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Month =
   | 'APRIL'
   | 'AUGUST'
@@ -67,56 +21,6 @@ export type Month =
   | 'NOVEMBER'
   | 'OCTOBER'
   | 'SEPTEMBER';
-
-export type MonthlyReport = DistanceReport & {
-  readonly dailyReports: DailyReportsConnection;
-  readonly month: Month;
-  readonly odometerValue: Scalars['Int']['output'];
-  readonly reportDate: Scalars['DateTime']['output'];
-  readonly tripDistance: Scalars['Int']['output'];
-  readonly year: Scalars['Int']['output'];
-};
-
-export type Mutation = {
-  readonly recordDrivingRecord: Scalars['Boolean']['output'];
-};
-
-export type MutationRecordDrivingRecordArgs = {
-  date: Scalars['DateTime']['input'];
-  memo?: InputMaybe<Scalars['String']['input']>;
-  odometerValue: Scalars['Int']['input'];
-};
-
-export type Query = {
-  readonly lastReport?: Maybe<DailyReport>;
-  readonly monthlyReport: MonthlyReport;
-  readonly recentDrivingRecords: RecentDrivingRecordsConnection;
-  readonly yearlyReport: YearlyReport;
-};
-
-export type QueryMonthlyReportArgs = {
-  month: Month;
-  year: Scalars['Int']['input'];
-};
-
-export type QueryRecentDrivingRecordsArgs = {
-  first: Scalars['Int']['input'];
-};
-
-export type QueryYearlyReportArgs = {
-  year: Scalars['Int']['input'];
-};
-
-export type RecentDrivingRecordsConnection = DrivingRecordsConnection & {
-  readonly nodes: ReadonlyArray<DailyReport>;
-};
-
-export type YearlyReport = DistanceReport & {
-  readonly monthlyReports: ReadonlyArray<MonthlyReport>;
-  readonly odometerValue: Scalars['Int']['output'];
-  readonly reportDate: Scalars['DateTime']['output'];
-  readonly year: Scalars['Int']['output'];
-};
 
 type ChartDataSeries_DailyReportsConnection_Fragment = {
   readonly nodes: ReadonlyArray<{
@@ -155,9 +59,9 @@ export type MonthlySummaryFragment = ({
 }) & { ' $fragmentName'?: 'MonthlySummaryFragment' };
 
 export type RecordDriveMutationVariables = Exact<{
-  date: Scalars['DateTime']['input'];
-  distance: Scalars['Int']['input'];
-  memo?: InputMaybe<Scalars['String']['input']>;
+  date: string;
+  distance: number;
+  memo?: string | null | undefined;
 }>;
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
@@ -200,11 +104,11 @@ export type TotalDistanceFragment =
   | TotalDistance_YearlyReport_Fragment;
 
 export type GetRootQueryVariables = Exact<{
-  first: Scalars['Int']['input'];
+  first: number;
 }>;
 
 export type GetRootQuery = {
-  readonly lastReport?: {
+  readonly lastReport: {
     ' $fragmentRefs'?: {
       TotalDistance_DailyReport_Fragment: TotalDistance_DailyReport_Fragment;
       LastOdometerValue_DailyReport_Fragment: LastOdometerValue_DailyReport_Fragment;
@@ -218,7 +122,7 @@ export type GetRootQuery = {
 };
 
 export type MonthReportQueryVariables = Exact<{
-  year: Scalars['Int']['input'];
+  year: number;
   month: Month;
 }>;
 
