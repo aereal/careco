@@ -19,6 +19,8 @@ const eslintConfig = defineConfigWithVueTs(
     'node_modules/**',
     'dist/**/*',
     'frontend/src/graphql/**/*.ts',
+    '.vercel/**/*',
+    'coverage.front/**/*',
   ]),
   vue.configs['flat/essential'],
   vueTsConfigs.recommended,
