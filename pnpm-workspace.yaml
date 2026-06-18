@@ -2,3 +2,5 @@ allowBuilds:
   browser-tabs-lock: true
   esbuild: true
   msw: true
+minimumReleaseAgeExclude:
+  - '@graphql-codegen/cli@7.1.3'
