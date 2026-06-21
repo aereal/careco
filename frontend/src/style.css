@@ -1,2 +1,25 @@
 @import 'tailwindcss';
 @plugin 'daisyui';
+
+:root {
+  --app-header-height: calc(4rem + env(safe-area-inset-top));
+  --app-bottom-nav-height: calc(4rem + env(safe-area-inset-bottom));
+}
+
+.app-header {
+  height: var(--app-header-height);
+  padding-top: env(safe-area-inset-top);
+}
+
+.app-content {
+  padding-top: var(--app-header-height);
+  padding-bottom: var(--app-bottom-nav-height);
+}
+
+.fab-above-dock {
+  bottom: calc(var(--app-bottom-nav-height) + 1rem);
+}
+
+.toast-above-dock {
+  bottom: calc(var(--app-bottom-nav-height) + 5rem);
+}

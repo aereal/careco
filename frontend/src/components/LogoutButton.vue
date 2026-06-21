@@ -6,5 +6,5 @@ const logout = async (): Promise<void> =>
   auth0.logout({ logoutParams: { returnTo: window.location.href } });
 </script>
 <template>
-  <button @click="logout" class="btn">Logout</button>
+  <button @click="logout" class="btn btn-ghost">Logout</button>
 </template>

@@ -81,20 +81,12 @@ export default {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto">
-    <div class="p-4">
-      <div class="w-full" v-if="authOngoing || queryFetching">
-        <div class="w-full loading loading-spinner loading-xl" />
-      </div>
-      <div v-else-if="!isAuthenticated">
-        <div v-if="!isAuthenticated">
-          <LoginButton />
-        </div>
-      </div>
-      <ErrorAlert :error="error" v-else-if="error" />
-      <div v-else-if="data">
-        <MonthlyReport :summary="data.monthlyReport" />
-      </div>
-    </div>
+  <div class="w-full" v-if="authOngoing || queryFetching">
+    <div class="w-full loading loading-spinner loading-xl" />
+  </div>
+  <div v-else-if="!isAuthenticated">ログインしてください</div>
+  <ErrorAlert :error="error" v-else-if="error" />
+  <div v-else-if="data">
+    <MonthlyReport :summary="data.monthlyReport" />
   </div>
 </template>
