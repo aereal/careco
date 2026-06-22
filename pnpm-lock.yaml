@@ -18,14 +18,14 @@ importers:
         specifier: 0.8.1
         version: 0.8.1(typescript@6.0.3)
       '@urql/core':
-        specifier: 6.0.1
-        version: 6.0.1(graphql@16.12.0)
+        specifier: 6.0.3
+        version: 6.0.3(graphql@16.12.0)
       '@urql/exchange-auth':
         specifier: 3.0.0
-        version: 3.0.0(@urql/core@6.0.1(graphql@16.12.0))
+        version: 3.0.0(@urql/core@6.0.3(graphql@16.12.0))
       '@urql/vue':
         specifier: 2.0.0
-        version: 2.0.0(@urql/core@6.0.1(graphql@16.12.0))(vue@3.5.25(typescript@6.0.3))
+        version: 2.0.0(@urql/core@6.0.3(graphql@16.12.0))(vue@3.5.25(typescript@6.0.3))
       '@vueuse/core':
         specifier: 14.2.1
         version: 14.2.1(vue@3.5.25(typescript@6.0.3))
@@ -43,7 +43,7 @@ importers:
         version: 2.12.6(graphql@16.12.0)
       urql:
         specifier: 5.0.1
-        version: 5.0.1(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0)
+        version: 5.0.1(@urql/core@6.0.3(graphql@16.12.0))(react@19.2.0)
       vue:
         specifier: 3.5.25
         version: 3.5.25(typescript@6.0.3)
@@ -2036,8 +2036,8 @@ packages:
     resolution: {integrity: sha512-6fJ9MHWtK14C1DSkiMlHUSOmrVebL7150xZJBlJiL62jjhIA4JmOq6flwBgDxIdBKKdoiZRel+dfPD5MLfny3w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@urql/core@6.0.1':
-    resolution: {integrity: sha512-FZDiQk6jxbj5hixf2rEPv0jI+IZz0EqqGW8mJBEug68/zHTtT+f34guZDmyjJZyiWbj0vL165LoMr/TkeDHaug==}
+  '@urql/core@6.0.3':
+    resolution: {integrity: sha512-0F39XWR21+IVLJfsqBvLShvoSzxT6h6wWXwrDhN8j9J+IEVOpQIUNHwpgjsp+2ePzn9aCH+rpDonn3HOAUnn9A==}
 
   '@urql/exchange-auth@3.0.0':
     resolution: {integrity: sha512-tj09xiOR2f1J2h8TE9uZWjRZipCdmDoTewEytOacDQ+0Teo+yIZxm3ppHxolQtiA51OHrGYiNTkMte8HtfvaBw==}
@@ -4404,6 +4404,7 @@ packages:
 
   stream-to-promise@2.2.0:
     resolution: {integrity: sha512-HAGUASw8NT0k8JvIVutB2Y/9iBk7gpgEyAudXwNJmZERdMITGdajOa4VJfD/kNiA3TppQpTP4J+CtcHwdzKBAw==}
+    deprecated: Deprecated. Use node:stream/promises and node:stream/consumers instead.
 
   streamx@2.28.0:
     resolution: {integrity: sha512-1Yowhzjf0ivGMrTIkY9hav5TxobO9qIVqUE41fiCGMGgc3CLlf4MY+9AHmZqBWgDTue0fY9zWjYFVyf6Diuobw==}
@@ -6896,21 +6897,21 @@ snapshots:
       '@typescript-eslint/types': 8.61.1
       eslint-visitor-keys: 5.0.1
 
-  '@urql/core@6.0.1(graphql@16.12.0)':
+  '@urql/core@6.0.3(graphql@16.12.0)':
     dependencies:
       '@0no-co/graphql.web': 1.2.0(graphql@16.12.0)
       wonka: 6.3.5
     transitivePeerDependencies:
       - graphql
 
-  '@urql/exchange-auth@3.0.0(@urql/core@6.0.1(graphql@16.12.0))':
+  '@urql/exchange-auth@3.0.0(@urql/core@6.0.3(graphql@16.12.0))':
     dependencies:
-      '@urql/core': 6.0.1(graphql@16.12.0)
+      '@urql/core': 6.0.3(graphql@16.12.0)
       wonka: 6.3.5
 
-  '@urql/vue@2.0.0(@urql/core@6.0.1(graphql@16.12.0))(vue@3.5.25(typescript@6.0.3))':
+  '@urql/vue@2.0.0(@urql/core@6.0.3(graphql@16.12.0))(vue@3.5.25(typescript@6.0.3))':
     dependencies:
-      '@urql/core': 6.0.1(graphql@16.12.0)
+      '@urql/core': 6.0.3(graphql@16.12.0)
       vue: 3.5.25(typescript@6.0.3)
       wonka: 6.3.5
 
@@ -9743,9 +9744,9 @@ snapshots:
 
   urlpattern-polyfill@10.1.0: {}
 
-  urql@5.0.1(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0):
+  urql@5.0.1(@urql/core@6.0.3(graphql@16.12.0))(react@19.2.0):
     dependencies:
-      '@urql/core': 6.0.1(graphql@16.12.0)
+      '@urql/core': 6.0.3(graphql@16.12.0)
       react: 19.2.0
       wonka: 6.3.5
 
