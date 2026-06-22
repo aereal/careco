@@ -1,10 +1,7 @@
 <script lang="ts">
 import { DriveRecordSeries } from '@/components/DriveRecordSeries';
 import ErrorAlert from '@/components/ErrorAlert.vue';
-import LoginButton from '@/components/LoginButton.vue';
-import LogoutButton from '@/components/LogoutButton.vue';
 import RecordDialog from '@/components/RecordDialog.vue';
-import SelectMonth from '@/components/SelectMonth.vue';
 import TotalDistance from '@/components/TotalDistance.vue';
 import { graphql } from '@/graphql';
 import { useAuth0 } from '@auth0/auth0-vue';
@@ -27,10 +24,7 @@ const queryGetRoot = graphql(`
 export default {
   components: {
     RecordDialog,
-    SelectMonth,
     TotalDistance,
-    LoginButton,
-    LogoutButton,
     ErrorAlert,
     DriveRecordSeries,
   },
@@ -61,41 +55,28 @@ export default {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto">
-    <div class="p-4">
-      <div class="w-full" v-if="authOngoing || queryFetching">
-        <div class="w-full loading loading-spinner loading-xl" />
-      </div>
-      <div v-else-if="!isAuthenticated">
-        <div v-if="!isAuthenticated">
-          <LoginButton />
+  <div class="w-full" v-if="authOngoing || queryFetching">
+    <div class="w-full loading loading-spinner loading-xl" />
+  </div>
+  <div v-else-if="!isAuthenticated">ログインしてください</div>
+  <div v-else>
+    <ErrorAlert :error="error" v-if="error" />
+    <div v-else-if="data">
+      <TotalDistance
+        :total-distance="data.lastReport"
+        granularity="day"
+        v-if="data.lastReport"
+      />
+      <div class="my-8">
+        <h1 class="font-bold text-lg -mb-4">最近の記録</h1>
+        <div class="my-8 h-[60vh]">
+          <DriveRecordSeries :data="data.recentDrivingRecords" />
         </div>
       </div>
-      <div v-else>
-        <ErrorAlert :error="error" v-if="error" />
-        <div v-else-if="data">
-          <TotalDistance
-            :total-distance="data.lastReport"
-            granularity="day"
-            v-if="data.lastReport"
-          />
-          <div class="my-4">
-            <h2 class="font-bold text-md mb-2">月毎の記録を見る</h2>
-            <SelectMonth />
-          </div>
-          <div class="my-8">
-            <h1 class="font-bold text-lg -mb-4">最近の記録</h1>
-            <div class="my-8 h-[60vh]">
-              <DriveRecordSeries :data="data.recentDrivingRecords" />
-            </div>
-          </div>
-          <RecordDialog
-            :last-odometer-value="data.lastReport"
-            @success="handleRecordSuccess"
-          />
-          <LogoutButton />
-        </div>
-      </div>
+      <RecordDialog
+        :last-odometer-value="data.lastReport"
+        @success="handleRecordSuccess"
+      />
     </div>
   </div>
 </template>

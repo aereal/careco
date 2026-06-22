@@ -100,7 +100,7 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
 </script>
 
 <template>
-  <div class="fab">
+  <div class="fab fab-above-dock">
     <button class="btn btn-lg btn-circle btn-primary" @click="handleOpenClick">
       +
     </button>
@@ -147,7 +147,7 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
       <button>close record dialog</button>
     </form>
   </dialog>
-  <div class="toast bottom-24" v-if="error">
+  <div class="toast toast-above-dock" v-if="error">
     <div class="alert alert-error" role="alert">
       <span>{{ error }}</span>
       <div>

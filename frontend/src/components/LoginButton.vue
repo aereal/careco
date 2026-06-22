@@ -5,5 +5,5 @@ const auth0 = useAuth0();
 const login = async (): Promise<void> => auth0.loginWithRedirect();
 </script>
 <template>
-  <button @click="login" class="btn btn-primary">Login</button>
+  <button @click="login" class="btn btn-ghost">Login</button>
 </template>
