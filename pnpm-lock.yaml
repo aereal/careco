@@ -15,8 +15,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(graphql@16.12.0)
       '@praha/byethrow':
-        specifier: 0.8.1
-        version: 0.8.1(typescript@6.0.3)
+        specifier: 0.12.0
+        version: 0.12.0(typescript@6.0.3)
       '@urql/core':
         specifier: 6.0.1
         version: 6.0.1(graphql@16.12.0)
@@ -1483,8 +1483,8 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  '@praha/byethrow@0.8.1':
-    resolution: {integrity: sha512-THvagF+Fq43PV6NMkPjNt9aN1fP8LZdKBqNNHvdFmIv2oi2gy3ryU6HYTQqOT5LHsbD7Ih2qySvsW5gGPgGoCA==}
+  '@praha/byethrow@0.12.0':
+    resolution: {integrity: sha512-Q3dRHW8aGqYbEe/W5YKrik6GbtfLGdCrCVcDcP/YJe4uhhbbrkEw9XoRuPZhfMb4uLrUXk27h4phK3I8+cAdRw==}
     peerDependencies:
       typescript: '>=5.0.0'
 
@@ -1809,9 +1809,6 @@ packages:
 
   '@sinclair/typebox@0.25.24':
     resolution: {integrity: sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==}
-
-  '@standard-schema/spec@1.0.0':
-    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -4404,6 +4401,7 @@ packages:
 
   stream-to-promise@2.2.0:
     resolution: {integrity: sha512-HAGUASw8NT0k8JvIVutB2Y/9iBk7gpgEyAudXwNJmZERdMITGdajOa4VJfD/kNiA3TppQpTP4J+CtcHwdzKBAw==}
+    deprecated: Deprecated. Use node:stream/promises and node:stream/consumers instead.
 
   streamx@2.28.0:
     resolution: {integrity: sha512-1Yowhzjf0ivGMrTIkY9hav5TxobO9qIVqUE41fiCGMGgc3CLlf4MY+9AHmZqBWgDTue0fY9zWjYFVyf6Diuobw==}
@@ -6470,9 +6468,9 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@praha/byethrow@0.8.1(typescript@6.0.3)':
+  '@praha/byethrow@0.12.0(typescript@6.0.3)':
     dependencies:
-      '@standard-schema/spec': 1.0.0
+      '@standard-schema/spec': 1.1.0
       typescript: 6.0.3
 
   '@renovatebot/pep440@4.2.1': {}
@@ -6651,8 +6649,6 @@ snapshots:
     optional: true
 
   '@sinclair/typebox@0.25.24': {}
-
-  '@standard-schema/spec@1.0.0': {}
 
   '@standard-schema/spec@1.1.0': {}
 
