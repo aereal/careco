@@ -42,8 +42,8 @@ importers:
         specifier: 2.12.6
         version: 2.12.6(graphql@16.12.0)
       urql:
-        specifier: 5.0.1
-        version: 5.0.1(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0)
+        specifier: 5.0.3
+        version: 5.0.3(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0)
       vue:
         specifier: 3.5.25
         version: 3.5.25(typescript@6.0.3)
@@ -4404,6 +4404,7 @@ packages:
 
   stream-to-promise@2.2.0:
     resolution: {integrity: sha512-HAGUASw8NT0k8JvIVutB2Y/9iBk7gpgEyAudXwNJmZERdMITGdajOa4VJfD/kNiA3TppQpTP4J+CtcHwdzKBAw==}
+    deprecated: Deprecated. Use node:stream/promises and node:stream/consumers instead.
 
   streamx@2.28.0:
     resolution: {integrity: sha512-1Yowhzjf0ivGMrTIkY9hav5TxobO9qIVqUE41fiCGMGgc3CLlf4MY+9AHmZqBWgDTue0fY9zWjYFVyf6Diuobw==}
@@ -4684,8 +4685,8 @@ packages:
   urlpattern-polyfill@10.1.0:
     resolution: {integrity: sha512-IGjKp/o0NL3Bso1PymYURCJxMPNAf/ILOpendP9f5B6e1rTJgdgiOvgfoT8VxCAdY+Wisb9uhGaJJf3yZ2V9nw==}
 
-  urql@5.0.1:
-    resolution: {integrity: sha512-r58gYlWvCTC19QvkTaARaCLV9/bp870byH/qbLaw3S7f8i/bC6x2Szub8RVXptiMxWmqq5dyVBjUL9G+xPEuqg==}
+  urql@5.0.3:
+    resolution: {integrity: sha512-gWywgPjduTCUqWKofW6YLOy1auxe0uJN/vHa44eXGKn+f+QHNb308ZEZnKBLZ4F+jRrguaJy9CdtecTZJQWPCg==}
     peerDependencies:
       '@urql/core': ^6.0.0
       react: '>= 16.8.0'
@@ -9743,7 +9744,7 @@ snapshots:
 
   urlpattern-polyfill@10.1.0: {}
 
-  urql@5.0.1(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0):
+  urql@5.0.3(@urql/core@6.0.1(graphql@16.12.0))(react@19.2.0):
     dependencies:
       '@urql/core': 6.0.1(graphql@16.12.0)
       react: 19.2.0
