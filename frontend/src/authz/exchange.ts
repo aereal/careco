@@ -20,7 +20,13 @@ export const auth0Exchange = (auth0Client: Auth0VueClient) => {
       return provider.willExpire();
     },
     didAuthError(err) {
-      return err.response?.status === 401;
+      return (
+        (err.response?.status === 401 ||
+          err.networkError?.message?.includes(
+            'Unknown or invalid refresh token',
+          )) ??
+        false
+      );
     },
     async refreshAuth() {
       await provider.refresh();
