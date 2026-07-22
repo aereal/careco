@@ -20,7 +20,12 @@ describe('navItems', () => {
 });
 
 describe('isNavItemActive', () => {
-  const home = { type: 'link', label: 'ホーム', to: '/', matchPrefix: '/' } as const;
+  const home = {
+    type: 'link',
+    label: 'ホーム',
+    to: '/',
+    matchPrefix: '/',
+  } as const;
   const reports = {
     type: 'action',
     label: '月別レポート',
