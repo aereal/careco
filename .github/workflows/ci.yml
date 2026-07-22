@@ -17,6 +17,7 @@ jobs:
       - frontend-lint
       - frontend-check-diff
       - backend-test
+      - backend-lint
     if: failure()
     permissions: {}
     runs-on: ubuntu-24.04
@@ -174,6 +175,35 @@ jobs:
         with:
           version: v0.75.10
           config: octocov.backend.yml
+  backend-lint:
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        id: setup-go
+        with:
+          cache: true
+          go-version-file: go.mod
+      - run: go mod download
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.12.2
+          install-only: true
+      - name: golangci-lint
+        id: lint
+        run: golangci-lint run ./...
+        continue-on-error: true
+      - uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        with:
+          sarif_file: golangci-lint.sarif
+          category: golangci-lint
+      - name: report issues
+        if: steps.lint.outcome == 'failure'
+        run: exit 1
   backend-build:
     runs-on: ubuntu-24.04
     needs:
