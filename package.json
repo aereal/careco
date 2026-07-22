@@ -24,7 +24,7 @@
   "dependencies": {
     "@auth0/auth0-vue": "2.9.0",
     "@graphql-typed-document-node/core": "3.2.0",
-    "@praha/byethrow": "0.8.1",
+    "@praha/byethrow": "0.12.0",
     "@urql/core": "6.0.3",
     "@urql/exchange-auth": "3.0.0",
     "@urql/vue": "2.1.1",
