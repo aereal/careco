@@ -18,7 +18,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/lestrrat-go/jwx/v3 v3.1.1
 	github.com/rs/cors v1.11.1
-	github.com/vektah/gqlparser/v2 v2.5.34
+	github.com/vektah/gqlparser/v2 v2.5.36
 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0
