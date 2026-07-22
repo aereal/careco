@@ -209,8 +209,10 @@ func (r *Resolver) Query() exec.QueryResolver { return &queryResolver{r} }
 
 func (r *Resolver) YearlyReport() exec.YearlyReportResolver { return &yearlyReportResolver{r} }
 
-type dailyReportResolver struct{ *Resolver }
-type monthlyReportResolver struct{ *Resolver }
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type yearlyReportResolver struct{ *Resolver }
+type (
+	dailyReportResolver   struct{ *Resolver }
+	monthlyReportResolver struct{ *Resolver }
+	mutationResolver      struct{ *Resolver }
+	queryResolver         struct{ *Resolver }
+	yearlyReportResolver  struct{ *Resolver }
+)
