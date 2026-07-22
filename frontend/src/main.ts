@@ -19,7 +19,7 @@ const auth0Plugin = createAuth0({
   cacheLocation: 'localstorage',
   authorizationParams: {
     display: 'touch',
-    prompt: 'consent',
+    prompt: 'none',
     redirect_uri: window.location.origin,
     audience: getConfig('auth0Audience'),
   },
