@@ -21,7 +21,7 @@ export const runMutation = <D, V extends AnyVariables>(
 ): ((
   variables: V,
 ) => Promise<Result.Result<SuccessfulOperationResult<D, V>, Error>>) =>
-  Result.try({
+  Result.fn({
     try: async (variables: V): Promise<SuccessfulOperationResult<D, V>> => {
       const { error, ...rest } = await fn(variables);
       if (error) {

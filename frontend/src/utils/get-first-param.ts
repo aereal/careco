@@ -9,7 +9,7 @@ export class NoParameterGivenError extends Error {
   }
 }
 
-export const getFirstParam = Result.try({
+export const getFirstParam = Result.fn({
   try: (name: string, p: string | string[] | undefined): string => {
     if (p === undefined) {
       throw new NoParameterGivenError(name);

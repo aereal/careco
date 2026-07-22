@@ -12,7 +12,9 @@ const { isLoading, isAuthenticated } = useAuth0();
   <header
     class="app-header navbar bg-primary text-primary-content fixed top-0 inset-x-0 z-10 p-0"
   >
-    <div class="max-w-2xl mx-auto w-full px-4 flex items-center justify-between">
+    <div
+      class="max-w-2xl mx-auto w-full px-4 flex items-center justify-between"
+    >
       <span class="font-bold text-lg">Careco</span>
       <div v-if="!isLoading">
         <LogoutButton v-if="isAuthenticated" />
