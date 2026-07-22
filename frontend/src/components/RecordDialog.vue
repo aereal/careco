@@ -25,7 +25,9 @@ const { executeMutation: recordDrive } = useMutation(mutationRecordDrive);
 
 const props = defineProps<{
   lastOdometerValue:
-    FragmentType<typeof fragmentLastOdometerValue> | undefined | null;
+    | FragmentType<typeof fragmentLastOdometerValue>
+    | undefined
+    | null;
 }>();
 
 const { odometerValue: lastOdometerValue } = props.lastOdometerValue

@@ -16,7 +16,7 @@ export const getFirstParam = Result.fn({
     }
     if (p instanceof Array) {
       if (p.length > 0) {
-        return p[0]!;
+        return p[0];
       } else {
         throw new NoParameterGivenError(name);
       }
@@ -24,5 +24,5 @@ export const getFirstParam = Result.fn({
     return p;
   },
   catch: (err: unknown): Error =>
-    err instanceof Error ? err : new Error(`${err}`),
+    err instanceof Error ? err : new Error(String(err)),
 });

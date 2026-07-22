@@ -5,8 +5,7 @@
     "vitest.config.*",
     "cypress.config.*",
     "nightwatch.conf.*",
-    "playwright.config.*",
-    "eslint.config.mjs"
+    "playwright.config.*"
   ],
   "compilerOptions": {
     "noEmit": true,

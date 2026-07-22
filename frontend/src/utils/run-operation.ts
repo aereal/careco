@@ -33,4 +33,4 @@ export const runMutation = <D, V extends AnyVariables>(
   });
 
 const toError = (v: unknown): Error =>
-  v instanceof Error ? v : new Error(`${v}`);
+  v instanceof Error ? v : new Error(String(v));

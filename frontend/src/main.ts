@@ -7,6 +7,7 @@ import { getConfig } from './config';
 import router from './router';
 import './style.css';
 
+// oxlint-disable-next-line typescript/no-unsafe-argument -- oxlint's type-aware linting doesn't yet resolve .vue module types (oxc-project/oxc#21936), so `App` appears untyped here
 const app = createApp(App);
 
 const auth0Plugin = createAuth0({

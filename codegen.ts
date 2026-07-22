@@ -7,7 +7,7 @@ const config: CodegenConfig = {
   schema: './schema.gql',
   documents: ['./frontend/src/**/!(*.gen).{ts,tsx}', './frontend/src/**/*.vue'],
   hooks: {
-    afterAllFileWrite: ['prettier --write'],
+    afterAllFileWrite: ['pnpm run format'],
   },
   config: {
     scalars: {
