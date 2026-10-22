@@ -42,7 +42,7 @@ jobs:
       - run: pnpm test
       - uses: k1LoW/octocov-action@a167dc0dee441b7ffc45e1b862ab55ec0d87f278 # v1.5.2
         with:
-          version: v0.75.10
+          version: v0.83.3
           config: octocov.frontend.yml
   frontend-lint:
     runs-on: ubuntu-24.04
@@ -191,7 +191,7 @@ jobs:
         run: go test -coverpkg=./... -coverprofile=./coverage.out -timeout=30s ./backend/...
       - uses: k1LoW/octocov-action@a167dc0dee441b7ffc45e1b862ab55ec0d87f278 # v1.5.2
         with:
-          version: v0.75.10
+          version: v0.83.3
           config: octocov.backend.yml
   backend-lint:
     runs-on: ubuntu-24.04
