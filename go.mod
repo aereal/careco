@@ -1,6 +1,6 @@
 module careco
 
-go 1.25.8
+go 1.27.3
 
 tool (
 	github.com/99designs/gqlgen
