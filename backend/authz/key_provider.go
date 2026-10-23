@@ -2,7 +2,7 @@ package authz
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"iter"
@@ -117,7 +117,7 @@ func (f *oidcKeyFetcher) fetchJwskURIFromOIDCConfiguration(ctx context.Context) 
 	}
 	body, err := request(ctx, f.client, f.issuer.oidcConfiguration().String(), func(r io.Reader) (*wkEndpoints, error) {
 		var endpoints wkEndpoints
-		if err := json.NewDecoder(r).Decode(&endpoints); err != nil {
+		if err := json.UnmarshalRead(r, &endpoints); err != nil {
 			return nil, err
 		}
 		return &endpoints, nil

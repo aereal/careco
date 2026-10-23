@@ -5,7 +5,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/rsa"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"net/http"
@@ -285,12 +285,12 @@ func newIssuerServer(privKey *rsa.PrivateKey) (*issuerServer, error) {
 	s.mux.Handle("GET /.well-known/openid-configuration", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.callCount.wellKnownOIDCConfig.Add(1)
 		w.Header().Set("content-type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]string{"jwks_uri": s.origin + "/jwks.json"})
+		_ = json.MarshalWrite(w, map[string]string{"jwks_uri": s.origin + "/jwks.json"})
 	}))
 	s.mux.Handle("GET /jwks.json", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.callCount.jwks.Add(1)
 		w.Header().Set("content-type", "application/json")
-		_ = json.NewEncoder(w).Encode(set)
+		_ = json.MarshalWrite(w, set)
 	}))
 	return s, nil
 }

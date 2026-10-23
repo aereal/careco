@@ -5,7 +5,7 @@ import (
 	stdcmp "cmp"
 	"context"
 	_ "embed"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"iter"
 	"maps"
@@ -41,7 +41,7 @@ func TestServer(t *testing.T) {
 			t.Parallel()
 
 			buf := new(bytes.Buffer)
-			if err := json.NewEncoder(buf).Encode(tc.Request); err != nil {
+			if err := json.MarshalWrite(buf, tc.Request); err != nil {
 				t.Fatal(err)
 			}
 
@@ -139,7 +139,7 @@ type responseExpectation struct {
 func transformResponse(hr *http.Response) *responseExpectation {
 	defer hr.Body.Close()
 	m := make(map[string]any)
-	_ = json.NewDecoder(hr.Body).Decode(&m)
+	_ = json.UnmarshalRead(hr.Body, &m)
 	return &responseExpectation{
 		Status: hr.StatusCode,
 		Body:   m,
