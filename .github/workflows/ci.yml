@@ -356,7 +356,6 @@ jobs:
           flags: |
             --service-account cloud-run-runner@careco-477008.iam.gserviceaccount.com
           labels: |-
-            github-head-ref=${{ github.head_ref }}
             github-job=${{ github.job }}
             github-run-id=${{ github.run_id }}
             github-run-number=${{ github.run_number }}
