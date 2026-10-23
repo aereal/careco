@@ -18,12 +18,12 @@ jobs:
       - backend-lint
     if: failure()
     permissions: {}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 1
     steps:
       - run: exit 1
   frontend-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       contents: read
@@ -49,7 +49,7 @@ jobs:
           version: v0.83.3
           config: octocov.frontend.yml
   frontend-lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       contents: read
@@ -79,7 +79,7 @@ jobs:
         if: steps.lint.outcome == 'failure'
         run: exit 1
   frontend-format-check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     timeout-minutes: 25
@@ -97,7 +97,7 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - run: pnpm format:check
   frontend-e2e-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       contents: read
@@ -139,7 +139,7 @@ jobs:
       - run: exit 1
         if: ${{ steps.test.outcome == 'failure' }}
   frontend-check-diff:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     timeout-minutes: 25
@@ -198,7 +198,7 @@ jobs:
     with:
       environment: production
   backend-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       contents: read
@@ -231,7 +231,7 @@ jobs:
           version: v0.83.3
           config: octocov.backend.yml
   backend-lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       contents: read
@@ -263,7 +263,7 @@ jobs:
         if: steps.lint.outcome == 'failure'
         run: exit 1
   backend-build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - backend-test
     permissions:
@@ -316,7 +316,7 @@ jobs:
           image_tag: ${{ github.sha }}
           KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ steps.auth.outputs.project_id }}/backend/backend
   backend-deploy:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
