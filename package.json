@@ -51,7 +51,7 @@
     "@tsconfig/node24": "24.0.4",
     "@types/jsdom": "28.0.3",
     "@types/node": "24.19.2",
-    "@vitejs/plugin-vue": "6.0.8",
+    "@vitejs/plugin-vue": "6.0.10",
     "@vitest/coverage-v8": "4.1.10",
     "@vue/test-utils": "2.4.11",
     "@vue/tsconfig": "0.9.1",
