@@ -19,6 +19,7 @@ jobs:
     if: failure()
     permissions: {}
     runs-on: ubuntu-24.04
+    timeout-minutes: 1
     steps:
       - run: exit 1
   frontend-test:
@@ -27,6 +28,7 @@ jobs:
       actions: read
       contents: read
       pull-requests: write
+    timeout-minutes: 25
     env:
       TZ: Asia/Tokyo
     steps:
@@ -52,6 +54,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -79,6 +82,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -98,6 +102,7 @@ jobs:
       actions: read
       contents: read
       pull-requests: write
+    timeout-minutes: 25
     env:
       TZ: Asia/Tokyo
       VITE_AUTH0_DOMAIN: careco.auth0.test
@@ -137,6 +142,7 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -188,6 +194,7 @@ jobs:
         image: 'ghcr.io/aereal/firebase-emulator-image:v0.1.0'
         ports:
           - 8888
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -254,6 +261,7 @@ jobs:
     outputs:
       image: ${{ steps.build.outputs.image }}
       revision: ${{ steps.build.outputs.revision }}
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -304,6 +312,7 @@ jobs:
       name: production-backend
     concurrency:
       group: ${{ github.job }}-${{ github.head_ref }}
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
