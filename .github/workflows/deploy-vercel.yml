@@ -6,6 +6,21 @@ on:
       environment:
         required: true
         type: string
+    secrets:
+      VERCEL_ORG_ID:
+        required: true
+      VERCEL_PROJECT_ID:
+        required: true
+      VERCEL_TOKEN:
+        required: true
+      VITE_AUTH0_AUDIENCE:
+        required: true
+      VITE_AUTH0_CLIENT_ID:
+        required: true
+      VITE_AUTH0_DOMAIN:
+        required: true
+      VITE_BACKEND_ENDPOINT:
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-24.04

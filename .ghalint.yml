@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/suzuki-shunsuke/ghalint/v1.2.1/json-schema/ghalint.json
+excludes:
+  - policy_name: job_secrets
+    workflow_file_path: .github/workflows/deploy-vercel.yml
+    job_name: deploy
