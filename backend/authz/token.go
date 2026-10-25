@@ -7,7 +7,7 @@ import (
 
 	"careco/backend/o11y/attr"
 
-	"github.com/lestrrat-go/jwx/v3/jwt"
+	"github.com/lestrrat-go/jwx/v4/jwt"
 	"go.opentelemetry.io/otel/attribute"
 )
 
