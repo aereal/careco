@@ -20,9 +20,9 @@ import (
 	"github.com/aereal/coll"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/lestrrat-go/jwx/v3/jwa"
-	"github.com/lestrrat-go/jwx/v3/jwk"
-	"github.com/lestrrat-go/jwx/v3/jwt"
+	"github.com/lestrrat-go/jwx/v4/jwa"
+	"github.com/lestrrat-go/jwx/v4/jwk"
+	"github.com/lestrrat-go/jwx/v4/jwt"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -263,7 +263,7 @@ func sendRequest(ctx context.Context, appSrvURL string, issuerURL *url.URL, want
 }
 
 func newIssuerServer(privKey *rsa.PrivateKey) (*issuerServer, error) {
-	key, err := jwk.Import(&privKey.PublicKey)
+	key, err := jwk.Import[jwk.Key](&privKey.PublicKey)
 	if err != nil {
 		return nil, fmt.Errorf("jwk.Import: %w", err)
 	}
@@ -378,7 +378,7 @@ var (
 						Name: "exception",
 						Attributes: []attribute.KeyValue{
 							attribute.String("exception.message", `jwt.ParseString: failed to parse string: unknown payload type (payload is not JWT?)`),
-							attribute.String("exception.type", "github.com/lestrrat-go/jwx/v3/jwt/internal/errors.ParseError"),
+							attribute.String("exception.type", "github.com/lestrrat-go/jwx/v4/jwt.ParseError"),
 						},
 					},
 				},
@@ -426,7 +426,7 @@ var (
 						Name: "exception",
 						Attributes: []attribute.KeyValue{
 							attribute.String("exception.message", `jwt.ParseString: failed to parse string: jwt.Validate: validation failed: "iss" not satisfied: claim "iss" does not have the expected value`),
-							attribute.String("exception.type", "github.com/lestrrat-go/jwx/v3/jwt/internal/errors.ParseError"),
+							attribute.String("exception.type", "github.com/lestrrat-go/jwx/v4/jwt.ParseError"),
 						},
 					},
 				},

@@ -14,7 +14,7 @@ import (
 	"careco/backend/log/attribute"
 
 	"github.com/aereal/coll"
-	"github.com/lestrrat-go/jwx/v3/jwt"
+	"github.com/lestrrat-go/jwx/v4/jwt"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -111,7 +111,7 @@ func handleError(w http.ResponseWriter, r *http.Request, err error) {
 	case errors.Is(err, ErrMissingToken):
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(`{"error":"no credentials provided"}`))
-	case errors.Is(err, jwt.ParseError()) || isaUnexpectedAuthScheme(err):
+	case errors.Is(err, jwt.ParseError{}) || isaUnexpectedAuthScheme(err):
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = w.Write([]byte(`{"error":"invalid credentials"}`))
 	default:

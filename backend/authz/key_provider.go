@@ -11,9 +11,9 @@ import (
 
 	"careco/backend/o11y/traceutils"
 
-	"github.com/lestrrat-go/jwx/v3/jwa"
-	"github.com/lestrrat-go/jwx/v3/jwk"
-	"github.com/lestrrat-go/jwx/v3/jws"
+	"github.com/lestrrat-go/jwx/v4/jwa"
+	"github.com/lestrrat-go/jwx/v4/jwk"
+	"github.com/lestrrat-go/jwx/v4/jws"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -54,11 +54,7 @@ func (p *oidcKeyProvider) FetchKeys(ctx context.Context, sink jws.KeySink, sig *
 
 func iterateSignableKeys(keySet jwk.Set) iter.Seq2[jwa.SignatureAlgorithm, jwk.Key] {
 	return func(yield func(jwa.SignatureAlgorithm, jwk.Key) bool) {
-		for idx := range keySet.Len() {
-			key, ok := keySet.Key(idx)
-			if !ok {
-				continue
-			}
+		for _, key := range keySet.All() {
 			alg, ok := key.Algorithm()
 			if !ok {
 				continue
