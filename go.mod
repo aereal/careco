@@ -18,7 +18,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/lestrrat-go/jwx/v3 v3.4.0
 	github.com/rs/cors v1.11.1
-	github.com/vektah/gqlparser/v2 v2.5.36
+	github.com/vektah/gqlparser/v2 v2.5.64
 	go.opentelemetry.io/contrib/detectors/gcp v1.47.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0
@@ -39,7 +39,7 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
 	cloud.google.com/go/longrunning v1.2.0 // indirect
-	github.com/agnivade/levenshtein v1.2.1 // indirect
+	github.com/agnivade/levenshtein v1.2.2 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coder/websocket v1.8.15 // indirect
