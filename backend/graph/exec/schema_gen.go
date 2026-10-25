@@ -167,7 +167,7 @@ func (ec *executionContext) _DailyReport_year(ctx context.Context, field graphql
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, "Int")
 }
 
 func (ec *executionContext) _DailyReport_month(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -190,7 +190,7 @@ func (ec *executionContext) _DailyReport_month(ctx context.Context, field graphq
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_month(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Month does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, "Month")
 }
 
 func (ec *executionContext) _DailyReport_day(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -213,7 +213,7 @@ func (ec *executionContext) _DailyReport_day(ctx context.Context, field graphql.
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, "Int")
 }
 
 func (ec *executionContext) _DailyReport_odometerValue(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -236,7 +236,7 @@ func (ec *executionContext) _DailyReport_odometerValue(ctx context.Context, fiel
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_odometerValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, "Int")
 }
 
 func (ec *executionContext) _DailyReport_tripDistance(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -259,7 +259,7 @@ func (ec *executionContext) _DailyReport_tripDistance(ctx context.Context, field
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_tripDistance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, true, true, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, true, true, "Int")
 }
 
 func (ec *executionContext) _DailyReport_recordedAt(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -282,7 +282,7 @@ func (ec *executionContext) _DailyReport_recordedAt(ctx context.Context, field g
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_recordedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, "DateTime")
 }
 
 func (ec *executionContext) _DailyReport_memo(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -305,7 +305,7 @@ func (ec *executionContext) _DailyReport_memo(ctx context.Context, field graphql
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_memo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type String does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, "String")
 }
 
 func (ec *executionContext) _DailyReport_reportDate(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
@@ -328,7 +328,7 @@ func (ec *executionContext) _DailyReport_reportDate(ctx context.Context, field g
 	)
 }
 func (ec *executionContext) fieldContext_DailyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("DailyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
+	return graphql.NewScalarFieldContext("DailyReport", field, false, false, "DateTime")
 }
 
 func (ec *executionContext) _DailyReportsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReportsConnection) (ret graphql.Marshaler) {
@@ -383,7 +383,7 @@ func (ec *executionContext) _MonthlyReport_year(ctx context.Context, field graph
 	)
 }
 func (ec *executionContext) fieldContext_MonthlyReport_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, "Int")
 }
 
 func (ec *executionContext) _MonthlyReport_month(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -406,7 +406,7 @@ func (ec *executionContext) _MonthlyReport_month(ctx context.Context, field grap
 	)
 }
 func (ec *executionContext) fieldContext_MonthlyReport_month(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, errors.New("field of type Month does not have child fields"))
+	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, "Month")
 }
 
 func (ec *executionContext) _MonthlyReport_odometerValue(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -429,7 +429,7 @@ func (ec *executionContext) _MonthlyReport_odometerValue(ctx context.Context, fi
 	)
 }
 func (ec *executionContext) fieldContext_MonthlyReport_odometerValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("MonthlyReport", field, true, true, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("MonthlyReport", field, true, true, "Int")
 }
 
 func (ec *executionContext) _MonthlyReport_tripDistance(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -452,7 +452,7 @@ func (ec *executionContext) _MonthlyReport_tripDistance(ctx context.Context, fie
 	)
 }
 func (ec *executionContext) fieldContext_MonthlyReport_tripDistance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("MonthlyReport", field, true, true, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("MonthlyReport", field, true, true, "Int")
 }
 
 func (ec *executionContext) _MonthlyReport_dailyReports(ctx context.Context, field graphql.CollectedField, obj *dtos.MonthlyReport) (ret graphql.Marshaler) {
@@ -507,7 +507,7 @@ func (ec *executionContext) _MonthlyReport_reportDate(ctx context.Context, field
 	)
 }
 func (ec *executionContext) fieldContext_MonthlyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
+	return graphql.NewScalarFieldContext("MonthlyReport", field, false, false, "DateTime")
 }
 
 func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -775,10 +775,10 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *introspection.Schema) graphql.Marshaler {
-			return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, selections, v)
+			return ec.marshalN__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, selections, v)
 		},
 		true,
-		false,
+		true,
 	)
 }
 func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -846,7 +846,7 @@ func (ec *executionContext) _YearlyReport_year(ctx context.Context, field graphq
 	)
 }
 func (ec *executionContext) fieldContext_YearlyReport_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("YearlyReport", field, false, false, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("YearlyReport", field, false, false, "Int")
 }
 
 func (ec *executionContext) _YearlyReport_odometerValue(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
@@ -869,7 +869,7 @@ func (ec *executionContext) _YearlyReport_odometerValue(ctx context.Context, fie
 	)
 }
 func (ec *executionContext) fieldContext_YearlyReport_odometerValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("YearlyReport", field, true, true, errors.New("field of type Int does not have child fields"))
+	return graphql.NewScalarFieldContext("YearlyReport", field, true, true, "Int")
 }
 
 func (ec *executionContext) _YearlyReport_monthlyReports(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
@@ -924,7 +924,7 @@ func (ec *executionContext) _YearlyReport_reportDate(ctx context.Context, field 
 	)
 }
 func (ec *executionContext) fieldContext_YearlyReport_reportDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	return graphql.NewScalarFieldContext("YearlyReport", field, false, false, errors.New("field of type DateTime does not have child fields"))
+	return graphql.NewScalarFieldContext("YearlyReport", field, false, false, "DateTime")
 }
 
 // endregion **************************** field.gotpl *****************************
@@ -1006,169 +1006,40 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 	fields := graphql.CollectFields(ec.OperationContext, sel, dailyReportImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DailyReport")
 		case "year":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._DailyReport_year(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._DailyReport_year(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "month":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._DailyReport_month(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._DailyReport_month(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "day":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._DailyReport_day(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._DailyReport_day(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "odometerValue":
 			out.Values[i] = ec._DailyReport_odometerValue(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "tripDistance":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._DailyReport_tripDistance(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._DailyReport_tripDistance(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "recordedAt":
 			out.Values[i] = ec._DailyReport_recordedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1193,14 +1064,10 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1211,8 +1078,7 @@ func (ec *executionContext) _DailyReportsConnection(ctx context.Context, sel ast
 	fields := graphql.CollectFields(ec.OperationContext, sel, dailyReportsConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -1231,14 +1097,10 @@ func (ec *executionContext) _DailyReportsConnection(ctx context.Context, sel ast
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1249,8 +1111,7 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 	fields := graphql.CollectFields(ec.OperationContext, sel, monthlyReportImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -1266,119 +1127,23 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "odometerValue":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._MonthlyReport_odometerValue(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._MonthlyReport_odometerValue(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "tripDistance":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._MonthlyReport_tripDistance(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._MonthlyReport_tripDistance(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "dailyReports":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._MonthlyReport_dailyReports(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._MonthlyReport_dailyReports(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "reportDate":
 			out.Values[i] = ec._MonthlyReport_reportDate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1393,14 +1158,10 @@ func (ec *executionContext) _MonthlyReport(ctx context.Context, sel ast.Selectio
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1414,8 +1175,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -1441,14 +1201,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1462,8 +1218,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	})
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -1474,93 +1229,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
 		case "recentDrivingRecords":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_recentDrivingRecords(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+			out.ResolveRootConcurrently(innerCtx, ec.OperationContext, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._Query_recentDrivingRecords(ctx, field)
+				})
 		case "yearlyReport":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_yearlyReport(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+			out.ResolveRootConcurrently(innerCtx, ec.OperationContext, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._Query_yearlyReport(ctx, field)
+				})
 		case "monthlyReport":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_monthlyReport(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+			out.ResolveRootConcurrently(innerCtx, ec.OperationContext, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._Query_monthlyReport(ctx, field)
+				})
 		case "lastReport":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_lastReport(ctx, field)
-				if res == graphql.RequiredNull {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+			out.ResolveRootConcurrently(innerCtx, ec.OperationContext, i,
+				true, false,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._Query_lastReport(ctx, field)
+				})
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -1572,7 +1263,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
-			if out.Values[i] == graphql.RequiredNull {
+			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
@@ -1584,14 +1275,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1602,8 +1289,7 @@ func (ec *executionContext) _RecentDrivingRecordsConnection(ctx context.Context,
 	fields := graphql.CollectFields(ec.OperationContext, sel, recentDrivingRecordsConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -1622,14 +1308,10 @@ func (ec *executionContext) _RecentDrivingRecordsConnection(ctx context.Context,
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1640,8 +1322,7 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 	fields := graphql.CollectFields(ec.OperationContext, sel, yearlyReportImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	deferredFieldSet := graphql.NewFieldSet(nil)
-	deferLabelToView := make(map[string]*graphql.FieldSetView)
+	deferred := graphql.NewDeferredGroup(ctx)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -1652,81 +1333,17 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "odometerValue":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._YearlyReport_odometerValue(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._YearlyReport_odometerValue(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "monthlyReports":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._YearlyReport_monthlyReports(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.IsDeferred() {
-				deferredFieldSet.AddField(field)
-				fieldIndex := len(deferredFieldSet.Values) - 1
-				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, deferredFieldSet)
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._YearlyReport_monthlyReports(ctx, field, obj)
 				})
-
-				for _, deferrable := range field.Deferrables {
-					view, ok := deferLabelToView[deferrable.Label]
-					if !ok {
-						view = deferredFieldSet.NewView()
-						deferLabelToView[deferrable.Label] = view
-					}
-					view.AddIndices(fieldIndex)
-				}
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "reportDate":
 			out.Values[i] = ec._YearlyReport_reportDate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -1741,14 +1358,10 @@ func (ec *executionContext) _YearlyReport(ctx context.Context, sel ast.Selection
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
-
-	ec.ProcessDeferredGroup(graphql.DeferredGroup{
-		Defers:   deferLabelToView,
-		Path:     graphql.GetPath(ctx),
-		FieldSet: deferredFieldSet,
-		Context:  ctx,
-	})
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
 
 	return out
 }
@@ -1775,23 +1388,15 @@ func (ec *executionContext) marshalNDailyReport2ᚕᚖcarecoᚋbackendᚋgraph�
 
 func (ec *executionContext) marshalNDailyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.DailyReport) graphql.Marshaler {
 	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullError(ctx, "DailyReport!")
 		return graphql.Null
 	}
 	return ec._DailyReport(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDailyReportsConnection2carecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection(ctx context.Context, sel ast.SelectionSet, v dtos.DailyReportsConnection) graphql.Marshaler {
-	return ec._DailyReportsConnection(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNDailyReportsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐDailyReportsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.DailyReportsConnection) graphql.Marshaler {
 	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullError(ctx, "DailyReportsConnection!")
 		return graphql.Null
 	}
 	return ec._DailyReportsConnection(ctx, sel, v)
@@ -1806,9 +1411,7 @@ func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, se
 	_ = sel
 	res := dtos.MarshalDateTime(v)
 	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullFromMarshaler(ctx, "DateTime!")
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
 }
@@ -1822,15 +1425,9 @@ func (ec *executionContext) marshalNMonth2timeᚐMonth(ctx context.Context, sel 
 	_ = sel
 	res := dtos.MarshalMonth(v)
 	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullFromMarshaler(ctx, "Month!")
 	}
 	return graphql.WrapContextMarshaler(ctx, res)
-}
-
-func (ec *executionContext) marshalNMonthlyReport2carecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport(ctx context.Context, sel ast.SelectionSet, v dtos.MonthlyReport) graphql.Marshaler {
-	return ec._MonthlyReport(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReportᚄ(ctx context.Context, sel ast.SelectionSet, v []*dtos.MonthlyReport) graphql.Marshaler {
@@ -1851,37 +1448,23 @@ func (ec *executionContext) marshalNMonthlyReport2ᚕᚖcarecoᚋbackendᚋgraph
 
 func (ec *executionContext) marshalNMonthlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐMonthlyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.MonthlyReport) graphql.Marshaler {
 	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullError(ctx, "MonthlyReport!")
 		return graphql.Null
 	}
 	return ec._MonthlyReport(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRecentDrivingRecordsConnection2carecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
-	return ec._RecentDrivingRecordsConnection(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐRecentDrivingRecordsConnection(ctx context.Context, sel ast.SelectionSet, v *dtos.RecentDrivingRecordsConnection) graphql.Marshaler {
 	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullError(ctx, "RecentDrivingRecordsConnection!")
 		return graphql.Null
 	}
 	return ec._RecentDrivingRecordsConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNYearlyReport2carecoᚋbackendᚋgraphᚋdtosᚐYearlyReport(ctx context.Context, sel ast.SelectionSet, v dtos.YearlyReport) graphql.Marshaler {
-	return ec._YearlyReport(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNYearlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐYearlyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.YearlyReport) graphql.Marshaler {
 	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
+		graphql.AddInvalidNullError(ctx, "YearlyReport!")
 		return graphql.Null
 	}
 	return ec._YearlyReport(ctx, sel, v)
