@@ -51,3 +51,5 @@ minimumReleaseAgeExclude:
   - oxfmt@0.60.0
   - oxlint-tsgolint@7.0.2001
   - oxlint@1.75.0
+  - '@graphql-codegen/typescript-operations@6.2.0'
+  - '@graphql-codegen/visitor-plugin-common@7.5.0'
