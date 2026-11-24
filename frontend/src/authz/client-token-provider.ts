@@ -11,14 +11,17 @@ export class ClientTokenProvider {
   }
 
   async refresh(): Promise<void> {
-    const { access_token, expires_in } =
-      await this.#client.getAccessTokenSilently({
-        detailedResponse: true,
-        cacheMode: 'off',
-        authorizationParams: {
-          audience: getConfig('auth0Audience'),
-        },
-      });
+    const ret = await this.#client.getAccessTokenSilently({
+      detailedResponse: true,
+      cacheMode: 'off',
+      authorizationParams: {
+        audience: getConfig('auth0Audience'),
+      },
+    });
+    if (ret === undefined) {
+      return;
+    }
+    const { expires_in, access_token } = ret;
     const expiresAt = new Date(Date.now() + expires_in * 1000);
     this.#cachedValue.update(access_token, expiresAt);
   }
