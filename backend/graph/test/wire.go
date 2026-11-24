@@ -18,11 +18,15 @@ func BuildHandler(_ *gomock.Controller) *TestHandler {
 		graph.ProvideServer,
 		mock.NewMockDrivingRecordCommand,
 		mock.NewMockDrivingRecordQuery,
+		mock.NewMockTireCommand,
+		mock.NewMockTireQuery,
 		provideTestServer,
 		resolver.ProvideResolver,
 		test.ProvideNoopTracerProvider,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*mock.MockDrivingRecordCommand)),
 		wire.Bind(new(domain.DrivingRecordQuery), new(*mock.MockDrivingRecordQuery)),
+		wire.Bind(new(domain.TireCommand), new(*mock.MockTireCommand)),
+		wire.Bind(new(domain.TireQuery), new(*mock.MockTireQuery)),
 	)
 	return nil
 }

@@ -5,6 +5,7 @@ export type NavItem =
 export const navItems: NavItem[] = [
   { type: 'link', label: 'ホーム', to: '/', matchPrefix: '/' },
   { type: 'action', label: '月別レポート', matchPrefix: '/reports' },
+  { type: 'link', label: 'タイヤ', to: '/tires', matchPrefix: '/tires' },
 ];
 
 export const isNavItemActive = (currentPath: string, item: NavItem): boolean =>

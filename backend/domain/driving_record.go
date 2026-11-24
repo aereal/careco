@@ -13,4 +13,5 @@ type DrivingRecord struct {
 	//
 	// 日時は [Date] で表される。
 	OdometerValue int64
+	TireID        optional.Option[TireID]
 }

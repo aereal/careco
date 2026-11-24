@@ -3,6 +3,7 @@
 package dtos
 
 import (
+	"careco/backend/domain"
 	"time"
 )
 
@@ -17,10 +18,11 @@ type DrivingRecordsConnection interface {
 }
 
 type DailyReport struct {
-	OdometerValue int       `json:"odometerValue"`
-	RecordedAt    time.Time `json:"recordedAt"`
-	Memo          *string   `json:"memo,omitempty"`
-	ReportDate    time.Time `json:"reportDate"`
+	OdometerValue int           `json:"odometerValue"`
+	RecordedAt    time.Time     `json:"recordedAt"`
+	Memo          *string       `json:"memo,omitempty"`
+	ReportDate    time.Time     `json:"reportDate"`
+	TireID        domain.TireID `json:"-"`
 }
 
 func (DailyReport) IsDistanceReport()             {}
@@ -65,6 +67,13 @@ func (this RecentDrivingRecordsConnection) GetNodes() []*DailyReport {
 		interfaceSlice = append(interfaceSlice, concrete)
 	}
 	return interfaceSlice
+}
+
+type Tire struct {
+	ID          string     `json:"id"`
+	Name        string     `json:"name"`
+	PurchasedOn *time.Time `json:"purchasedOn,omitempty"`
+	Retired     bool       `json:"retired"`
 }
 
 type YearlyReport struct {

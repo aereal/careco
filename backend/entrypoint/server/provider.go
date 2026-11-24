@@ -26,6 +26,7 @@ var (
 		BindGCPProject,
 		config.ProvideEnvironment,
 		firestore.ProvideDrivingRecordRepository,
+		firestore.ProvideTireRepository,
 		graph.ProvideServer,
 		http.ProvideClient,
 		log.ProvideGlobalInstrumentation,
@@ -43,6 +44,8 @@ var (
 		web.ProvideServer,
 		wire.Bind(new(domain.DrivingRecordCommand), new(*firestore.DrivingRecordRepository)),
 		wire.Bind(new(domain.DrivingRecordQuery), new(*firestore.DrivingRecordRepository)),
+		wire.Bind(new(domain.TireCommand), new(*firestore.TireRepository)),
+		wire.Bind(new(domain.TireQuery), new(*firestore.TireRepository)),
 		wire.Bind(new(trace.TracerProvider), new(*sdktrace.TracerProvider)),
 	)
 	DevProvider = wire.NewSet(

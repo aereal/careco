@@ -8,6 +8,17 @@ describe('navItems', () => {
     );
   });
 
+  it('contains a link to the tire list', () => {
+    expect(navItems).toContainEqual(
+      expect.objectContaining({
+        type: 'link',
+        label: 'タイヤ',
+        to: '/tires',
+        matchPrefix: '/tires',
+      }),
+    );
+  });
+
   it('contains an action item for picking a report month', () => {
     expect(navItems).toContainEqual(
       expect.objectContaining({
@@ -32,6 +43,13 @@ describe('isNavItemActive', () => {
     matchPrefix: '/reports',
   } as const;
 
+  const tires = {
+    type: 'link',
+    label: 'タイヤ',
+    to: '/tires',
+    matchPrefix: '/tires',
+  } as const;
+
   it('marks home active only on the exact root path', () => {
     expect(isNavItemActive('/', home)).toBe(true);
     expect(isNavItemActive('/reports/2026/06', home)).toBe(false);
@@ -41,5 +59,11 @@ describe('isNavItemActive', () => {
     expect(isNavItemActive('/reports/2026/06', reports)).toBe(true);
     expect(isNavItemActive('/reports/2024/01', reports)).toBe(true);
     expect(isNavItemActive('/', reports)).toBe(false);
+  });
+
+  it('marks tires active on the tire list page', () => {
+    expect(isNavItemActive('/tires', tires)).toBe(true);
+    expect(isNavItemActive('/', tires)).toBe(false);
+    expect(isNavItemActive('/tires', home)).toBe(false);
   });
 });

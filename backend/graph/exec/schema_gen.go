@@ -25,6 +25,8 @@ type DailyReportResolver interface {
 	Day(ctx context.Context, obj *dtos.DailyReport) (int, error)
 
 	TripDistance(ctx context.Context, obj *dtos.DailyReport) (int, error)
+
+	Tire(ctx context.Context, obj *dtos.DailyReport) (*dtos.Tire, error)
 }
 type MonthlyReportResolver interface {
 	OdometerValue(ctx context.Context, obj *dtos.MonthlyReport) (int, error)
@@ -32,13 +34,16 @@ type MonthlyReportResolver interface {
 	DailyReports(ctx context.Context, obj *dtos.MonthlyReport) (*dtos.DailyReportsConnection, error)
 }
 type MutationResolver interface {
-	RecordDrivingRecord(ctx context.Context, date time.Time, odometerValue int, memo *string) (bool, error)
+	RecordDrivingRecord(ctx context.Context, date time.Time, odometerValue int, memo *string, tireID string) (bool, error)
+	AddTire(ctx context.Context, name string, purchasedOn *time.Time) (*dtos.Tire, error)
+	RetireTire(ctx context.Context, id string) (*dtos.Tire, error)
 }
 type QueryResolver interface {
 	RecentDrivingRecords(ctx context.Context, first int) (*dtos.RecentDrivingRecordsConnection, error)
 	YearlyReport(ctx context.Context, year int) (*dtos.YearlyReport, error)
 	MonthlyReport(ctx context.Context, year int, month time.Month) (*dtos.MonthlyReport, error)
 	LastReport(ctx context.Context) (*dtos.DailyReport, error)
+	Tires(ctx context.Context, includeRetired bool) ([]*dtos.Tire, error)
 }
 type YearlyReportResolver interface {
 	OdometerValue(ctx context.Context, obj *dtos.YearlyReport) (int, error)
@@ -48,6 +53,28 @@ type YearlyReportResolver interface {
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_addTire_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "name",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNString2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["name"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "purchasedOn",
+		func(ctx context.Context, v any) (*time.Time, error) {
+			return ec.unmarshalODateTime2ᚖtimeᚐTime(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["purchasedOn"] = arg1
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_recordDrivingRecord_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
@@ -76,6 +103,28 @@ func (ec *executionContext) field_Mutation_recordDrivingRecord_args(ctx context.
 		return nil, err
 	}
 	args["memo"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "tireID",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["tireID"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_retireTire_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (string, error) {
+			return ec.unmarshalNID2string(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -126,6 +175,20 @@ func (ec *executionContext) field_Query_recentDrivingRecords_args(ctx context.Co
 		return nil, err
 	}
 	args["first"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tires_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "includeRetired",
+		func(ctx context.Context, v any) (bool, error) {
+			return ec.unmarshalNBoolean2bool(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["includeRetired"] = arg0
 	return args, nil
 }
 
@@ -331,6 +394,38 @@ func (ec *executionContext) fieldContext_DailyReport_reportDate(_ context.Contex
 	return graphql.NewScalarFieldContext("DailyReport", field, false, false, "DateTime")
 }
 
+func (ec *executionContext) _DailyReport_tire(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_DailyReport_tire(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.DailyReport().Tire(ctx, obj)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.Tire) graphql.Marshaler {
+			return ec.marshalOTire2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTire(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_DailyReport_tire(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DailyReport",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Tire(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DailyReportsConnection_nodes(ctx context.Context, field graphql.CollectedField, obj *dtos.DailyReportsConnection) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -520,7 +615,7 @@ func (ec *executionContext) _Mutation_recordDrivingRecord(ctx context.Context, f
 		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(time.Time), fc.Args["odometerValue"].(int), fc.Args["memo"].(*string))
+			return ec.Resolvers.Mutation().RecordDrivingRecord(ctx, fc.Args["date"].(time.Time), fc.Args["odometerValue"].(int), fc.Args["memo"].(*string), fc.Args["tireID"].(string))
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
@@ -548,6 +643,94 @@ func (ec *executionContext) fieldContext_Mutation_recordDrivingRecord(ctx contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_recordDrivingRecord_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addTire(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_addTire(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().AddTire(ctx, fc.Args["name"].(string), fc.Args["purchasedOn"].(*time.Time))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.Tire) graphql.Marshaler {
+			return ec.marshalNTire2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTire(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_addTire(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Tire(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addTire_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_retireTire(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_retireTire(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Mutation().RetireTire(ctx, fc.Args["id"].(string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *dtos.Tire) graphql.Marshaler {
+			return ec.marshalNTire2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTire(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Mutation_retireTire(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Tire(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_retireTire_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -718,6 +901,50 @@ func (ec *executionContext) fieldContext_Query_lastReport(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_tires(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_tires(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().Tires(ctx, fc.Args["includeRetired"].(bool))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*dtos.Tire) graphql.Marshaler {
+			return ec.marshalNTire2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐTireᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Query_tires(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Tire(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_tires_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -824,6 +1051,98 @@ func (ec *executionContext) fieldContext_RecentDrivingRecordsConnection_nodes(_ 
 		},
 	}
 	return fc, nil
+}
+
+func (ec *executionContext) _Tire_id(ctx context.Context, field graphql.CollectedField, obj *dtos.Tire) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Tire_id(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNID2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Tire_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Tire", field, false, false, "ID")
+}
+
+func (ec *executionContext) _Tire_name(ctx context.Context, field graphql.CollectedField, obj *dtos.Tire) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Tire_name(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v string) graphql.Marshaler {
+			return ec.marshalNString2string(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Tire_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Tire", field, false, false, "String")
+}
+
+func (ec *executionContext) _Tire_purchasedOn(ctx context.Context, field graphql.CollectedField, obj *dtos.Tire) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Tire_purchasedOn(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.PurchasedOn, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *time.Time) graphql.Marshaler {
+			return ec.marshalODateTime2ᚖtimeᚐTime(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Tire_purchasedOn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Tire", field, false, false, "DateTime")
+}
+
+func (ec *executionContext) _Tire_retired(ctx context.Context, field graphql.CollectedField, obj *dtos.Tire) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Tire_retired(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Retired, nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v bool) graphql.Marshaler {
+			return ec.marshalNBoolean2bool(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Tire_retired(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Tire", field, false, false, "Boolean")
 }
 
 func (ec *executionContext) _YearlyReport_year(ctx context.Context, field graphql.CollectedField, obj *dtos.YearlyReport) (ret graphql.Marshaler) {
@@ -1055,6 +1374,12 @@ func (ec *executionContext) _DailyReport(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "tire":
+			out.ResolveConcurrently(ec.OperationContext, &deferred, i,
+				true, false,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._DailyReport_tire(ctx, field, obj)
+				})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1192,6 +1517,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "addTire":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addTire(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "retireTire":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_retireTire(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1252,6 +1591,12 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				func(ctx context.Context) graphql.Marshaler {
 					return ec._Query_lastReport(ctx, field)
 				})
+		case "tires":
+			out.ResolveRootConcurrently(innerCtx, ec.OperationContext, i,
+				true, true,
+				func(ctx context.Context) graphql.Marshaler {
+					return ec._Query_tires(ctx, field)
+				})
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -1296,6 +1641,54 @@ func (ec *executionContext) _RecentDrivingRecordsConnection(ctx context.Context,
 			out.Values[i] = graphql.MarshalString("RecentDrivingRecordsConnection")
 		case "nodes":
 			out.Values[i] = ec._RecentDrivingRecordsConnection_nodes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	if n := len(deferred.Defers); n > 0 {
+		atomic.AddInt32(&ec.Deferred, int32(min(n, math.MaxInt32)))
+		ec.ProcessDeferredGroup(deferred)
+	}
+
+	return out
+}
+
+var tireImplementors = []string{"Tire"}
+
+func (ec *executionContext) _Tire(ctx context.Context, sel ast.SelectionSet, obj *dtos.Tire) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tireImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := graphql.NewDeferredGroup(ctx)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Tire")
+		case "id":
+			out.Values[i] = ec._Tire_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Tire_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "purchasedOn":
+			out.Values[i] = ec._Tire_purchasedOn(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
+		case "retired":
+			out.Values[i] = ec._Tire_retired(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -1462,6 +1855,30 @@ func (ec *executionContext) marshalNRecentDrivingRecordsConnection2ᚖcarecoᚋb
 	return ec._RecentDrivingRecordsConnection(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTire2ᚕᚖcarecoᚋbackendᚋgraphᚋdtosᚐTireᚄ(ctx context.Context, sel ast.SelectionSet, v []*dtos.Tire) graphql.Marshaler {
+	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 1000, false, func(ctx context.Context, i int) graphql.Marshaler {
+		fc := graphql.GetFieldContext(ctx)
+		fc.Result = &v[i]
+		return ec.marshalNTire2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTire(ctx, sel, v[i])
+	})
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTire2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTire(ctx context.Context, sel ast.SelectionSet, v *dtos.Tire) graphql.Marshaler {
+	if v == nil {
+		graphql.AddInvalidNullError(ctx, "Tire!")
+		return graphql.Null
+	}
+	return ec._Tire(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNYearlyReport2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐYearlyReport(ctx context.Context, sel ast.SelectionSet, v *dtos.YearlyReport) graphql.Marshaler {
 	if v == nil {
 		graphql.AddInvalidNullError(ctx, "YearlyReport!")
@@ -1475,6 +1892,30 @@ func (ec *executionContext) marshalODailyReport2ᚖcarecoᚋbackendᚋgraphᚋdt
 		return graphql.Null
 	}
 	return ec._DailyReport(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODateTime2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := dtos.UnmarshalDateTime(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODateTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	_ = sel
+	res := dtos.MarshalDateTime(*v)
+	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) marshalOTire2ᚖcarecoᚋbackendᚋgraphᚋdtosᚐTire(ctx context.Context, sel ast.SelectionSet, v *dtos.Tire) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Tire(ctx, sel, v)
 }
 
 // endregion ***************************** type.gotpl *****************************

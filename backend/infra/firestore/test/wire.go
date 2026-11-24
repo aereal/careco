@@ -26,3 +26,17 @@ func BuildDrivingRecordRepository(_ *testing.T) (*firestore.DrivingRecordReposit
 	)
 	return nil, nil
 }
+
+func BuildTireRepository(_ *testing.T) (*firestore.TireRepository, error) {
+	wire.Build(
+		config.ProvideEnvironment,
+		firestore.ProvideEmulatorClient,
+		firestore.ProvideTireRepository,
+		provideContext,
+		provideDatabaseID,
+		providers.ProvideFirestoreEmulatorAddr,
+		provideTracerProvider,
+		wire.Value(gcp.ProjectID("test")),
+	)
+	return nil, nil
+}

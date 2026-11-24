@@ -9,6 +9,7 @@ const createTestRouter = async (initialPath: string) => {
     routes: [
       { path: '/', component: { template: '<div />' } },
       { path: '/reports/:year/:month', component: { template: '<div />' } },
+      { path: '/tires', component: { template: '<div />' } },
     ],
   });
   await router.push(initialPath);
@@ -16,11 +17,20 @@ const createTestRouter = async (initialPath: string) => {
 };
 
 describe('BottomNav', () => {
-  it('renders a link for the home item and a button for the report picker', async () => {
+  it('renders links for the home and tire items and a button for the report picker', async () => {
     const router = await createTestRouter('/');
     const wrapper = mount(BottomNav, { global: { plugins: [router] } });
-    expect(wrapper.findAll('a')).toHaveLength(1);
+    const links = wrapper.findAll('a');
+    expect(links.map((a) => a.text())).toEqual(['ホーム', 'タイヤ']);
     expect(wrapper.find('button').exists()).toBe(true);
+  });
+
+  it('highlights the tire nav item while viewing the tire list', async () => {
+    const router = await createTestRouter('/tires');
+    const wrapper = mount(BottomNav, { global: { plugins: [router] } });
+    const activeItems = wrapper.findAll('.dock-active');
+    expect(activeItems).toHaveLength(1);
+    expect(activeItems[0]?.text()).toBe('タイヤ');
   });
 
   it('highlights the report nav item while viewing any report page', async () => {

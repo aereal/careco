@@ -58,7 +58,8 @@ func build(contextContext context.Context) (*server.Entrypoint, error) {
 		return nil, err
 	}
 	drivingRecordRepository := firestore.ProvideDrivingRecordRepository(tracerProvider, client)
-	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository)
+	tireRepository := firestore.ProvideTireRepository(tracerProvider, client)
+	resolverResolver := resolver.ProvideResolver(drivingRecordRepository, drivingRecordRepository, tireRepository, tireRepository)
 	handlerServer := graph.ProvideServer(tracerProvider, resolverResolver)
 	issuer, err := providers.ProvideIssuer(environment)
 	if err != nil {

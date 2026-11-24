@@ -50,6 +50,28 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 			},
 		},
 		{
+			name: "ok/with tire",
+			inputs: []*domain.DrivingRecord{
+				{
+					Date:          t1,
+					OdometerValue: 123,
+					TireID:        optional.Some(domain.TireID("tire-1")),
+				},
+			},
+			wantRecords: []*domain.DrivingRecord{
+				{
+					Date:          t1,
+					OdometerValue: 123,
+					TireID:        optional.Some(domain.TireID("tire-1")),
+				},
+			},
+			wantErr: nil,
+			intervalToFind: domain.Interval[time.Time]{
+				Start: domain.ClosedEndpoint(t2),
+				End:   domain.ClosedEndpoint(t1),
+			},
+		},
+		{
 			name: "multiple calls on same date",
 			inputs: []*domain.DrivingRecord{
 				{Date: t3, OdometerValue: 45},
@@ -88,7 +110,7 @@ func TestDrivingRecordRepository_RecordDrivingRecord(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if err := tests.Diff(tc.wantRecords, gotRecords, tests.EquateOptional[string](), tests.EquateOptional[int]()); err != nil {
+			if err := tests.Diff(tc.wantRecords, gotRecords, tests.EquateOptional[string](), tests.EquateOptional[domain.TireID](), tests.EquateOptional[int]()); err != nil {
 				t.Error(err)
 			}
 		})
@@ -180,7 +202,7 @@ func TestDrivingRecordRepository_FindRecordsInPeriod(t *testing.T) {
 			if gotErr != nil {
 				return
 			}
-			if err := tests.Diff(tc.want, got, tests.EquateOptional[string]()); err != nil {
+			if err := tests.Diff(tc.want, got, tests.EquateOptional[string](), tests.EquateOptional[domain.TireID]()); err != nil {
 				t.Error(err)
 			}
 		})
@@ -235,7 +257,7 @@ func TestDrivingRecordRepository_FindLastRecordInPeriod(t *testing.T) {
 			if gotErr != nil {
 				return
 			}
-			if err := tests.Diff(tc.wantVal, got, tests.EquateOptional[string]()); err != nil {
+			if err := tests.Diff(tc.wantVal, got, tests.EquateOptional[string](), tests.EquateOptional[domain.TireID]()); err != nil {
 				t.Error(err)
 			}
 		})

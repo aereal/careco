@@ -14,6 +14,10 @@ const queryGetRoot = graphql(`
     lastReport {
       ...TotalDistance
       ...LastOdometerValue
+      ...LastTire
+    }
+    tires {
+      ...TireOption
     }
     recentDrivingRecords(first: $first) {
       ...ChartDataSeries
@@ -75,6 +79,8 @@ export default {
       </div>
       <RecordDialog
         :last-odometer-value="data.lastReport"
+        :last-tire="data.lastReport"
+        :tires="data.tires"
         @success="handleRecordSuccess"
       />
     </div>

@@ -34,3 +34,22 @@ func BuildDrivingRecordRepository(t *testing.T) (*firestore.DrivingRecordReposit
 var (
 	_wireProjectIDValue = gcp.ProjectID("test")
 )
+
+func BuildTireRepository(t *testing.T) (*firestore.TireRepository, error) {
+	tracerProvider := provideTracerProvider()
+	context := provideContext(t)
+	databaseID := provideDatabaseID(t)
+	projectID := _wireGcpProjectIDValue
+	environment := config.ProvideEnvironment()
+	emulatorAddr := providers.ProvideFirestoreEmulatorAddr(environment)
+	client, err := firestore.ProvideEmulatorClient(context, databaseID, projectID, emulatorAddr, tracerProvider)
+	if err != nil {
+		return nil, err
+	}
+	tireRepository := firestore.ProvideTireRepository(tracerProvider, client)
+	return tireRepository, nil
+}
+
+var (
+	_wireGcpProjectIDValue = gcp.ProjectID("test")
+)

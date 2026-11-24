@@ -7,17 +7,42 @@ import { Result } from '@praha/byethrow';
 import { useMutation } from '@urql/vue';
 import { format } from 'date-fns/format';
 import { formatISO } from 'date-fns/formatISO';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const mutationRecordDrive = graphql(`
-  mutation RecordDrive($date: DateTime!, $distance: Int!, $memo: String) {
-    recordDrivingRecord(date: $date, odometerValue: $distance, memo: $memo)
+  mutation RecordDrive(
+    $date: DateTime!
+    $distance: Int!
+    $memo: String
+    $tireID: ID!
+  ) {
+    recordDrivingRecord(
+      date: $date
+      odometerValue: $distance
+      memo: $memo
+      tireID: $tireID
+    )
   }
 `);
 
 const fragmentLastOdometerValue = graphql(`
   fragment LastOdometerValue on DistanceReport {
     odometerValue
+  }
+`);
+
+const fragmentTireOption = graphql(`
+  fragment TireOption on Tire {
+    id
+    name
+  }
+`);
+
+const fragmentLastTire = graphql(`
+  fragment LastTire on DailyReport {
+    tire {
+      id
+    }
   }
 `);
 
@@ -28,11 +53,18 @@ const props = defineProps<{
     | FragmentType<typeof fragmentLastOdometerValue>
     | undefined
     | null;
+  tires: readonly FragmentType<typeof fragmentTireOption>[];
+  lastTire: FragmentType<typeof fragmentLastTire> | undefined | null;
 }>();
 
 const { odometerValue: lastOdometerValue } = props.lastOdometerValue
   ? getFragmentData(fragmentLastOdometerValue, props.lastOdometerValue)
   : { odometerValue: 0 };
+
+const tires = props.tires.map((t) => getFragmentData(fragmentTireOption, t));
+const lastTireID = props.lastTire
+  ? getFragmentData(fragmentLastTire, props.lastTire).tire?.id
+  : undefined;
 
 const error = ref<string | undefined>();
 const modalOpen = ref(false);
@@ -40,6 +72,10 @@ const distance = ref(lastOdometerValue);
 const date = ref(new Date());
 const memo = ref('');
 const active = ref(true);
+const tireID = ref(
+  tires.some((t) => t.id === lastTireID) ? (lastTireID ?? '') : '',
+);
+const canSubmit = computed(() => active.value && tireID.value !== '');
 
 const emit = defineEmits<{ success: [] }>();
 
@@ -71,6 +107,12 @@ const handleMemoChange = (e: Event): void => {
   }
   memo.value = e.target.value;
 };
+const handleTireChange = (e: Event): void => {
+  if (!(e.target instanceof HTMLSelectElement)) {
+    return;
+  }
+  tireID.value = e.target.value;
+};
 const handleSubmit = async (e: SubmitEvent): Promise<void> => {
   e.preventDefault();
   error.value = undefined;
@@ -80,6 +122,7 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
     date: formatISO(date.value),
     distance: distance.value,
     memo: memo.value === '' ? undefined : memo.value,
+    tireID: tireID.value,
   });
   const isSuccess =
     Result.isSuccess(result) && result.value.data
@@ -127,6 +170,25 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
             :value="format(date, 'yyyy-MM-dd')"
             :disabled="!active"
         /></label>
+        <label class="select my-1" v-if="tires.length > 0"
+          >タイヤ
+          <select
+            name="tire"
+            required
+            @change="handleTireChange"
+            :value="tireID"
+            :disabled="!active"
+          >
+            <option value="" disabled>選択してください</option>
+            <option v-for="tire in tires" :key="tire.id" :value="tire.id">
+              {{ tire.name }}
+            </option>
+          </select>
+        </label>
+        <p class="my-1 text-sm" v-else>
+          <RouterLink to="/tires" class="link">タイヤを登録</RouterLink
+          >してから記録してください
+        </p>
         <details class="collapse collapse-arrow my-1 p-1 bg-base-100 border">
           <summary class="collapse-title text-sm pl-2 py-2">メモ</summary>
           <div class="collapse-content px-2">
@@ -139,7 +201,9 @@ const handleSubmit = async (e: SubmitEvent): Promise<void> => {
           </div>
         </details>
         <div class="modal-action">
-          <button class="btn btn-primary" :disabled="!active">記録する</button>
+          <button type="submit" class="btn btn-primary" :disabled="!canSubmit">
+            記録する
+          </button>
         </div>
       </form>
     </div>
