@@ -40,6 +40,7 @@ type ComplexityRoot struct {
 		OdometerValue func(childComplexity int) int
 		RecordedAt    func(childComplexity int) int
 		ReportDate    func(childComplexity int) int
+		Tire          func(childComplexity int) int
 		TripDistance  func(childComplexity int) int
 		Year          func(childComplexity int) int
 	}
@@ -58,18 +59,28 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		RecordDrivingRecord func(childComplexity int, date time.Time, odometerValue int, memo *string) int
+		AddTire             func(childComplexity int, name string, purchasedOn *time.Time) int
+		RecordDrivingRecord func(childComplexity int, date time.Time, odometerValue int, memo *string, tireID string) int
+		RetireTire          func(childComplexity int, id string) int
 	}
 
 	Query struct {
 		LastReport           func(childComplexity int) int
 		MonthlyReport        func(childComplexity int, year int, month time.Month) int
 		RecentDrivingRecords func(childComplexity int, first int) int
+		Tires                func(childComplexity int, includeRetired bool) int
 		YearlyReport         func(childComplexity int, year int) int
 	}
 
 	RecentDrivingRecordsConnection struct {
 		Nodes func(childComplexity int) int
+	}
+
+	Tire struct {
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		PurchasedOn func(childComplexity int) int
+		Retired     func(childComplexity int) int
 	}
 
 	YearlyReport struct {
@@ -130,6 +141,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.DailyReport.ReportDate(childComplexity), true
+	case "DailyReport.tire":
+		if e.ComplexityRoot.DailyReport.Tire == nil {
+			break
+		}
+
+		return e.ComplexityRoot.DailyReport.Tire(childComplexity), true
 	case "DailyReport.tripDistance":
 		if e.ComplexityRoot.DailyReport.TripDistance == nil {
 			break
@@ -187,6 +204,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.MonthlyReport.Year(childComplexity), true
 
+	case "Mutation.addTire":
+		if e.ComplexityRoot.Mutation.AddTire == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addTire_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.AddTire(childComplexity, args["name"].(string), args["purchasedOn"].(*time.Time)), true
 	case "Mutation.recordDrivingRecord":
 		if e.ComplexityRoot.Mutation.RecordDrivingRecord == nil {
 			break
@@ -197,7 +225,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string)), true
+		return e.ComplexityRoot.Mutation.RecordDrivingRecord(childComplexity, args["date"].(time.Time), args["odometerValue"].(int), args["memo"].(*string), args["tireID"].(string)), true
+	case "Mutation.retireTire":
+		if e.ComplexityRoot.Mutation.RetireTire == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_retireTire_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Mutation.RetireTire(childComplexity, args["id"].(string)), true
 
 	case "Query.lastReport":
 		if e.ComplexityRoot.Query.LastReport == nil {
@@ -227,6 +266,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Query.RecentDrivingRecords(childComplexity, args["first"].(int)), true
+	case "Query.tires":
+		if e.ComplexityRoot.Query.Tires == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tires_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.ComplexityRoot.Query.Tires(childComplexity, args["includeRetired"].(bool)), true
 	case "Query.yearlyReport":
 		if e.ComplexityRoot.Query.YearlyReport == nil {
 			break
@@ -245,6 +295,31 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.RecentDrivingRecordsConnection.Nodes(childComplexity), true
+
+	case "Tire.id":
+		if e.ComplexityRoot.Tire.ID == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Tire.ID(childComplexity), true
+	case "Tire.name":
+		if e.ComplexityRoot.Tire.Name == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Tire.Name(childComplexity), true
+	case "Tire.purchasedOn":
+		if e.ComplexityRoot.Tire.PurchasedOn == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Tire.PurchasedOn(childComplexity), true
+	case "Tire.retired":
+		if e.ComplexityRoot.Tire.Retired == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Tire.Retired(childComplexity), true
 
 	case "YearlyReport.monthlyReports":
 		if e.ComplexityRoot.YearlyReport.MonthlyReports == nil {
@@ -406,6 +481,14 @@ type DailyReport implements DistanceReport {
   recordedAt: DateTime!
   memo: String
   reportDate: DateTime!
+  tire: Tire
+}
+
+type Tire {
+  id: ID!
+  name: String!
+  purchasedOn: DateTime
+  retired: Boolean!
 }
 
 type RecentDrivingRecordsConnection implements DrivingRecordsConnection {
@@ -421,6 +504,7 @@ type Query {
   yearlyReport(year: Int!): YearlyReport!
   monthlyReport(year: Int!, month: Month!): MonthlyReport!
   lastReport: DailyReport
+  tires(includeRetired: Boolean! = false): [Tire!]!
 }
 
 type Mutation {
@@ -428,7 +512,10 @@ type Mutation {
     date: DateTime!
     odometerValue: Int!
     memo: String
+    tireID: ID!
   ): Boolean!
+  addTire(name: String!, purchasedOn: DateTime): Tire!
+  retireTire(id: ID!): Tire!
 }
 `, BuiltIn: false},
 }
@@ -456,6 +543,8 @@ func (ec *executionContext) childFields_DailyReport(ctx context.Context, field g
 		return ec.fieldContext_DailyReport_memo(ctx, field)
 	case "reportDate":
 		return ec.fieldContext_DailyReport_reportDate(ctx, field)
+	case "tire":
+		return ec.fieldContext_DailyReport_tire(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type DailyReport", field.Name)
 }
@@ -492,6 +581,20 @@ func (ec *executionContext) childFields_RecentDrivingRecordsConnection(ctx conte
 		return ec.fieldContext_RecentDrivingRecordsConnection_nodes(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type RecentDrivingRecordsConnection", field.Name)
+}
+
+func (ec *executionContext) childFields_Tire(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Tire_id(ctx, field)
+	case "name":
+		return ec.fieldContext_Tire_name(ctx, field)
+	case "purchasedOn":
+		return ec.fieldContext_Tire_purchasedOn(ctx, field)
+	case "retired":
+		return ec.fieldContext_Tire_retired(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Tire", field.Name)
 }
 
 func (ec *executionContext) childFields_YearlyReport(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {

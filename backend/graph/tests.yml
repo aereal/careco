@@ -18,12 +18,16 @@ cases:
         {
           lastReport {
             odometerValue
+            tire {
+              id
+            }
           }
         }
     response:
       data:
         lastReport:
           odometerValue: 45678
+          tire: null
   'query recentDrivingRecords/ok':
     request:
       query: |
@@ -171,15 +175,171 @@ cases:
   'mutation recordDrivingRecord/ok':
     request:
       query: |
-        mutation Record($date: DateTime!, $distance: Int!, $memo: String) {
-          recordDrivingRecord(date: $date, odometerValue: $distance, memo: $memo)
+        mutation Record($date: DateTime!, $distance: Int!, $memo: String, $tireID: ID!) {
+          recordDrivingRecord(date: $date, odometerValue: $distance, memo: $memo, tireID: $tireID)
         }
       variables:
         date: '2025-10-03T00:00:00+00:00'
         distance: 10001
+        tireID: tire-1
     response:
       data:
         recordDrivingRecord: true
+  'mutation recordDrivingRecord/tire not found':
+    request:
+      query: |
+        mutation Record($date: DateTime!, $distance: Int!, $tireID: ID!) {
+          recordDrivingRecord(date: $date, odometerValue: $distance, tireID: $tireID)
+        }
+      variables:
+        date: '2025-10-03T00:00:00+00:00'
+        distance: 10001
+        tireID: not-exist
+    response:
+      errors:
+        - message: Tire not found
+          path:
+            - recordDrivingRecord
+          locations:
+            - line: 2
+              column: 3
+      data: null
+  'mutation recordDrivingRecord/retired tire':
+    request:
+      query: |
+        mutation Record($date: DateTime!, $distance: Int!, $tireID: ID!) {
+          recordDrivingRecord(date: $date, odometerValue: $distance, tireID: $tireID)
+        }
+      variables:
+        date: '2025-10-03T00:00:00+00:00'
+        distance: 10001
+        tireID: tire-retired
+    response:
+      errors:
+        - message: Tire is retired
+          path:
+            - recordDrivingRecord
+          locations:
+            - line: 2
+              column: 3
+      data: null
+  'mutation addTire/ok':
+    request:
+      query: |
+        mutation AddTire($name: String!, $purchasedOn: DateTime) {
+          addTire(name: $name, purchasedOn: $purchasedOn) {
+            id
+            name
+            purchasedOn
+            retired
+          }
+        }
+      variables:
+        name: summer
+        purchasedOn: '2025-04-01T00:00:00+00:00'
+    response:
+      data:
+        addTire:
+          id: tire-1
+          name: summer
+          purchasedOn: '2025-04-01T00:00:00+00:00'
+          retired: false
+  'mutation retireTire/ok':
+    request:
+      query: |
+        mutation RetireTire($id: ID!) {
+          retireTire(id: $id) {
+            id
+            name
+            purchasedOn
+            retired
+          }
+        }
+      variables:
+        id: tire-1
+    response:
+      data:
+        retireTire:
+          id: tire-1
+          name: summer
+          purchasedOn: null
+          retired: true
+  'mutation retireTire/not found':
+    request:
+      query: |
+        mutation RetireTire($id: ID!) {
+          retireTire(id: $id) {
+            id
+          }
+        }
+      variables:
+        id: not-exist
+    response:
+      errors:
+        - message: Tire not found
+          path:
+            - retireTire
+          locations:
+            - line: 2
+              column: 3
+      data: null
+  'query tires/ok':
+    request:
+      query: |
+        {
+          tires {
+            id
+            name
+            purchasedOn
+            retired
+          }
+        }
+    response:
+      data:
+        tires:
+          - id: tire-1
+            name: studless
+            purchasedOn: '2024-11-01T00:00:00+00:00'
+            retired: false
+          - id: tire-2
+            name: summer
+            purchasedOn: null
+            retired: false
+  'query tires/includeRetired':
+    request:
+      query: |
+        {
+          tires(includeRetired: true) {
+            id
+            retired
+          }
+        }
+    response:
+      data:
+        tires:
+          - id: tire-1
+            retired: false
+          - id: tire-3
+            retired: true
+  'query lastReport/with tire':
+    request:
+      query: |
+        {
+          lastReport {
+            odometerValue
+            tire {
+              id
+              name
+            }
+          }
+        }
+    response:
+      data:
+        lastReport:
+          odometerValue: 45678
+          tire:
+            id: tire-1
+            name: summer
   'query tripDistance':
     request:
       query: |

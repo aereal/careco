@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"strconv"
 	"testing"
+	"time"
 
 	"careco/backend/infra/firestore"
 
@@ -26,5 +28,8 @@ func provideDatabaseID(t *testing.T) firestore.DatabaseID {
 	t.Helper()
 	h := sha256.New()
 	h.Write([]byte(t.Name()))
+	h.Write([]byte(runNonce))
 	return firestore.DatabaseID("test_" + hex.EncodeToString(h.Sum(nil)))
 }
+
+var runNonce = strconv.FormatInt(time.Now().UnixNano(), 10)

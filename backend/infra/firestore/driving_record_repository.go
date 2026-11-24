@@ -44,6 +44,7 @@ func (r *DrivingRecordRepository) RecordDrivingRecord(ctx context.Context, recor
 		Date:          record.Date,
 		OdometerValue: record.OdometerValue,
 		Memo:          record.Memo.Ptr(),
+		TireID:        tireIDPtr(record.TireID),
 	}
 	if _, err := r.client.Collection("driving_records").Doc(epochID(record.Date)).Set(ctx, data); err != nil {
 		return fmt.Errorf("firestore.DocumentRef.Set: %w", err)
@@ -86,6 +87,7 @@ func (r *DrivingRecordRepository) BulkWriteDrivingRecords(ctx context.Context, r
 				Date:          record.Date,
 				OdometerValue: record.OdometerValue,
 				Memo:          record.Memo.Ptr(),
+				TireID:        tireIDPtr(record.TireID),
 			}
 			docRef := r.client.Collection("driving_records").Doc(epochID(record.Date))
 			if err := tx.Set(docRef, data); err != nil {
@@ -118,6 +120,23 @@ type dtoDrivingRecord struct {
 	Date          time.Time
 	OdometerValue int64
 	Memo          *string
+	TireID        *string
+}
+
+func tireIDPtr(id optional.Option[domain.TireID]) *string {
+	v, ok := optional.Unwrap(id)
+	if !ok {
+		return nil
+	}
+	s := string(v)
+	return &s
+}
+
+func tireIDFromPtr(s *string) optional.Option[domain.TireID] {
+	if s == nil {
+		return optional.None[domain.TireID]()
+	}
+	return optional.Some(domain.TireID(*s))
 }
 
 func epochID(t time.Time) string {
@@ -156,6 +175,7 @@ func iterateDrivingRecords(docs *firestore.DocumentIterator) iter.Seq[*result[*d
 				Date:          dto.Date,
 				OdometerValue: dto.OdometerValue,
 				Memo:          optional.FromPtr(dto.Memo),
+				TireID:        tireIDFromPtr(dto.TireID),
 			}
 			if !yield(&result[*domain.DrivingRecord]{value: record}) {
 				return

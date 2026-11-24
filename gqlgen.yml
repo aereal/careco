@@ -42,6 +42,11 @@ models:
         resolver: true
       tripDistance:
         resolver: true
+      tire:
+        resolver: true
+    extraFields:
+      TireID:
+        type: careco/backend/domain.TireID
   MonthlyReport:
     fields:
       odometerValue:

@@ -62,6 +62,7 @@ export type RecordDriveMutationVariables = Exact<{
   date: string;
   distance: number;
   memo?: string | null | undefined;
+  tireID: string | number;
 }>;
 
 export type RecordDriveMutation = { readonly recordDrivingRecord: boolean };
@@ -82,6 +83,43 @@ export type LastOdometerValueFragment =
   | LastOdometerValue_DailyReport_Fragment
   | LastOdometerValue_MonthlyReport_Fragment
   | LastOdometerValue_YearlyReport_Fragment;
+
+export type TireOptionFragment = {
+  readonly id: string;
+  readonly name: string;
+} & { ' $fragmentName'?: 'TireOptionFragment' };
+
+export type LastTireFragment = {
+  readonly tire: { readonly id: string } | null;
+} & { ' $fragmentName'?: 'LastTireFragment' };
+
+export type ListTiresQueryVariables = Exact<{
+  includeRetired: boolean;
+}>;
+
+export type ListTiresQuery = {
+  readonly tires: ReadonlyArray<{
+    readonly id: string;
+    readonly name: string;
+    readonly purchasedOn: Date | null;
+    readonly retired: boolean;
+  }>;
+};
+
+export type AddTireMutationVariables = Exact<{
+  name: string;
+  purchasedOn?: string | null | undefined;
+}>;
+
+export type AddTireMutation = { readonly addTire: { readonly id: string } };
+
+export type RetireTireMutationVariables = Exact<{
+  id: string | number;
+}>;
+
+export type RetireTireMutation = {
+  readonly retireTire: { readonly id: string };
+};
 
 type TotalDistance_DailyReport_Fragment = {
   readonly odometerValue: number;
@@ -112,8 +150,12 @@ export type GetRootQuery = {
     ' $fragmentRefs'?: {
       TotalDistance_DailyReport_Fragment: TotalDistance_DailyReport_Fragment;
       LastOdometerValue_DailyReport_Fragment: LastOdometerValue_DailyReport_Fragment;
+      LastTireFragment: LastTireFragment;
     };
   } | null;
+  readonly tires: ReadonlyArray<{
+    ' $fragmentRefs'?: { TireOptionFragment: TireOptionFragment };
+  }>;
   readonly recentDrivingRecords: {
     ' $fragmentRefs'?: {
       ChartDataSeries_RecentDrivingRecordsConnection_Fragment: ChartDataSeries_RecentDrivingRecordsConnection_Fragment;
@@ -299,6 +341,54 @@ export const LastOdometerValueFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<LastOdometerValueFragment, unknown>;
+export const TireOptionFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TireOption' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Tire' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TireOptionFragment, unknown>;
+export const LastTireFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'LastTire' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DailyReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'tire' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LastTireFragment, unknown>;
 export const RecordDriveDocument = {
   kind: 'Document',
   definitions: [
@@ -334,6 +424,17 @@ export const RecordDriveDocument = {
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'memo' } },
           type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
         },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'tireID' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -366,6 +467,14 @@ export const RecordDriveDocument = {
                   name: { kind: 'Name', value: 'memo' },
                 },
               },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'tireID' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'tireID' },
+                },
+              },
             ],
           },
         ],
@@ -373,6 +482,172 @@ export const RecordDriveDocument = {
     },
   ],
 } as unknown as DocumentNode<RecordDriveMutation, RecordDriveMutationVariables>;
+export const ListTiresDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'ListTires' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'includeRetired' },
+          },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'Boolean' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'tires' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'includeRetired' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'includeRetired' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'purchasedOn' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'retired' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ListTiresQuery, ListTiresQueryVariables>;
+export const AddTireDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'AddTire' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'name' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'String' },
+            },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: {
+            kind: 'Variable',
+            name: { kind: 'Name', value: 'purchasedOn' },
+          },
+          type: {
+            kind: 'NamedType',
+            name: { kind: 'Name', value: 'DateTime' },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'addTire' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'name' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'name' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'purchasedOn' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'purchasedOn' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AddTireMutation, AddTireMutationVariables>;
+export const RetireTireDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RetireTire' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'ID' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'retireTire' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'id' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'id' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RetireTireMutation, RetireTireMutationVariables>;
 export const GetRootDocument = {
   kind: 'Document',
   definitions: [
@@ -409,6 +684,23 @@ export const GetRootDocument = {
                 {
                   kind: 'FragmentSpread',
                   name: { kind: 'Name', value: 'LastOdometerValue' },
+                },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'LastTire' },
+                },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'tires' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TireOption' },
                 },
               ],
             },
@@ -465,6 +757,44 @@ export const GetRootDocument = {
         kind: 'SelectionSet',
         selections: [
           { kind: 'Field', name: { kind: 'Name', value: 'odometerValue' } },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'LastTire' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'DailyReport' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'tire' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TireOption' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Tire' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'name' } },
         ],
       },
     },

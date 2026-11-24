@@ -54,6 +54,12 @@ func TestServer(t *testing.T) {
 				if c.drivingRecordQuery != nil {
 					c.drivingRecordQuery(h.DrivingRecordQuery)
 				}
+				if c.tireCommand != nil {
+					c.tireCommand(h.TireCommand)
+				}
+				if c.tireQuery != nil {
+					c.tireQuery(h.TireQuery)
+				}
 			}
 			srv := httptest.NewServer(h)
 			t.Cleanup(srv.Close)
@@ -114,7 +120,7 @@ func (r *casesRoot) All() iter.Seq[*testCase] {
 
 func assertsResponse(t *testing.T, want *gqlResponse, got *http.Response) {
 	t.Helper()
-	jv, err := json.Marshal(want)
+	jv, err := json.Marshal(want, json.FormatNilMapAsNull(true))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -149,6 +155,8 @@ func transformResponse(hr *http.Response) *responseExpectation {
 type mocks struct {
 	drivingRecordCommand func(m *mock.MockDrivingRecordCommand)
 	drivingRecordQuery   func(m *mock.MockDrivingRecordQuery)
+	tireCommand          func(m *mock.MockTireCommand)
+	tireQuery            func(m *mock.MockTireQuery)
 }
 
 var mockCalls = map[string]*mocks{
@@ -157,11 +165,106 @@ var mockCalls = map[string]*mocks{
 			want := &domain.DrivingRecord{
 				OdometerValue: 10001,
 				Date:          time.Date(2025, time.October, 3, 0, 0, 0, 0, time.UTC),
+				TireID:        optional.Some(domain.TireID("tire-1")),
 			}
 			m.EXPECT().RecordDrivingRecord(gomock.Any(), gomock.Any()).
 				DoAndReturn(func(ctx context.Context, record *domain.DrivingRecord) error {
-					return tests.Diff(want, record, cmpopts.EquateApproxTime(time.Millisecond), tests.EquateOptional[string]())
+					return tests.Diff(want, record, cmpopts.EquateApproxTime(time.Millisecond), tests.EquateOptional[string](), tests.EquateOptional[domain.TireID]())
 				}).
+				Times(1)
+		},
+		tireQuery: func(m *mock.MockTireQuery) {
+			m.EXPECT().
+				FindTire(gomock.Any(), domain.TireID("tire-1")).
+				Return(&domain.Tire{ID: "tire-1", Name: "summer"}, nil).
+				Times(1)
+		},
+	},
+	"mutation recordDrivingRecord/tire not found": {
+		tireQuery: func(m *mock.MockTireQuery) {
+			m.EXPECT().
+				FindTire(gomock.Any(), domain.TireID("not-exist")).
+				Return(nil, domain.ErrTireNotFound).
+				Times(1)
+		},
+	},
+	"mutation recordDrivingRecord/retired tire": {
+		tireQuery: func(m *mock.MockTireQuery) {
+			m.EXPECT().
+				FindTire(gomock.Any(), domain.TireID("tire-retired")).
+				Return(&domain.Tire{ID: "tire-retired", Name: "old", Retired: true}, nil).
+				Times(1)
+		},
+	},
+	"mutation addTire/ok": {
+		tireCommand: func(m *mock.MockTireCommand) {
+			purchasedOn := time.Date(2025, time.April, 1, 0, 0, 0, 0, time.UTC)
+			want := &domain.Tire{Name: "summer", PurchasedOn: optional.Some(purchasedOn)}
+			m.EXPECT().
+				AddTire(gomock.Any(), gomock.Any()).
+				DoAndReturn(func(ctx context.Context, tire *domain.Tire) (*domain.Tire, error) {
+					if err := tests.Diff(want, tire, tests.EquateOptional[time.Time]()); err != nil {
+						return nil, err
+					}
+					return &domain.Tire{ID: "tire-1", Name: tire.Name, PurchasedOn: tire.PurchasedOn}, nil
+				}).
+				Times(1)
+		},
+	},
+	"mutation retireTire/ok": {
+		tireCommand: func(m *mock.MockTireCommand) {
+			m.EXPECT().
+				RetireTire(gomock.Any(), domain.TireID("tire-1")).
+				Return(&domain.Tire{ID: "tire-1", Name: "summer", Retired: true}, nil).
+				Times(1)
+		},
+	},
+	"mutation retireTire/not found": {
+		tireCommand: func(m *mock.MockTireCommand) {
+			m.EXPECT().
+				RetireTire(gomock.Any(), domain.TireID("not-exist")).
+				Return(nil, domain.ErrTireNotFound).
+				Times(1)
+		},
+	},
+	"query tires/ok": {
+		tireQuery: func(m *mock.MockTireQuery) {
+			m.EXPECT().
+				FindTires(gomock.Any(), false).
+				Return([]*domain.Tire{
+					{ID: "tire-1", Name: "studless", PurchasedOn: optional.Some(time.Date(2024, time.November, 1, 0, 0, 0, 0, time.UTC))},
+					{ID: "tire-2", Name: "summer"},
+				}, nil).
+				Times(1)
+		},
+	},
+	"query tires/includeRetired": {
+		tireQuery: func(m *mock.MockTireQuery) {
+			m.EXPECT().
+				FindTires(gomock.Any(), true).
+				Return([]*domain.Tire{
+					{ID: "tire-1", Name: "studless"},
+					{ID: "tire-3", Name: "summer", Retired: true},
+				}, nil).
+				Times(1)
+		},
+	},
+	"query lastReport/with tire": {
+		drivingRecordQuery: func(m *mock.MockDrivingRecordQuery) {
+			m.EXPECT().
+				FindRecordsInPeriod(gomock.Any(), domain.EmptyInterval[time.Time](), domain.OrderDirectionDesc, optional.Some(1)).
+				Return([]*domain.DrivingRecord{
+					{
+						OdometerValue: 45678,
+						TireID:        optional.Some(domain.TireID("tire-1")),
+					},
+				}, nil).
+				Times(1)
+		},
+		tireQuery: func(m *mock.MockTireQuery) {
+			m.EXPECT().
+				FindTire(gomock.Any(), domain.TireID("tire-1")).
+				Return(&domain.Tire{ID: "tire-1", Name: "summer"}, nil).
 				Times(1)
 		},
 	},

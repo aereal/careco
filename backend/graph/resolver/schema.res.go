@@ -7,6 +7,7 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -43,6 +44,20 @@ func (r *dailyReportResolver) TripDistance(ctx context.Context, obj *dtos.DailyR
 		return 0, err
 	}
 	return obj.OdometerValue - int(lastOdometerValue), nil
+}
+
+func (r *dailyReportResolver) Tire(ctx context.Context, obj *dtos.DailyReport) (*dtos.Tire, error) {
+	if obj.TireID == "" {
+		return nil, nil //nolint:nilnil // records created before tires were introduced have no tire
+	}
+	tire, err := r.tireQuery.FindTire(ctx, obj.TireID)
+	if errors.Is(err, domain.ErrTireNotFound) {
+		return nil, nil //nolint:nilnil // the referenced tire may not exist
+	}
+	if err != nil {
+		return nil, fmt.Errorf("TireQuery.FindTire: %w", err)
+	}
+	return toTireDTO(tire), nil
 }
 
 func (r *monthlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.MonthlyReport) (int, error) {
@@ -91,26 +106,54 @@ func (r *monthlyReportResolver) DailyReports(ctx context.Context, obj *dtos.Mont
 	}
 	conn := &dtos.DailyReportsConnection{Nodes: make([]*dtos.DailyReport, len(records))}
 	for i, record := range records {
-		conn.Nodes[i] = &dtos.DailyReport{
-			OdometerValue: int(record.OdometerValue),
-			RecordedAt:    record.Date,
-			ReportDate:    record.Date,
-			Memo:          record.Memo.Ptr(),
-		}
+		conn.Nodes[i] = toDailyReport(record)
 	}
 	return conn, nil
 }
 
-func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, odometerValue int, memo *string) (bool, error) {
+func (r *mutationResolver) RecordDrivingRecord(ctx context.Context, date time.Time, odometerValue int, memo *string, tireID string) (bool, error) {
+	tire, err := r.tireQuery.FindTire(ctx, domain.TireID(tireID))
+	if errors.Is(err, domain.ErrTireNotFound) {
+		return false, domain.ErrTireNotFound
+	}
+	if err != nil {
+		return false, fmt.Errorf("TireQuery.FindTire: %w", err)
+	}
+	if tire.Retired {
+		return false, domain.ErrTireRetired
+	}
 	record := &domain.DrivingRecord{
 		Date:          date,
 		OdometerValue: int64(odometerValue),
 		Memo:          optional.FromPtr(memo),
+		TireID:        optional.Some(tire.ID),
 	}
 	if err := r.drivingRecordCommand.RecordDrivingRecord(ctx, record); err != nil {
 		return false, fmt.Errorf("RecordDrivingRecord: %w", err)
 	}
 	return true, nil
+}
+
+func (r *mutationResolver) AddTire(ctx context.Context, name string, purchasedOn *time.Time) (*dtos.Tire, error) {
+	tire, err := r.tireCommand.AddTire(ctx, &domain.Tire{
+		Name:        name,
+		PurchasedOn: optional.FromPtr(purchasedOn),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("TireCommand.AddTire: %w", err)
+	}
+	return toTireDTO(tire), nil
+}
+
+func (r *mutationResolver) RetireTire(ctx context.Context, id string) (*dtos.Tire, error) {
+	tire, err := r.tireCommand.RetireTire(ctx, domain.TireID(id))
+	if errors.Is(err, domain.ErrTireNotFound) {
+		return nil, domain.ErrTireNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("TireCommand.RetireTire: %w", err)
+	}
+	return toTireDTO(tire), nil
 }
 
 func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*dtos.RecentDrivingRecordsConnection, error) {
@@ -122,12 +165,7 @@ func (r *queryResolver) RecentDrivingRecords(ctx context.Context, first int) (*d
 		Nodes: make([]*dtos.DailyReport, len(records)),
 	}
 	for i, record := range records {
-		conn.Nodes[i] = &dtos.DailyReport{
-			OdometerValue: int(record.OdometerValue),
-			RecordedAt:    record.Date,
-			ReportDate:    record.Date,
-			Memo:          record.Memo.Ptr(),
-		}
+		conn.Nodes[i] = toDailyReport(record)
 	}
 	return conn, nil
 }
@@ -158,12 +196,19 @@ func (r *queryResolver) LastReport(ctx context.Context) (*dtos.DailyReport, erro
 		return nil, nil //nolint:nilnil // no record is usual
 	}
 	record := records[0]
-	return &dtos.DailyReport{
-		OdometerValue: int(record.OdometerValue),
-		RecordedAt:    record.Date,
-		ReportDate:    record.Date,
-		Memo:          record.Memo.Ptr(),
-	}, nil
+	return toDailyReport(record), nil
+}
+
+func (r *queryResolver) Tires(ctx context.Context, includeRetired bool) ([]*dtos.Tire, error) {
+	tires, err := r.tireQuery.FindTires(ctx, includeRetired)
+	if err != nil {
+		return nil, fmt.Errorf("TireQuery.FindTires: %w", err)
+	}
+	ret := make([]*dtos.Tire, len(tires))
+	for i, tire := range tires {
+		ret[i] = toTireDTO(tire)
+	}
+	return ret, nil
 }
 
 func (r *yearlyReportResolver) OdometerValue(ctx context.Context, obj *dtos.YearlyReport) (int, error) {

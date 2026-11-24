@@ -20,8 +20,10 @@ func BuildHandler(controller *gomock.Controller) *TestHandler {
 	tracerProvider := test.ProvideNoopTracerProvider()
 	mockDrivingRecordCommand := mock.NewMockDrivingRecordCommand(controller)
 	mockDrivingRecordQuery := mock.NewMockDrivingRecordQuery(controller)
-	resolverResolver := resolver.ProvideResolver(mockDrivingRecordCommand, mockDrivingRecordQuery)
+	mockTireCommand := mock.NewMockTireCommand(controller)
+	mockTireQuery := mock.NewMockTireQuery(controller)
+	resolverResolver := resolver.ProvideResolver(mockDrivingRecordCommand, mockDrivingRecordQuery, mockTireCommand, mockTireQuery)
 	server := graph.ProvideServer(tracerProvider, resolverResolver)
-	testHandler := provideTestServer(server, mockDrivingRecordCommand, mockDrivingRecordQuery)
+	testHandler := provideTestServer(server, mockDrivingRecordCommand, mockDrivingRecordQuery, mockTireCommand, mockTireQuery)
 	return testHandler
 }

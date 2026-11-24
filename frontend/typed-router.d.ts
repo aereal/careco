@@ -41,8 +41,15 @@ declare module 'vue-router/auto-routes' {
     '/reports/[year]/[month]': RouteRecordInfo<
       '/reports/[year]/[month]',
       '/reports/:year/:month',
-      { year: ParamValue<true>, month: ParamValue<true> },
-      { year: ParamValue<false>, month: ParamValue<false> },
+      { month: ParamValue<true>, year: ParamValue<true> },
+      { month: ParamValue<false>, year: ParamValue<false> },
+      | never
+    >,
+    '/tires': RouteRecordInfo<
+      '/tires',
+      '/tires',
+      Record<never, never>,
+      Record<never, never>,
       | never
     >,
   }
@@ -73,6 +80,14 @@ declare module 'vue-router/auto-routes' {
         | never
       pathParamNames:
         | 'month'
+    }
+    'src/pages/tires.vue': {
+      routes:
+        | '/tires'
+      views:
+        | never
+      pathParamNames:
+        | never
     }
   }
 
